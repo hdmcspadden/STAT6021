@@ -1,0 +1,373 @@
+---
+title: "Stat6021Module0"
+author: "Diana McSpadden"
+date: "8/22/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Module 0 Homework Exercises
+
+### Question 1
+Statistical theory tells us the distribution of the sample means with a xed sample
+size, under certain circumstances. The sampling distribution is an approximation of
+the density histogram of the sample means. We know the sample means vary from
+sample to sample. The sampling distribution tells us the expected value (mean) of the
+distribution, and the standard deviation of the sample means.
+(a) Suppose the variable X follows a normal distribution with mean  and standard
+deviation . Consider taking random samples, each with size n, repeatedly. What
+is the sampling distribution of the sample mean, x?
+(b) Suppose the variable X has an unknown distribution but known mean and
+known standard deviation What is the name of the statistical theory that
+informs us that the sampling distribution of the sample mean, x, can be well-
+approximated by a normal distribution?
+
+**Part a**
+x-bar approx normal distribution mean mew, with sigma over square root n sd.
+
+**Part b**
+Central Limit Theorem
+
+### Question 2
+An automatic machine in a manufacturing process produces subcomponents. The
+lengths of the subcomponents follow a normal distribution with a mean of 116 cm and
+a standard deviation of 4.8 cm.
+(a) Find the probability that one selected subcomponent is longer than 118cm.
+(b) Find the probability that if 3 subcomponents are randomly selected, their mean
+length exceeds 118cm.
+
+```{r q2a}
+1 - pnorm((118-116) / 4.8)
+```
+```{r q2b}
+1 - pnorm((118-116) / (4.8 / sqrt(3)))
+
+```
+### Question 3
+
+What are the goals of constructing a confidence interval?
+
+**Answer**
+1. Create an estimate of the unknown parameter of interest
+1. Create a range of plausible (typically 95%) values for a parameter of interest
+1. Provide a measure of uncertainty
+
+### Question 4
+How does increasing the confidence level affect the margin of error and the width of the confidence interval? Hint: sketching the standard normal distribution will be helpful.
+
+** Answer **
+Increasing the confidence level, from say 95% to 99% means that the width of the confidence interval also increases because we must include a larger area of values to be more confident. The margin of error also increased because the multiplier increases as alpha decreases.
+
+### Question 5
+How does increasing the sample size affect the margin of error and the width of the confidence interval? Briefy explain.
+
+**Answer**
+Increasing the sample size decreases the margin of error because sigma/sqrt(n) gets smaller as the denominator increases cuase the multiplier to be smaller. We get closer to a standard normal distribution of the sample mean.
+
+### Question 6
+Use R to find the value of the t-multiplier when constructing a confidence interval for the mean in the following situations:
+(a) 94% confidence interval with n = 49.
+(b) 86% confidence interval with n = 82.
+(c) 74% confidence interval with n = 150.
+
+```{r q6a}
+qt(0.96,48)
+```
+
+```{r q6b}
+qt(0.93,81)
+```
+```{r q6c}
+qt(0.87,149)
+```
+### Question 7
+A random sample of 100 students had a mean grade point average (GPA) of 3.2 with
+a standard deviation of 0.2.
+(a) Calculate a 97% confidence interval for the mean GPA for all students.
+(b) What is the margin of error for the condence interval found in the previous part?
+What is the margin of error telling us?
+(c) Based on this condence interval, is it reasonable to say that the mean GPA of
+all students is 3.25 or greater?
+
+```{r q7a}
+# CI == 3.2 +- tmultiplier
+
+tmult = qt(0.985,99)
+moe = tmult * (.2 / sqrt(100))
+lci = 3.2 - moe
+uci = 3.2 + moe
+ci = cat("(",lci,",",uci,")")
+ci
+```
+```{r}
+moe
+```
+No, gpa mean of 3.25 or greater is not reasonable.
+### Question 8
+determine if a change in data or simply normal variation.
+
+### Question 9
+Hypothesis questions are about the POPULATION
+
+### Question 10
+For each of the situations, state the appropriate null and alternative hypotheses, in
+symbols and in words. Sketch how you would nd the p-value based on the calculated
+test statistic.
+(a) David's car averages 29 miles per gallon on the highway. He just switched to a
+new motor oil that is advertised as increasing gas mileage. He wants to investigate
+if the advertisement is accurate.
+
+**Answer**
+null: mew highway car mileage is 29 mpg
+Ha: mew highway car mileage greater than 29mpg
+
+(b) The diameter of a spindle in a small motor is supposed to be 4 millimeters. If
+the spindle is too small or too large, the motor will not function properly. The
+manufacturer wants to investigate whether the mean diameter is moved away from
+the target.
+
+**Answer**
+H0: mew spindle diameter == 4mm
+Ha: mew spindle diameter != 4mm
+
+
+(c) The average time in traffic between 2 points of a congested highway used to be 2
+hours. The government invested money to improve travel times by building extra
+lanes and overpasses. Citizens want to access if travel times have improved, on
+average.
+
+**Answer**
+H0: mew time == 2 hours
+Ha: mew time < 2 hours
+
+### Question 11
+To have more evidence against the null hypothesis, our test statistic should be larger
+/ smaller (choose one) in magnitude. Brie
+y explain.
+
+**Answer**
+LARGER: equation is xbar - null mew / s/sqrt(n). Test statistic gets larger as it deviates from null mew.
+
+### Question 12
+How does increasing the difference between the sample mean and the population mean
+under the null hypothesis affect the test statistic and the evidence against the null
+hypothesis?
+
+**Answer**
+See q11
+
+### Question 13
+How does increasing the sample size affect the test statistic and the evidence against
+the null hypothesis?
+
+**Answer**
+Decreases the denominator thus making test statistic larger. more evidence against 
+h0.
+
+### Question 14
+Use R to obtain the critical values of the following hypothesis tests:
+(a) H0 : mew = 3:5;Ha : mew != 3:5, with alpha = 0:08 and n = 96.
+```{r q14a}
+critvalue = qt(.96,95)
+critvalue
+
+```
+
+(b) H0 :  = 75;Ha :  < 75, with  = 0:12 and n = 43.
+```{r q14b}
+critvalue2 = -qt(.88,42)
+critvalue2
+```
+
+
+(c) H0 :  = 10;Ha :  > 10, with  = 0:045 and n = 132.
+```{r q14c}
+critvalue3 = qt(.955,131)
+critvalue3
+```
+
+Hint: you will need either the qt() or pt() function.
+
+## Question 15
+Use R to obtain the p-values of the following hypothesis tests:
+(a) H0 : mew = 48;Ha : mew != 48, with t-stat = 2:14 and n = 50.
+```{r q15a}
+(1 - pt(2.14,49)) * 2
+```
+
+
+(b) H0 : mew = 3;Ha : mew > 3, with t-stat = 0:78 and n = 316.
+```{r q15b}
+1 - pt(.78,315)
+```
+
+
+(c) H0 : mew = 12;Ha : mew < 12, with t-stat = 1:57 and n = 34.
+```{r q15c}
+pt(1.57,33)
+```
+Hint: you will need either the qt() or pt() function.
+
+## Question 16
+The 10-year historical average yield of corn in the United States is 160 bushels per acre.
+A survey of 50 farmers this year gives a sample mean yield of 158.4 bushels per acre,
+with a standard deviation of 5 bushels per acre. Does this sample provide evidence
+that the yield of corn has decreased from the 10-year historical average? Conduct an
+appropriate hypothesis test.
+(a) State the null and alternative hypotheses.
+**Answer**
+H0: mew (average yield of corn in US) = 160 b/a
+Ha: mew (average yield of corn in US) < 160 b/a
+
+
+(b) Calculate the test-statistic.
+**Work**
+s = 5 b/a
+n = 50
+x-bar = 158.4
+```{r}
+tstat = (158.4 - 160)/(5 / sqrt(50))
+tstat
+```
+
+
+(c) Find the p-value and critical value.
+```{r}
+pvalue = pt(-2.2637,49)
+print(pvalue)
+
+critvalue4 = -qt(.95,49)
+print(critvalue4)
+```
+
+
+(d) State a conclusion in context.
+```{r}
+
+```
+
+
+(e) How would you interpret the calculated p-value?
+```{r}
+
+```
+
+## Question 17
+Obtain the critical value of a hypothesis test where H0 : mew = 145;Ha : mew != 145, with
+significance level alpha = 0:02. Suppose the sample size is 50.
+
+mew: 145
+alpha: 0.02
+use .99 because two sided test
+n = 50
+df = 49
+```{r q17}
+critvalue17 = qt(0.99, 49)
+critvalue17
+```
+## Question 18
+Obtain the t-multiplier for a 98% confidence interval. Suppose the sample size is 50.
+
+CI == 2-sided test, so use .99 for perc
+n = 50
+df = 49
+
+```{r q18}
+tmult18 = qt(0.99, 49)
+tmult18
+```
+## Question 19
+Compare the critical value and the t-multiplier found in the previous 2 parts. What is
+an implication based on this comparison?
+
+**Answer**
+Crit value and CI are same for given perc and n.
+
+## Question 20
+Suppose the hypothesis test in part 17 is carried out and the p-value is 0.043. Which
+of the following confidence intervals is/are possible?
+
+**Q 17 info**
+mew: 145
+alpha: 0.02
+use .99 because two sided test
+n = 50
+df = 49
+
+**Ranges**
+- (143.2, 144.5)
+- (151.3, 154.6)
+- (144.5, 163.5)
+```{r}
+(143.2 - 144.5) / 2
+```
+```{r}
+(151.3 - 154.6) / 2
+```
+```{r}
+(144.5 - 163.5) / 2
+```
+
+ 
+**Reasoning**
+possible would contain mew: 145. Only (144.5, 163.5) contains 145, but at alpha .02 and p-value == 0.043 means pvalue > alpha of 0.02. We do not reject H0.
+
+## Question 21
+A random sample of 85 banded archerfish were collected, and their lengths were mea-
+sured and recorded. Their average length was 20cm with a standard deviation of 3cm.
+(a) Construct a 95% confidence interval for the population mean length of banded
+archerfish.
+```{r q21a}
+n = 85
+df = 84
+mew = 20
+sd = 3
+
+alpha = .05
+alphahalf = .025
+alphaperc = 1 - (.05/2)
+
+# 20 +/- ME
+# 20 +/- qt(0.975,84)(3/sqrt(85))
+mem = 20 - (qt(alphaperc,84)*(3/sqrt(85)))
+mep = 20 + (qt(alphaperc,84)*(3/sqrt(85)))
+
+cat("(",mem,",",mep,")")
+```
+
+
+(b) Based on your confidence interval, is it plausible that the population mean length
+of banded archerfish is 21cm? Briefy explain.
+**Answer**
+No, a pop mean of 21cm is not plauible as the value ies outside the 95% confidence interval.
+
+
+(c) Suppose you conduct the following hypothesis test. H0 : mew = 21;Ha : mew != 21.
+Without actually performing any additional calculations, what do you expect the
+p-value of this hypothesis test will be? Briefly explain.
+* greater than 0.05
+* less than 0.05
+**Answer**
+less than 0.05. 
+
+
+(d) Conduct the hypothesis test to verify your answer to the previous part.
+xbar = 20
+mew = 21
+sd = 3
+n = 85
+df = 84
+```{r q21d}
+tvalue21 = (20 - 21)/(3/sqrt(85))
+
+pvalue21 = pt(tvalue21, 84)
+pvalue21
+```
+
+**Answer**
+0.00143 is smaller than 0.05 thus we reject the null hypothesis.
+
+

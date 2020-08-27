@@ -1,0 +1,37 @@
+---
+title: "R Notebook"
+pdf_document: default
+---
+
+# 1.2 Simple Linear Regression
+
+## 1. Write down the simple linear regression equation and the simple linear regression model.
+
+**Model**
+y = B0 + B1x
+
+**Equation**
+y-hat = B0-hat + B1-hat(x)
+
+
+## 2. Compare and contrast the simple linear regression equation and the simple linear regression model. What do each of these describe?
+
+**Model**
+Describes the linear relationship of x to y. This is the population model that best describes, with the least regression and residual error the relationship of x to y.
+
+**Equation**
+Gives a point estimate for the mean of y for a particular x. In other words, what is an estimate of the average y, for an x.
+
+## 3. What is the interpretation associated with the slope and intercept in a simple linear regression equation?
+
+The slope, B1, the change in y by a unit change in x.
+
+The y-intercept is the fitted-model's estimate for y-bar for an x of 0, but 0 may not be in the range of x, and thus, B0 may have no logical meaning.
+
+## 4. Write down the assumptions for a simple linear regression model. You may state the assumptions using equations, and then describe what these equations mean.
+
+**Assumption 1:** the errors of the model have a mean of 0.
+**Assumption 2:** the variance of errors is unknown.
+**Assumption 3:** errors are uncorrelated - do not depend on any other error.
+
+# 1.3 Estimating Regression Coefficients

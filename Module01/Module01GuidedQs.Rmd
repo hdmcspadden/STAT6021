@@ -1,0 +1,37 @@
+---
+title: "Module 01 Guided Qs"
+output: html_notebook
+---
+
+# STAT 6021: Guided Question Set 1
+The data for this question is saved as bp.txt". The data set contains information on the
+weight (in pounds) and systolic blood pressure (in millimeters of mercury, mmHg) of 26
+randomly selected males in the age group 25-30.
+
+```{r getdata}
+#getwd()
+data <- read.table('bp.txt', sep='\t', header = TRUE)
+head(data,5)
+```
+
+## Question 1
+
+Create a scatterplot for this data set. Be sure to label the axes and give an appropriate
+title. Based on the appearance of the plot, does a simple linear regression appear
+reasonable for the data?
+
+```{r}
+plot(x=data$weight, y=data$BP, main='Weight v BP', xlab = 'Weight (lbs)', ylab = 'Systolic BP (mmHg)')
+```
+
+
+*Answer*
+*Yes*, it does seem reasonable that sys BP is simple linear function of weight.
+
+## Question 2
+
+Perform a simple linear regression for systolic blood pressure against weight. Record
+the estimated equation for the linear regression, and state the estimated values of
+the slope and intercept. Interpret the values of the estimated slope and intercept, in
+context.
+
