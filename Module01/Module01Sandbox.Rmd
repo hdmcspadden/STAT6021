@@ -67,9 +67,9 @@ residuals, (e-i) = (y-i) - (y-hat). Residuals are variances that cannot be expla
 ## 4. Describe, using your own words, how the regression coefficients are estimated using  least-squares criterion.
 The regression coef's, B0 and B1, are estimated by ...
 **First, estimate B1, i.e. the slope, as Sxy / Sxx.**
-Sxy is the sum of cross products of x-i's and y-i's corrected by the average sum of (x-i)(y-i).
+Sxy is the sum of cross products of x-i's and y-i's corrected by the average sum of (x-i)(y-i) and **Sxy is the measure of the spread of y as x changes**
 
-Sxx is the sum of squares of (x-i) - (x-bar)
+Sxx is the sum of squares of (x-i) - (x-bar) and **Sxx is the measure of the spread of x's**
 
 After you have an estimate for B1, you can estimate B0. Using mean of y (y-bar) and mean of x (x-bar):
 B0-hat = y-bar - B1-hat(x-bar), this is from the simple linear regression formula.
@@ -85,5 +85,94 @@ Best linear unbiased estimate means that the the regression coefs, B0 and B1, ha
 
 # 1.4 Estimating the Variance of a Regression Model
 
+##1. Write down the formulas for the following, as well as their degrees of freedom. Also describe what each of them are measuring, as well as the relationship between these three formulas.
+**Total sum of squares (SS-T)**
+SS-T = SS-R + SS-res
+measures the total variation from real data of the model, including that explained by the model, and that not explained from the model.
+
+**Regression sum of squares (SS-R)**
+SS-R = sum [(y-hat - y-bar)^2]
+
+sum of square of difference between predicted y and average y
+
+This is total variance/difference of the model of y for given x and the mean of y for a given x.  
+
+**Residual sum of squares (SS-res):**
+SS-res = sum [(y-i - y-hat)^2]
+
+The residuals are variances/errors not explained by the model; so these are calculated by the sum of square of difference between actual y data for x and predicted y value for x.
+
+##2. What is the relationship between SS-T, SS-R, and SS-res?
+SS-T = SS-R + SS-res
+
+The total variance is the sum of regression variance and residual variance, i.e., the sum of explained and unexplained model variance.
+
+##3. Write down the formula for the estimated variance, σ^2, of a regression model.
+σ^2 = SS-res / (n - 2)
+
+n-s because of degree of freedom needed for B0 and B1.
+
+# 1.5 ANOVA F Test
+
+**Interesting finding in book section 2.3.3**
+SS-res = SS-T - (B1-hat)S-xy
+
+and 
+
+SS-T = SS-R + SS-res
+
+So,
+
+SS-R = (B1-hat)S-xy
+
+**And df's**
+SS-T = n-1
+SS-R = 1
+SS-res = n-2
+
+
+## 1. Consider the ANOVA F test in a simple linear regression setting.
+
+**In your own words, describe what the ANOVA F test is used for.**
+The F test allows a comparison between our regression and a regression with no predictor variables, i.e. B1 = 0, or rather a model with only a B0 (intercept), or single average y value for all x values.
+
+The formula is 
+MS-R / MS-res, or explained error divided by unexplained error. 
+
+Expected values are:
+E(MS-R) = sigma^2 + B1^2(Sxx)
+E(MS-res) = sigma^2
+
+
+IF F0 is large then B1 != 0 == H0 is rejected, because is B1^2(Sxx) is larger then the slope 
+must be larger.
+
+**Write down the null and alternative hypotheses associated with an ANOVA F test.**
+H0: B1 == 0
+Ha: B1 != 0
+
+If F0 > F-alpha,1,n-2
+
+**How do we calculate the ANOVA F statistic? What distribution is the calculated F statistic compared to?**
+The formula is 
+MS-R / MS-res, or explained error divided by unexplained error. 
+
+Compared to F-alpha,1,n-2 == a "non-central F distribution with 1 and n-2 df and non-centrality parameter of:
+
+B1^2(Sxx) / sigma^2
+
+ 
+## 2. Write down the formula for the coefficient of determination, R2. What is R2 measuring?
+**Formula:**
+SS-R / SS-T
+
+R^2 is the **Coef of determination** and is a proportion, i.e. value between 0 and 1, inclusive, of the variability in y explained by variations in x.
+
+The closer the error explained by model is to total error, the closer the value is to 1 - which would be a model that explained 100% of the variability in y, i.e. a perfect model.
+
+**Caution**
+more term can artificially increase R^2. Also, large R^2 does **not** necessarily mean the model is an accurate predictor.
+
+ 
 
 
