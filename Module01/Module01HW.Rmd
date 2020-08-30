@@ -1,17 +1,46 @@
 ---
-title: "R Notebook"
+title: 'Stat 6021: Homework Set 1, Name: H. Diana McSpadden, UID: hdm5s'
 output:
-  pdf_document: default
+  html_document:
+    df_print: paged
 ---
+'''
+# Name: H. Diana McSpadden
+# UID: hdm5s
+# Assignment: Homework Set 1
+# Question 1
+(R required) We will use the dataset "copier.txt" for this question. 
 
 
-```{r}
-c = cars
-plot(cars)
+The Tri-City Office
+Equipment Corporation sells an imported copier on a franchise basis and performs
+preventive maintenance and repair service on this copier. The data have been collected
+from **45 recent calls on users** to perform routine preventive maintenance service; for
+each call, Serviced is the number of copiers serviced and Minutes is the total number
+of minutes spent by the service person.
+
+**Knowns**
+n = 45
+Serviced == number of copy machines serviced on a call
+Minutes == number minutes spent by service person on the call
+
+## First, get the data
+'''
+```{r getdata}
+#getwd()
+head(data,5)
 ```
+'''
+## 1a: What is the response variable in this analysis? What is predictor in this analysis?
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+**Answer**
+The response variable is **Minutes**.
+The predictor variable is **Serviced**.
+In other words, we believe the number of copiers serviced predicts the length, in minutes, of the service call.
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+## 1b: Produce a scatterplot of the two variables. 
+How would you describe the relationship between the number of copiers serviced and the time spent by the service
+person?
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+
