@@ -42,5 +42,57 @@ In other words, we believe the number of copiers serviced predicts the length, i
 How would you describe the relationship between the number of copiers serviced and the time spent by the service
 person?
 
+'''
+```{r scatterplot}
+#attach the data frame
+attach(data)
 
+#use plot(...) to create a scatterplot
+plot(x=Serviced, y=Minutes, main='Plot Minutes Against Number Copiers Serviced', xlab = 'Number of Copiers Serviced', ylab = 'Service Time (minutes)')
+```
+'''
+**Relationship**
+There is a strong linear relationship with positive correlation. I do not see any clusters or outliers.
 
+##1c: Use the lm() function to fit a linear regression for the two variables. 
+Where are the values of B1, B0, R2, and sigma-hat2 for this linear regression?
+'''
+
+```{r q1c}
+lmodel = lm(data)
+summary(lmodel)
+```
+```{r q1csigma}
+lmodel_sigma = sigma(lmodel)
+lmodel_sigma
+```
+'''
+B1: 15.0352
+B0: -0.5802
+R2: 0.9575
+sigma-hat2: 8.914
+
+##1d: Interpret the values of B1, B0 contextually. 
+Does the value of B0 make sense in this context?
+
+**Answer**
+B1 Interpretation: The change in service call time, in minutes, will be +15.0352 minutes for each additional copier serviced, after the first copier.
+
+B0 Interpretation: B0 tells us that a service call for 0 minutes would take negative 0.5802 minutes, which does not makes sense, and a service call for 0 copiers also does not make sense.
+
+##1e: Use the anova() function to produce the ANOVA table for this linear regression.
+What is the value of the ANOVA F statistic? What null and alternative hypotheses are being tested here? What is a relevant conclusion based on this ANOVA F statistic?
+'''
+
+```{r q1e}
+anova(lmodel)
+```
+'''
+ANOVA F STAT: 968.66
+
+H0: B1 == 0, or that the slope of the simple linear regression equation equals 0.
+Ha: B1 != 0, or that the slope of the simple linear regression equation does not equal 0.
+
+The F statistic is large (given the data set) are tells us that we should reject the null hypothesis and that our linear model predicts service call minutes based on number of copiers serviced better than using the average number of service call minutes, or any other number within the range of service minutes.
+
+'''
