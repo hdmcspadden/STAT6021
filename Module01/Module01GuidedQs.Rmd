@@ -21,12 +21,14 @@ title. Based on the appearance of the plot, does a simple linear regression appe
 reasonable for the data?
 
 ```{r}
-plot(x=data$weight, y=data$BP, main='Weight v BP', xlab = 'Weight (lbs)', ylab = 'Systolic BP (mmHg)')
+plot(x=data$weight, y=data$BP, main='Plot Systolic BP Against Weight', xlab = 'Weight (lbs)', ylab = 'Systolic BP (mmHg)')
 ```
 
 
 *Answer*
 *Yes*, it does seem reasonable that sys BP is simple linear function of weight.
+
+
 
 ## Question 2
 
@@ -35,3 +37,118 @@ the estimated equation for the linear regression, and state the estimated values
 the slope and intercept. Interpret the values of the estimated slope and intercept, in
 context.
 
+attach(data)
+##Fit a regression model
+
+```{r q2}
+lm(BP~weight)
+
+```
+
+**Estimated simple linear regression equation**
+y-hat = 69.1044 + .4194(x)
+B0 = 69.1044
+B1 = .4194
+
+**Interpretation of slope**
+For every 1 lb of weight the model estimate's a .4194 increase in systolic lood preassure, measured in mmHg. 
+
+**Interpretation of intercept**
+The intercept is meaningless as a weight of 0 lbs is not meaningful. A 0 lb adult male is not part of the sample or population we are analyzing.
+
+## Question 3
+
+For a 30-year-old male whose weight is 200, what is his predicted systolic blood pres-
+sure? What is his residual?
+
+```{r q3}
+
+yweight <- 69.1044 + (.4194 * 200)
+yweight
+
+
+```
+## Question 4
+
+Produce the ANOVA table for this linear regression.
+
+```{r q4a}
+result<-lm(BP~weight)
+anova(result)
+
+```
+
+```{r q4b}
+summary(result)
+```
+## Question 5
+
+What is the value of R2? Explain how this value is found. What does this value mean
+in this context?
+
+**Answer**
+The R2, Coef of determination, formula is: SS-R / SS-T, i.e. the regression error divided by the total error and can be used as a easure of how well variations in x explain variations in y.
+
+From video 1.6 : "Strength of the linear relationship between two quantitative variables"
+
+The closer the error explained by model is to total error, the closer the value is to 1 - which would be a model that explained 100% of the variability in y, i.e. a perfect model.
+
+Our model has an R2 of **.5983.**
+
+Our model, based on weight, explains roughly 60% of the variability in blood pressure.
+
+## Question 6
+
+What is the estimated value for the standard deviation of the error terms for this
+regression model, sigma-hat?
+
+**Answer**
+
+I believe the answer is **HELP HERE**
+```{r}
+sigma(result)
+```
+
+## Question 7
+
+What are the null and alternative hypotheses for the ANOVA F test?
+
+**Answer**
+H0: B1 == 0
+Ha: B1 != 0
+
+Since B1 == 69.1044 per our ANOVA test with an F statistic of 35.74 we reject H0.
+
+## Question 8
+
+Explain how the F statistic of 35.744 is found.
+
+**Answer**
+The formula is 
+MS-R / MS-res, or explained error divided by unexplained error. 
+
+**This is not working, what am I doing wrong??**
+
+Expected values are:
+E(MS-R) = sigma^2 + B1^2(Sxx)
+E(MS-res) = sigma^2
+```{r}
+mean(weight)
+Sxx <- sum((weight - mean(weight))^2)
+Sxx
+
+sigma <- sigma(result)
+sigma
+
+B1 <- 69.1044
+
+F0 <- (sigma^2 + (B1^2 * Sxx)) / sigma^2
+F0
+```
+
+## Question 9
+
+Write an appropriate conclusion for the ANOVA F test for this simple linear regression model.
+
+**Answer**
+The model is statistically significant because the F score is large. The model is a better predictor than y = B0 or Y-bar for the systolic bp of our study's population.

@@ -58,7 +58,7 @@ Gives a point estimate for the mean of y for a particular x. In other words, wha
 **Predicted / fitted value:**
 y-hat = B-hat0 + B-hat1(x)
 An estimate of the average value of the response variable (y) for a particular predictor variable (x).
-so, if you have all the values of y for a given x, the predicted/fitted value is the average value of all the y's, but the model creates a linear equation for all values of x, to minmize errors/variance of y-i, y-hat, and y-bar.
+so, if you have all the values of y for a given x, the predicted/fitted value is the average value of all the y's, but the model creates a linear equation for all values of x, to minimize errors/variance of y-i, y-hat, and y-bar.
 
 **Residuals
 Residuals are the difference between the actual value of y, y-i, and the predicted value of y, y-hat.
@@ -166,13 +166,24 @@ B1^2(Sxx) / sigma^2
 **Formula:**
 SS-R / SS-T
 
-R^2 is the **Coef of determination** and is a proportion, i.e. value between 0 and 1, inclusive, of the variability in y explained by variations in x.
+R^2 is the **Coef of determination** and is a proportion, i.e. value between 0 and 1 (or -1 and 0 for neg linear relationship), inclusive, of the variability in y explained by variations in x.
+
+"Strength of the linear relationship between two quan variables" - video 1.6
 
 The closer the error explained by model is to total error, the closer the value is to 1 - which would be a model that explained 100% of the variability in y, i.e. a perfect model.
 
 **Caution**
 more term can artificially increase R^2. Also, large R^2 does **not** necessarily mean the model is an accurate predictor.
 
- 
+# 1.6 Pitfalls of Correlation
 
+## 1. Describe situations where the correlation should not be used.
+can only measure strength of **linear** relationships. NOT exponential! or other non-lin. Always produce a scatterplot first.
+
+Outliers can distort relationship. Need to decide what to do with outliers.
+
+
+##2. Explain how a scatterplot should be used to prevent these common pitfalls in using the correlation from happening.
+
+Scatterplot can provide a visualization to let one know whether a linear relationship exists and if there are outliers, or clusters.
 
