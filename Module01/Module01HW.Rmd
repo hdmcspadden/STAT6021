@@ -5,9 +5,13 @@ output:
     df_print: paged
 ---
 '''
+
 # Name: H. Diana McSpadden
+
 # UID: hdm5s
+
 # Assignment: Homework Set 1
+
 # Question 1
 (R required) We will use the dataset "copier.txt" for this question. 
 
@@ -28,6 +32,7 @@ Minutes == number minutes spent by service person on the call
 '''
 ```{r getdata}
 #getwd()
+data <- read.table('copier.txt', sep='\t', header = TRUE)
 head(data,5)
 ```
 '''
@@ -45,16 +50,18 @@ person?
 '''
 ```{r scatterplot}
 #attach the data frame
-attach(data)
+#attach(data)
 
 #use plot(...) to create a scatterplot
-plot(x=Serviced, y=Minutes, main='Plot Minutes Against Number Copiers Serviced', xlab = 'Number of Copiers Serviced', ylab = 'Service Time (minutes)')
+plot(x=data$Serviced, y=data$Minutes, main='Plot Minutes Against Number Copiers Serviced', xlab = 'Number of Copiers Serviced', ylab = 'Service Time (minutes)')
 ```
+
 '''
+
 **Relationship**
 There is a strong linear relationship with positive correlation. I do not see any clusters or outliers.
 
-##1c: Use the lm() function to fit a linear regression for the two variables. 
+## 1c: Use the lm() function to fit a linear regression for the two variables. 
 Where are the values of B1, B0, R2, and sigma-hat2 for this linear regression?
 '''
 
@@ -67,12 +74,16 @@ lmodel_sigma = sigma(lmodel)
 lmodel_sigma
 ```
 '''
+
 B1: 15.0352
+
 B0: -0.5802
+
 R2: 0.9575
+
 sigma-hat2: 8.914
 
-##1d: Interpret the values of B1, B0 contextually. 
+## 1d: Interpret the values of B1, B0 contextually. 
 Does the value of B0 make sense in this context?
 
 **Answer**
@@ -80,7 +91,7 @@ B1 Interpretation: The change in service call time, in minutes, will be +15.0352
 
 B0 Interpretation: B0 tells us that a service call for 0 minutes would take negative 0.5802 minutes, which does not makes sense, and a service call for 0 copiers also does not make sense.
 
-##1e: Use the anova() function to produce the ANOVA table for this linear regression.
+## 1e: Use the anova() function to produce the ANOVA table for this linear regression.
 What is the value of the ANOVA F statistic? What null and alternative hypotheses are being tested here? What is a relevant conclusion based on this ANOVA F statistic?
 '''
 
@@ -88,11 +99,71 @@ What is the value of the ANOVA F statistic? What null and alternative hypotheses
 anova(lmodel)
 ```
 '''
-ANOVA F STAT: 968.66
+
+**ANOVA F STAT: 968.66**
 
 H0: B1 == 0, or that the slope of the simple linear regression equation equals 0.
+
 Ha: B1 != 0, or that the slope of the simple linear regression equation does not equal 0.
 
 The F statistic is large (given the data set) are tells us that we should reject the null hypothesis and that our linear model predicts service call minutes based on number of copiers serviced better than using the average number of service call minutes, or any other number within the range of service minutes.
+
+# Question 2. (Do not use R in this question) 
+Suppose that for n = 6 students, we want to predict their scores on the second quiz using scores from the first quiz. The estimated regression line is:
+
+**y-hat = 20 + 0.8x**
+
+## 2.a For each individual observation, calculate its predicted score on the second quiz y-hat-i and the residual e-i.
+
+y-hat-i = 20 + (0.8)(x-i)
+
+e-i = (y-i) - (y-hat)
+
+| element | Student 1 | Student 2 | Student 3 | Student 4 | Student 5 | Student 6|
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| x-i | 70 | 75 | 80 | 80 | 85 | 90 |
+| y-i | 75 | 82 | 80 | 86 | 90 | 91 |
+| y-hat-i | 76 | 80 | 84| 84 | 88 | 92 |
+| e-i |  -1 | 2 | -4 | 2 | 2 |  -1 |
+
+## 2.b Complete the ANOVA table for this dataset below. 
+Note: Cells with *** in them are typically left 
+
+SS-R = SUM[((y-i)- (y-bar))^2]
+
+y-bar = (75+82+80+86+90+91) / 6 == **84**
+
+SS-res = SUM[((y-i) - (y-hat))^2]
+
+|  | DF | SS |  MS | F-stat | p-value |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| Regression | 1 |  190 | 190 / 1 == **190**  | (190 / 7.5) == **25.3333**  | 0.0099 |
+| Residual |  n-2 | 30 |  30 / (6-2) == **7.5**  | *** | *** |
+| Total | n-1  |  190 + 30 == **220** | *** | *** | *** |
+
+
+## 2.c Calculate the sample estimate of the variance sigma^2 for the regression model.
+
+sigma^2 == SS-res / (n-2) == 30 / (6-2) == **7.5**
+
+## 2.d What is the value of R2 here?
+
+R2 == SS-R / SS-T == 190 / 220 == **.8636**
+
+## 2.e Carry out the ANOVA F test. 
+
+From Table A.4 of our textbook F-.01,1,4 == 21.20
+
+Is F0 > F-.01,1,4 ?
+
+**Answer**: Yes, 25.3333 > 21.20
+
+**What is an appropriate conclusion?**
+
+The appropriate conclusion is that we reject the null hypothesis, that B1 = 0, and we state that there is a linear relationship between the first quiz score and the second quiz score.
+
+# Question 3. (No R required) The least squares estimators of the simple linear regression model are
+
+
 
 '''
