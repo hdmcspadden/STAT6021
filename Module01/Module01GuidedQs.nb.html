@@ -1773,6 +1773,18 @@ head(data,5)</code></pre>
 <p>Create a scatterplot for this data set. Be sure to label the axes and give an appropriate title. Based on the appearance of the plot, does a simple linear regression appear reasonable for the data?</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXR0YWNoKGRhdGEpXG5gYGAifQ== -->
+<pre class="r"><code>attach(data)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiVGhlIGZvbGxvd2luZyBvYmplY3RzIGFyZSBtYXNrZWQgZnJvbSBkYXRhIChwb3MgPSAzKTpcblxuICAgIEJQLCB3ZWlnaHRcblxuVGhlIGZvbGxvd2luZyBvYmplY3RzIGFyZSBtYXNrZWQgZnJvbSBkYXRhIChwb3MgPSA5KTpcblxuICAgIEJQLCB3ZWlnaHRcbiJ9 -->
+<pre><code>The following objects are masked from data (pos = 3):
+
+    BP, weight
+
+The following objects are masked from data (pos = 9):
+
+    BP, weight</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdCh4PWRhdGEkd2VpZ2h0LCB5PWRhdGEkQlAsIG1haW49J1Bsb3QgU3lzdG9saWMgQlAgQWdhaW5zdCBXZWlnaHQnLCB4bGFiID0gJ1dlaWdodCAobGJzKScsIHlsYWIgPSAnU3lzdG9saWMgQlAgKG1tSGcpJylcbmBgYCJ9 -->
 <pre class="r"><code>plot(x=data$weight, y=data$BP, main=&#39;Plot Systolic BP Against Weight&#39;, xlab = &#39;Weight (lbs)&#39;, ylab = &#39;Systolic BP (mmHg)&#39;)</code></pre>
 <!-- rnb-source-end -->
@@ -1804,7 +1816,7 @@ Coefficients:
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p><strong>Estimated simple linear regression equation</strong> y-hat = 69.1044 + .4194(x) B0 = 69.1044 B1 = .4194</p>
-<p><strong>Interpretation of slope</strong> For every 1 lb of weight the model estimate’s a .4194 increase in systolic lood preassure, measured in mmHg.</p>
+<p><strong>Interpretation of slope</strong> For every 1 lb increase of weight the model estimates a .4194 increase in systolic blood preassure, measured in mmHg.</p>
 <p><strong>Interpretation of intercept</strong> The intercept is meaningless as a weight of 0 lbs is not meaningful. A 0 lb adult male is not part of the sample or population we are analyzing.</p>
 </div>
 <div id="question-3" class="section level2">
@@ -1825,6 +1837,17 @@ yweight</code></pre>
 </div>
 <div id="question-4" class="section level2">
 <h2>Question 4</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVzaWR1YWwgPC0gMTQ4IC0geXdlaWdodFxucmVzaWR1YWxcbmBgYCJ9 -->
+<pre class="r"><code>residual &lt;- 148 - yweight
+residual</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIC00Ljk4NDRcbiJ9 -->
+<pre><code>[1] -4.9844</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
 <p>Produce the ANOVA table for this linear regression.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
@@ -1875,7 +1898,7 @@ F-statistic: 35.74 on 1 and 24 DF,  p-value: 3.591e-06</code></pre>
 <div id="question-5" class="section level2">
 <h2>Question 5</h2>
 <p>What is the value of R2? Explain how this value is found. What does this value mean in this context?</p>
-<p><strong>Answer</strong> The R2, Coef of determination, formula is: SS-R / SS-T, i.e. the regression error divided by the total error and can be used as a easure of how well variations in x explain variations in y.</p>
+<p><strong>Answer</strong> The R2, Coef of determination, formula is: SS-R / SS-T, i.e. the regression error divided by the total error and can be used as a measure of how well variations in x explain variations in y.</p>
 <p>From video 1.6 : “Strength of the linear relationship between two quantitative variables”</p>
 <p>The closer the error explained by model is to total error, the closer the value is to 1 - which would be a model that explained 100% of the variability in y, i.e. a perfect model.</p>
 <p>Our model has an R2 of <strong>.5983.</strong></p>
@@ -1908,6 +1931,8 @@ F-statistic: 35.74 on 1 and 24 DF,  p-value: 3.591e-06</code></pre>
 <p>Explain how the F statistic of 35.744 is found.</p>
 <p><strong>Answer</strong> The formula is MS-R / MS-res, or explained error divided by unexplained error.</p>
 <p><strong>This is not working, what am I doing wrong??</strong></p>
+<p>2693.58</p>
+<p>1-pf(35.744,1,24)</p>
 <p>Expected values are: E(MS-R) = sigma^2 + B1^2(Sxx) E(MS-res) = sigma^2</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
@@ -1931,15 +1956,32 @@ sigma</code></pre>
 <!-- rnb-output-begin eyJkYXRhIjoiWzFdIDguNjgwODUyXG4ifQ== -->
 <pre><code>[1] 8.680852</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuQjEgPC0gNjkuMTA0NFxuXG5GMCA8LSAoc2lnbWFeMiArIChCMV4yICogU3h4KSkgLyBzaWdtYV4yXG5GMFxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuQjEgPC0gNjkuMTA0NFxuXG5GMCA8LSAoc2lnbWEgKyAoQjFeMiAqIFN4eCkpIC8gc2lnbWFcbkYwXG5gYGAifQ== -->
 <pre class="r"><code>B1 &lt;- 69.1044
 
-F0 &lt;- (sigma^2 + (B1^2 * Sxx)) / sigma^2
+F0 &lt;- (sigma + (B1^2 * Sxx)) / sigma
 F0</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDk3MDM1MVxuIn0= -->
-<pre><code>[1] 970351</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDg0MjM0NjZcbiJ9 -->
+<pre><code>[1] 8423466</code></pre>
 <!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuRjBfZnJvbWNsYXNzID0gMjY5My41OCAvIDc1LjM2XG5GMF9mcm9tY2xhc3NcbmBgYCJ9 -->
+<pre class="r"><code>F0_fromclass = 2693.58 / 75.36
+F0_fromclass</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDM1Ljc0MjgzXG4ifQ== -->
+<pre><code>[1] 35.74283</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucF9mcm9tY2xhc3MgPSAxLXBmKDM1Ljc0NCwxLDI0KVxucF9mcm9tY2xhc3NcbmBgYCJ9 -->
+<pre class="r"><code>p_fromclass = 1-pf(35.744,1,24)
+p_fromclass</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDMuNTkxMjRlLTA2XG4ifQ== -->
+<pre><code>[1] 3.59124e-06</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBob3cgdG8gZmluZCBGLWFscGhhLDEsXG5gYGAifQ== -->
+<pre class="r"><code># how to find F-alpha,1,</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -1951,7 +1993,7 @@ F0</code></pre>
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIk1vZHVsZSAwMSBHdWlkZWQgUXMiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQojIFNUQVQgNjAyMTogR3VpZGVkIFF1ZXN0aW9uIFNldCAxDQpUaGUgZGF0YSBmb3IgdGhpcyBxdWVzdGlvbiBpcyBzYXZlZCBhcyBicC50eHQiLiBUaGUgZGF0YSBzZXQgY29udGFpbnMgaW5mb3JtYXRpb24gb24gdGhlDQp3ZWlnaHQgKGluIHBvdW5kcykgYW5kIHN5c3RvbGljIGJsb29kIHByZXNzdXJlIChpbiBtaWxsaW1ldGVycyBvZiBtZXJjdXJ5LCBtbUhnKSBvZiAyNg0KcmFuZG9tbHkgc2VsZWN0ZWQgbWFsZXMgaW4gdGhlIGFnZSBncm91cCAyNS0zMC4NCg0KYGBge3IgZ2V0ZGF0YX0NCiNnZXR3ZCgpDQpkYXRhIDwtIHJlYWQudGFibGUoJ2JwLnR4dCcsIHNlcD0nXHQnLCBoZWFkZXIgPSBUUlVFKQ0KaGVhZChkYXRhLDUpDQpgYGANCg0KIyMgUXVlc3Rpb24gMQ0KDQpDcmVhdGUgYSBzY2F0dGVycGxvdCBmb3IgdGhpcyBkYXRhIHNldC4gQmUgc3VyZSB0byBsYWJlbCB0aGUgYXhlcyBhbmQgZ2l2ZSBhbiBhcHByb3ByaWF0ZQ0KdGl0bGUuIEJhc2VkIG9uIHRoZSBhcHBlYXJhbmNlIG9mIHRoZSBwbG90LCBkb2VzIGEgc2ltcGxlIGxpbmVhciByZWdyZXNzaW9uIGFwcGVhcg0KcmVhc29uYWJsZSBmb3IgdGhlIGRhdGE/DQoNCmBgYHtyfQ0KcGxvdCh4PWRhdGEkd2VpZ2h0LCB5PWRhdGEkQlAsIG1haW49J1Bsb3QgU3lzdG9saWMgQlAgQWdhaW5zdCBXZWlnaHQnLCB4bGFiID0gJ1dlaWdodCAobGJzKScsIHlsYWIgPSAnU3lzdG9saWMgQlAgKG1tSGcpJykNCmBgYA0KDQoNCipBbnN3ZXIqDQoqWWVzKiwgaXQgZG9lcyBzZWVtIHJlYXNvbmFibGUgdGhhdCBzeXMgQlAgaXMgc2ltcGxlIGxpbmVhciBmdW5jdGlvbiBvZiB3ZWlnaHQuDQoNCg0KDQojIyBRdWVzdGlvbiAyDQoNClBlcmZvcm0gYSBzaW1wbGUgbGluZWFyIHJlZ3Jlc3Npb24gZm9yIHN5c3RvbGljIGJsb29kIHByZXNzdXJlIGFnYWluc3Qgd2VpZ2h0LiBSZWNvcmQNCnRoZSBlc3RpbWF0ZWQgZXF1YXRpb24gZm9yIHRoZSBsaW5lYXIgcmVncmVzc2lvbiwgYW5kIHN0YXRlIHRoZSBlc3RpbWF0ZWQgdmFsdWVzIG9mDQp0aGUgc2xvcGUgYW5kIGludGVyY2VwdC4gSW50ZXJwcmV0IHRoZSB2YWx1ZXMgb2YgdGhlIGVzdGltYXRlZCBzbG9wZSBhbmQgaW50ZXJjZXB0LCBpbg0KY29udGV4dC4NCg0KYXR0YWNoKGRhdGEpDQojI0ZpdCBhIHJlZ3Jlc3Npb24gbW9kZWwNCg0KYGBge3IgcTJ9DQpsbShCUH53ZWlnaHQpDQoNCmBgYA0KDQoqKkVzdGltYXRlZCBzaW1wbGUgbGluZWFyIHJlZ3Jlc3Npb24gZXF1YXRpb24qKg0KeS1oYXQgPSA2OS4xMDQ0ICsgLjQxOTQoeCkNCkIwID0gNjkuMTA0NA0KQjEgPSAuNDE5NA0KDQoqKkludGVycHJldGF0aW9uIG9mIHNsb3BlKioNCkZvciBldmVyeSAxIGxiIG9mIHdlaWdodCB0aGUgbW9kZWwgZXN0aW1hdGUncyBhIC40MTk0IGluY3JlYXNlIGluIHN5c3RvbGljIGxvb2QgcHJlYXNzdXJlLCBtZWFzdXJlZCBpbiBtbUhnLiANCg0KKipJbnRlcnByZXRhdGlvbiBvZiBpbnRlcmNlcHQqKg0KVGhlIGludGVyY2VwdCBpcyBtZWFuaW5nbGVzcyBhcyBhIHdlaWdodCBvZiAwIGxicyBpcyBub3QgbWVhbmluZ2Z1bC4gQSAwIGxiIGFkdWx0IG1hbGUgaXMgbm90IHBhcnQgb2YgdGhlIHNhbXBsZSBvciBwb3B1bGF0aW9uIHdlIGFyZSBhbmFseXppbmcuDQoNCiMjIFF1ZXN0aW9uIDMNCg0KRm9yIGEgMzAteWVhci1vbGQgbWFsZSB3aG9zZSB3ZWlnaHQgaXMgMjAwLCB3aGF0IGlzIGhpcyBwcmVkaWN0ZWQgc3lzdG9saWMgYmxvb2QgcHJlcy0NCnN1cmU/IFdoYXQgaXMgaGlzIHJlc2lkdWFsPw0KDQpgYGB7ciBxM30NCg0KeXdlaWdodCA8LSA2OS4xMDQ0ICsgKC40MTk0ICogMjAwKQ0KeXdlaWdodA0KDQoNCmBgYA0KIyMgUXVlc3Rpb24gNA0KDQpQcm9kdWNlIHRoZSBBTk9WQSB0YWJsZSBmb3IgdGhpcyBsaW5lYXIgcmVncmVzc2lvbi4NCg0KYGBge3IgcTRhfQ0KcmVzdWx0PC1sbShCUH53ZWlnaHQpDQphbm92YShyZXN1bHQpDQoNCmBgYA0KDQpgYGB7ciBxNGJ9DQpzdW1tYXJ5KHJlc3VsdCkNCmBgYA0KIyMgUXVlc3Rpb24gNQ0KDQpXaGF0IGlzIHRoZSB2YWx1ZSBvZiBSMj8gRXhwbGFpbiBob3cgdGhpcyB2YWx1ZSBpcyBmb3VuZC4gV2hhdCBkb2VzIHRoaXMgdmFsdWUgbWVhbg0KaW4gdGhpcyBjb250ZXh0Pw0KDQoqKkFuc3dlcioqDQpUaGUgUjIsIENvZWYgb2YgZGV0ZXJtaW5hdGlvbiwgZm9ybXVsYSBpczogU1MtUiAvIFNTLVQsIGkuZS4gdGhlIHJlZ3Jlc3Npb24gZXJyb3IgZGl2aWRlZCBieSB0aGUgdG90YWwgZXJyb3IgYW5kIGNhbiBiZSB1c2VkIGFzIGEgZWFzdXJlIG9mIGhvdyB3ZWxsIHZhcmlhdGlvbnMgaW4geCBleHBsYWluIHZhcmlhdGlvbnMgaW4geS4NCg0KRnJvbSB2aWRlbyAxLjYgOiAiU3RyZW5ndGggb2YgdGhlIGxpbmVhciByZWxhdGlvbnNoaXAgYmV0d2VlbiB0d28gcXVhbnRpdGF0aXZlIHZhcmlhYmxlcyINCg0KVGhlIGNsb3NlciB0aGUgZXJyb3IgZXhwbGFpbmVkIGJ5IG1vZGVsIGlzIHRvIHRvdGFsIGVycm9yLCB0aGUgY2xvc2VyIHRoZSB2YWx1ZSBpcyB0byAxIC0gd2hpY2ggd291bGQgYmUgYSBtb2RlbCB0aGF0IGV4cGxhaW5lZCAxMDAlIG9mIHRoZSB2YXJpYWJpbGl0eSBpbiB5LCBpLmUuIGEgcGVyZmVjdCBtb2RlbC4NCg0KT3VyIG1vZGVsIGhhcyBhbiBSMiBvZiAqKi41OTgzLioqDQoNCk91ciBtb2RlbCwgYmFzZWQgb24gd2VpZ2h0LCBleHBsYWlucyByb3VnaGx5IDYwJSBvZiB0aGUgdmFyaWFiaWxpdHkgaW4gYmxvb2QgcHJlc3N1cmUuDQoNCiMjIFF1ZXN0aW9uIDYNCg0KV2hhdCBpcyB0aGUgZXN0aW1hdGVkIHZhbHVlIGZvciB0aGUgc3RhbmRhcmQgZGV2aWF0aW9uIG9mIHRoZSBlcnJvciB0ZXJtcyBmb3IgdGhpcw0KcmVncmVzc2lvbiBtb2RlbCwgc2lnbWEtaGF0Pw0KDQoqKkFuc3dlcioqDQoNCkkgYmVsaWV2ZSB0aGUgYW5zd2VyIGlzICoqSEVMUCBIRVJFKioNCmBgYHtyfQ0Kc2lnbWEocmVzdWx0KQ0KYGBgDQoNCiMjIFF1ZXN0aW9uIDcNCg0KV2hhdCBhcmUgdGhlIG51bGwgYW5kIGFsdGVybmF0aXZlIGh5cG90aGVzZXMgZm9yIHRoZSBBTk9WQSBGIHRlc3Q/DQoNCioqQW5zd2VyKioNCkgwOiBCMSA9PSAwDQpIYTogQjEgIT0gMA0KDQpTaW5jZSBCMSA9PSA2OS4xMDQ0IHBlciBvdXIgQU5PVkEgdGVzdCB3aXRoIGFuIEYgc3RhdGlzdGljIG9mIDM1Ljc0IHdlIHJlamVjdCBIMC4NCg0KIyMgUXVlc3Rpb24gOA0KDQpFeHBsYWluIGhvdyB0aGUgRiBzdGF0aXN0aWMgb2YgMzUuNzQ0IGlzIGZvdW5kLg0KDQoqKkFuc3dlcioqDQpUaGUgZm9ybXVsYSBpcyANCk1TLVIgLyBNUy1yZXMsIG9yIGV4cGxhaW5lZCBlcnJvciBkaXZpZGVkIGJ5IHVuZXhwbGFpbmVkIGVycm9yLiANCg0KKipUaGlzIGlzIG5vdCB3b3JraW5nLCB3aGF0IGFtIEkgZG9pbmcgd3Jvbmc/PyoqDQoNCkV4cGVjdGVkIHZhbHVlcyBhcmU6DQpFKE1TLVIpID0gc2lnbWFeMiArIEIxXjIoU3h4KQ0KRShNUy1yZXMpID0gc2lnbWFeMg0KYGBge3J9DQptZWFuKHdlaWdodCkNClN4eCA8LSBzdW0oKHdlaWdodCAtIG1lYW4od2VpZ2h0KSleMikNClN4eA0KDQpzaWdtYSA8LSBzaWdtYShyZXN1bHQpDQpzaWdtYQ0KDQpCMSA8LSA2OS4xMDQ0DQoNCkYwIDwtIChzaWdtYV4yICsgKEIxXjIgKiBTeHgpKSAvIHNpZ21hXjINCkYwDQpgYGANCg0KIyMgUXVlc3Rpb24gOQ0KDQpXcml0ZSBhbiBhcHByb3ByaWF0ZSBjb25jbHVzaW9uIGZvciB0aGUgQU5PVkEgRiB0ZXN0IGZvciB0aGlzIHNpbXBsZSBsaW5lYXIgcmVncmVzc2lvbiBtb2RlbC4NCg0KKipBbnN3ZXIqKg0KVGhlIG1vZGVsIGlzIHN0YXRpc3RpY2FsbHkgc2lnbmlmaWNhbnQgYmVjYXVzZSB0aGUgRiBzY29yZSBpcyBsYXJnZS4gVGhlIG1vZGVsIGlzIGEgYmV0dGVyIHByZWRpY3RvciB0aGFuIHkgPSBCMCBvciBZLWJhciBmb3IgdGhlIHN5c3RvbGljIGJwIG9mIG91ciBzdHVkeSdzIHBvcHVsYXRpb24uDQo=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIk1vZHVsZSAwMSBHdWlkZWQgUXMiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQojIFNUQVQgNjAyMTogR3VpZGVkIFF1ZXN0aW9uIFNldCAxDQpUaGUgZGF0YSBmb3IgdGhpcyBxdWVzdGlvbiBpcyBzYXZlZCBhcyBicC50eHQiLiBUaGUgZGF0YSBzZXQgY29udGFpbnMgaW5mb3JtYXRpb24gb24gdGhlDQp3ZWlnaHQgKGluIHBvdW5kcykgYW5kIHN5c3RvbGljIGJsb29kIHByZXNzdXJlIChpbiBtaWxsaW1ldGVycyBvZiBtZXJjdXJ5LCBtbUhnKSBvZiAyNg0KcmFuZG9tbHkgc2VsZWN0ZWQgbWFsZXMgaW4gdGhlIGFnZSBncm91cCAyNS0zMC4NCg0KYGBge3IgZ2V0ZGF0YX0NCiNnZXR3ZCgpDQpkYXRhIDwtIHJlYWQudGFibGUoJ2JwLnR4dCcsIHNlcD0nXHQnLCBoZWFkZXIgPSBUUlVFKQ0KaGVhZChkYXRhLDUpDQpgYGANCg0KIyMgUXVlc3Rpb24gMQ0KDQpDcmVhdGUgYSBzY2F0dGVycGxvdCBmb3IgdGhpcyBkYXRhIHNldC4gQmUgc3VyZSB0byBsYWJlbCB0aGUgYXhlcyBhbmQgZ2l2ZSBhbiBhcHByb3ByaWF0ZQ0KdGl0bGUuIEJhc2VkIG9uIHRoZSBhcHBlYXJhbmNlIG9mIHRoZSBwbG90LCBkb2VzIGEgc2ltcGxlIGxpbmVhciByZWdyZXNzaW9uIGFwcGVhcg0KcmVhc29uYWJsZSBmb3IgdGhlIGRhdGE/DQoNCmBgYHtyfQ0KYXR0YWNoKGRhdGEpDQpwbG90KHg9ZGF0YSR3ZWlnaHQsIHk9ZGF0YSRCUCwgbWFpbj0nUGxvdCBTeXN0b2xpYyBCUCBBZ2FpbnN0IFdlaWdodCcsIHhsYWIgPSAnV2VpZ2h0IChsYnMpJywgeWxhYiA9ICdTeXN0b2xpYyBCUCAobW1IZyknKQ0KYGBgDQoNCg0KKkFuc3dlcioNCipZZXMqLCBpdCBkb2VzIHNlZW0gcmVhc29uYWJsZSB0aGF0IHN5cyBCUCBpcyBzaW1wbGUgbGluZWFyIGZ1bmN0aW9uIG9mIHdlaWdodC4NCg0KDQoNCiMjIFF1ZXN0aW9uIDINCg0KUGVyZm9ybSBhIHNpbXBsZSBsaW5lYXIgcmVncmVzc2lvbiBmb3Igc3lzdG9saWMgYmxvb2QgcHJlc3N1cmUgYWdhaW5zdCB3ZWlnaHQuIFJlY29yZA0KdGhlIGVzdGltYXRlZCBlcXVhdGlvbiBmb3IgdGhlIGxpbmVhciByZWdyZXNzaW9uLCBhbmQgc3RhdGUgdGhlIGVzdGltYXRlZCB2YWx1ZXMgb2YNCnRoZSBzbG9wZSBhbmQgaW50ZXJjZXB0LiBJbnRlcnByZXQgdGhlIHZhbHVlcyBvZiB0aGUgZXN0aW1hdGVkIHNsb3BlIGFuZCBpbnRlcmNlcHQsIGluDQpjb250ZXh0Lg0KDQphdHRhY2goZGF0YSkNCiMjRml0IGEgcmVncmVzc2lvbiBtb2RlbA0KDQpgYGB7ciBxMn0NCmxtKEJQfndlaWdodCkNCg0KYGBgDQoNCioqRXN0aW1hdGVkIHNpbXBsZSBsaW5lYXIgcmVncmVzc2lvbiBlcXVhdGlvbioqDQp5LWhhdCA9IDY5LjEwNDQgKyAuNDE5NCh4KQ0KQjAgPSA2OS4xMDQ0DQpCMSA9IC40MTk0DQoNCioqSW50ZXJwcmV0YXRpb24gb2Ygc2xvcGUqKg0KRm9yIGV2ZXJ5IDEgbGIgaW5jcmVhc2Ugb2Ygd2VpZ2h0IHRoZSBtb2RlbCBlc3RpbWF0ZXMgYSAuNDE5NCBpbmNyZWFzZSBpbiBzeXN0b2xpYyBibG9vZCBwcmVhc3N1cmUsIG1lYXN1cmVkIGluIG1tSGcuIA0KDQoqKkludGVycHJldGF0aW9uIG9mIGludGVyY2VwdCoqDQpUaGUgaW50ZXJjZXB0IGlzIG1lYW5pbmdsZXNzIGFzIGEgd2VpZ2h0IG9mIDAgbGJzIGlzIG5vdCBtZWFuaW5nZnVsLiBBIDAgbGIgYWR1bHQgbWFsZSBpcyBub3QgcGFydCBvZiB0aGUgc2FtcGxlIG9yIHBvcHVsYXRpb24gd2UgYXJlIGFuYWx5emluZy4NCg0KIyMgUXVlc3Rpb24gMw0KDQpGb3IgYSAzMC15ZWFyLW9sZCBtYWxlIHdob3NlIHdlaWdodCBpcyAyMDAsIHdoYXQgaXMgaGlzIHByZWRpY3RlZCBzeXN0b2xpYyBibG9vZCBwcmVzLQ0Kc3VyZT8gV2hhdCBpcyBoaXMgcmVzaWR1YWw/DQoNCmBgYHtyIHEzfQ0KDQp5d2VpZ2h0IDwtIDY5LjEwNDQgKyAoLjQxOTQgKiAyMDApDQp5d2VpZ2h0DQoNCg0KYGBgDQojIyBRdWVzdGlvbiA0DQpgYGB7cn0NCnJlc2lkdWFsIDwtIDE0OCAtIHl3ZWlnaHQNCnJlc2lkdWFsDQpgYGANCg0KUHJvZHVjZSB0aGUgQU5PVkEgdGFibGUgZm9yIHRoaXMgbGluZWFyIHJlZ3Jlc3Npb24uDQoNCmBgYHtyIHE0YX0NCnJlc3VsdDwtbG0oQlB+d2VpZ2h0KQ0KYW5vdmEocmVzdWx0KQ0KDQpgYGANCg0KYGBge3IgcTRifQ0Kc3VtbWFyeShyZXN1bHQpDQpgYGANCiMjIFF1ZXN0aW9uIDUNCg0KV2hhdCBpcyB0aGUgdmFsdWUgb2YgUjI/IEV4cGxhaW4gaG93IHRoaXMgdmFsdWUgaXMgZm91bmQuIFdoYXQgZG9lcyB0aGlzIHZhbHVlIG1lYW4NCmluIHRoaXMgY29udGV4dD8NCg0KKipBbnN3ZXIqKg0KVGhlIFIyLCBDb2VmIG9mIGRldGVybWluYXRpb24sIGZvcm11bGEgaXM6IFNTLVIgLyBTUy1ULCBpLmUuIHRoZSByZWdyZXNzaW9uIGVycm9yIGRpdmlkZWQgYnkgdGhlIHRvdGFsIGVycm9yIGFuZCBjYW4gYmUgdXNlZCBhcyBhIG1lYXN1cmUgb2YgaG93IHdlbGwgdmFyaWF0aW9ucyBpbiB4IGV4cGxhaW4gdmFyaWF0aW9ucyBpbiB5Lg0KDQpGcm9tIHZpZGVvIDEuNiA6ICJTdHJlbmd0aCBvZiB0aGUgbGluZWFyIHJlbGF0aW9uc2hpcCBiZXR3ZWVuIHR3byBxdWFudGl0YXRpdmUgdmFyaWFibGVzIg0KDQoNCg0KVGhlIGNsb3NlciB0aGUgZXJyb3IgZXhwbGFpbmVkIGJ5IG1vZGVsIGlzIHRvIHRvdGFsIGVycm9yLCB0aGUgY2xvc2VyIHRoZSB2YWx1ZSBpcyB0byAxIC0gd2hpY2ggd291bGQgYmUgYSBtb2RlbCB0aGF0IGV4cGxhaW5lZCAxMDAlIG9mIHRoZSB2YXJpYWJpbGl0eSBpbiB5LCBpLmUuIGEgcGVyZmVjdCBtb2RlbC4NCg0KT3VyIG1vZGVsIGhhcyBhbiBSMiBvZiAqKi41OTgzLioqDQoNCk91ciBtb2RlbCwgYmFzZWQgb24gd2VpZ2h0LCBleHBsYWlucyByb3VnaGx5IDYwJSBvZiB0aGUgdmFyaWFiaWxpdHkgaW4gYmxvb2QgcHJlc3N1cmUuDQoNCiMjIFF1ZXN0aW9uIDYNCg0KV2hhdCBpcyB0aGUgZXN0aW1hdGVkIHZhbHVlIGZvciB0aGUgc3RhbmRhcmQgZGV2aWF0aW9uIG9mIHRoZSBlcnJvciB0ZXJtcyBmb3IgdGhpcw0KcmVncmVzc2lvbiBtb2RlbCwgc2lnbWEtaGF0Pw0KDQoqKkFuc3dlcioqDQoNCkkgYmVsaWV2ZSB0aGUgYW5zd2VyIGlzICoqSEVMUCBIRVJFKioNCmBgYHtyfQ0Kc2lnbWEocmVzdWx0KQ0KYGBgDQoNCiMjIFF1ZXN0aW9uIDcNCg0KV2hhdCBhcmUgdGhlIG51bGwgYW5kIGFsdGVybmF0aXZlIGh5cG90aGVzZXMgZm9yIHRoZSBBTk9WQSBGIHRlc3Q/DQoNCioqQW5zd2VyKioNCkgwOiBCMSA9PSAwDQpIYTogQjEgIT0gMA0KDQpTaW5jZSBCMSA9PSA2OS4xMDQ0IHBlciBvdXIgQU5PVkEgdGVzdCB3aXRoIGFuIEYgc3RhdGlzdGljIG9mIDM1Ljc0IHdlIHJlamVjdCBIMC4NCg0KIyMgUXVlc3Rpb24gOA0KDQpFeHBsYWluIGhvdyB0aGUgRiBzdGF0aXN0aWMgb2YgMzUuNzQ0IGlzIGZvdW5kLg0KDQoqKkFuc3dlcioqDQpUaGUgZm9ybXVsYSBpcyANCk1TLVIgLyBNUy1yZXMsIG9yIGV4cGxhaW5lZCBlcnJvciBkaXZpZGVkIGJ5IHVuZXhwbGFpbmVkIGVycm9yLiANCg0KKipUaGlzIGlzIG5vdCB3b3JraW5nLCB3aGF0IGFtIEkgZG9pbmcgd3Jvbmc/PyoqDQoNCjI2OTMuNTgNCg0KMS1wZigzNS43NDQsMSwyNCkNCg0KRXhwZWN0ZWQgdmFsdWVzIGFyZToNCkUoTVMtUikgPSBzaWdtYV4yICsgQjFeMihTeHgpDQpFKE1TLXJlcykgPSBzaWdtYV4yDQpgYGB7cn0NCm1lYW4od2VpZ2h0KQ0KU3h4IDwtIHN1bSgod2VpZ2h0IC0gbWVhbih3ZWlnaHQpKV4yKQ0KU3h4DQoNCnNpZ21hIDwtIHNpZ21hKHJlc3VsdCkNCnNpZ21hDQoNCkIxIDwtIDY5LjEwNDQNCg0KRjAgPC0gKHNpZ21hICsgKEIxXjIgKiBTeHgpKSAvIHNpZ21hDQpGMA0KDQpGMF9mcm9tY2xhc3MgPSAyNjkzLjU4IC8gNzUuMzYNCkYwX2Zyb21jbGFzcw0KDQpwX2Zyb21jbGFzcyA9IDEtcGYoMzUuNzQ0LDEsMjQpDQpwX2Zyb21jbGFzcw0KDQojIGhvdyB0byBmaW5kIEYtYWxwaGEsMSwNCmBgYA0KDQojIyBRdWVzdGlvbiA5DQoNCldyaXRlIGFuIGFwcHJvcHJpYXRlIGNvbmNsdXNpb24gZm9yIHRoZSBBTk9WQSBGIHRlc3QgZm9yIHRoaXMgc2ltcGxlIGxpbmVhciByZWdyZXNzaW9uIG1vZGVsLg0KDQoqKkFuc3dlcioqDQpUaGUgbW9kZWwgaXMgc3RhdGlzdGljYWxseSBzaWduaWZpY2FudCBiZWNhdXNlIHRoZSBGIHNjb3JlIGlzIGxhcmdlLiBUaGUgbW9kZWwgaXMgYSBiZXR0ZXIgcHJlZGljdG9yIHRoYW4geSA9IEIwIG9yIFktYmFyIGZvciB0aGUgc3lzdG9saWMgYnAgb2Ygb3VyIHN0dWR5J3MgcG9wdWxhdGlvbi4NCg==</div>
 
 
 

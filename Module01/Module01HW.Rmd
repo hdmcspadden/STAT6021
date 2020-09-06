@@ -1,6 +1,7 @@
 ---
 title: 'Stat 6021: Homework Set 1, Name: H. Diana McSpadden, UID: hdm5s'
 output:
+  word_document: default
   html_document:
     df_print: paged
 ---
@@ -162,8 +163,197 @@ Is F0 > F-.01,1,4 ?
 
 The appropriate conclusion is that we reject the null hypothesis, that B1 = 0, and we state that there is a linear relationship between the first quiz score and the second quiz score.
 
-# Question 3. (No R required) The least squares estimators of the simple linear regression model are
+# Question 3.
+
+**Please see images 3a, 3bc, and 3d - please see below interpretations** 
+
+## Also, give a one-sentence interpretation of what the equalities (6) to (9) mean.##
+
+**Interpretation 6: ** the sum of the residuals is 0.
+
+**Interpretation 7: ** The sum of the actual y values is equal to the sum of the predicted y values.
+
+**Interpretation 8: ** The sum of the predictor variable, x, multiplied/weighted by the residual error is 0.
+
+**Interpretation 9: ** The sum of the predicted values, y-hat, multiplied/weighted by the residual error is 0.
 
 
-
+## Image 3a
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+## Image 3bc
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+## Image 3d
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
 '''

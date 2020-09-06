@@ -1,0 +1,181 @@
+---
+title: 'Module02SandBox'
+author: "Diana McSpadden"
+date: "9/5/2020"
+output: html_document
+---
+
+# Module 03: Inference
+How do we assess whether there is a statistically significant linear relationship between the predictor and response variables?
+
+
+How do we estimate the mean value of the response variable for a specific value of the predictor variable?
+
+
+How do we predict the value of the response variable for a specific value of the predictor variable?
+
+## Objectives
+Describe what questions are addressed by the various confidence intervals and hypothesis tests in a simple linear regression.
+
+Given a data set and a question of interest, identify what inferential procedure to use in a simple linear regression setting.
+
+# 2.1 Intro
+Red bead experiment: random variation of samples
+
+# 2.2 Hypothesis Testing in Simple Linear Regression (SLR)
+
+Read Section 2.3 of your textbook. As you read, take notes on the following.
+ 
+## 1. In a hypothesis test for the slope, when do we use a t statistic instead of a z statistic? Which statistic, t or z, is more commonly used in a real-world setting? Briefly explain.
+
+When the population standard deviaton, sigma2 is unknown, we cant use Z stat. So we use t stat.
+
+t0 is a test statistc used to test H0 = B1 = Bx.
+
+WE reject H0 IFF abs(t0) > t(alpha/a, n-2)
+
+t is more commonly known because a true census of a population is often realistically impossible. Imagine trying to capture all characteristics of ALL fruitflies.
+
+
+## 2. Write down the formula for the standard error of the slope, se(β^1). 
+
+se(B^1) == standard error of estimated slope
+
+se(B^1) == sqrt(MS-res / Sxx)
+
+
+**T STATISTIC FOR NOT H0: B1 = 0**
+B1-hat - (Test B1) / (Std. Error of B1-hat from R) - use summar of lm(y~x)
+
+## 3. Explain why the standard error of the slope decreases as the fit of the model improves. 
+
+As the fit improves the MS-res (or errors unexplained by the model) decrease, thus the numerator decreases making se(B^1) decrease.
+
+
+## 4. Consider a situation in which we want to test to assess whether or not there is a linear relationship between the predictor and response variable.
+**How do we write the null and alternative hypotheses?** Express the hypotheses using statistical notation and describe what these expressions mean in words. 
+
+**What is the formula for the t statistic?** 
+Do you think a larger or smaller t statistic, in magnitude, leads to more evidence against the null hypothesis? 
+
+t0 = (B^1 - B10) / se(B^1) where se(B^1) == sqrt(MS-res / Sxx)
+
+A **larger t0** provides more evidence because the denominator will be smaller and the numerator will be larger is B1 != B10 (and a greater difference == larger numerator and smaller denominator)
+
+
+**What distribution do we compare the t statistic to? **
+
+We reject H0 IFF abs(t0) > t(alpha/a, n-2)
+
+
+## 5. Explain why the t-test for the slope gives the same result as the ANOVA F test in an SLR setting.
+
+F0 = MS-R / MS-res
+
+MS-R == B1-hat^2(Sxx)
+
+t0 = B1-hat / se(B1-hat)
+
+t0 = B1-hat / sqrt(MS-res / Sxx)
+
+square both top and bottom
+
+multiple bith top and bottom by Sxx
+
+== F0
+
+
+# 2.3 Confidence Interval of the Slope
+
+## 1. Write down the formula for the confidence interval of the slope. 
+For this confidence interval: 
+
+CI for B1-hat
+
+B1-hat - t-alpha/2,n-2(se(B1-hat)) <= B1-hat <= B1-hat + t-alpha/2,n-2(se(B1-hat))
+
+**How does increasing the level of confidence affect the width of this confidence interval? **
+
+**Answer**
+an increase in confidence level means that the abs(t-value) increases, so **the range of B1-hat increases.**
+```{r}
+tvalue1 <- abs(qt(0.975, 8)) # tvalue for 95% 2-sided, with n==10
+print(tvalue1)
+
+tvalue2 <- abs(qt(0.995, 8)) # tvalue for 99% 2-sided, with n==10
+print(tvalue2)
+```
+
+
+**How does model fit affect the width of this confidence interval? **
+The model fit is illustrated by the se(B1-hat). A better fit is a smaller se(B1-hat), so the interval for the same confidence level will be smaller because the corrections will be smaller.
+
+
+
+## 2.Describe, in your own words, what a confidence interval of the slope tells us. 
+
+CI of slope tells us the our confidence for the estimated slope of the linear equation lying within a given range. I think of it as a shaded area shaped like an hourglass around the midpoint of the line. we want a smaller hourglass.
+
+# 2.4 Confidence Interval of the Mean Response
+
+## 1. Write down the formula for the confidence interval of the mean response. For this confidence interval: 
+
+E(y|x0) == estimate of mean of y given value of x0.
+
+== B0-hat + B1-hat(x)
+
+See Equation 2.43 on page 31
+
+
+**How does increasing the level of confidence affect the width of this confidence interval? **
+
+increasing confidence == means the subtraction and addition from the mean increases, which increases the range of the estimate of mean response.
+
+
+**How does model fit affect the width of this confidence interval? **
+If the model fit is better then MS-res is smaller which is a weight on the t-value, so less is added or subtracted from E(y|x0), so the range of the CI decreases.
+
+
+
+**How does the width of this confidence interval change as the value of the predictor variable moves farther away from the sample mean of the predictor? **
+
+As x0 moves further away from X-bar, the multiplier/weight on the t-value increases, so the CI range increases.
+
+At x-bar, the multiplier is 1/n, so the larger the sample size, the smaller the CI range.
+
+
+## 2. Describe, in your own words, what a confidence interval of the mean response tells us. 
+ 
+CI of the mean of y at a particular value of x tells us how well our model performs as x changes. The more stabel the CI as x changes from the mean, the better our model predcts at the extremes of x.
+
+# 2.5  Prediction Interval of a New Response
+
+## 1. Write down the formula for the prediction interval of a new response. For this prediction interval: 
+
+y0-hat = B0-hat + b1-hat(x0) is how to predict new value
+
+y0 - all stuff, instead of y-bar - all stuff
+
+THe estimator in the CI changed
+
+**How does increasing the level of confidence affect the width of this interval? **
+
+Increasing confidence increases range of interval (t value gets larger)
+
+
+**How does model fit affect the width of this interval? **
+
+Model fit reduces MS-res so the range of the CI decreases.
+
+**How does the width of this change as the value of the predictor variable moves farther away from the sample mean of the predictor? **
+
+As x0 moves further from x-bar the correction increases, so the range of the CI increases.
+ 
+## 2. Describe, in your own words, what a prediction interval of a new response tells us. 
+
+It is a X% confidence that the value of a future response variable for a given predictor variable will be within the prediction interval.
+
+## 3. Compare the standard errors associated with the confidence interval of the mean response and the prediction interval of a new response. Which is larger? Explain why that answer makes practical sense.
+
+Stanard errors of prediction variable will be larger than the errors of the mean response. It makes sense because the mean response naturally allows for variation, but predicting a specific value is more difficult.
+

@@ -21,6 +21,7 @@ title. Based on the appearance of the plot, does a simple linear regression appe
 reasonable for the data?
 
 ```{r}
+attach(data)
 plot(x=data$weight, y=data$BP, main='Plot Systolic BP Against Weight', xlab = 'Weight (lbs)', ylab = 'Systolic BP (mmHg)')
 ```
 
@@ -51,7 +52,7 @@ B0 = 69.1044
 B1 = .4194
 
 **Interpretation of slope**
-For every 1 lb of weight the model estimate's a .4194 increase in systolic lood preassure, measured in mmHg. 
+For every 1 lb increase of weight the model estimates a .4194 increase in systolic blood preassure, measured in mmHg. 
 
 **Interpretation of intercept**
 The intercept is meaningless as a weight of 0 lbs is not meaningful. A 0 lb adult male is not part of the sample or population we are analyzing.
@@ -69,6 +70,10 @@ yweight
 
 ```
 ## Question 4
+```{r}
+residual <- 148 - yweight
+residual
+```
 
 Produce the ANOVA table for this linear regression.
 
@@ -87,9 +92,11 @@ What is the value of R2? Explain how this value is found. What does this value m
 in this context?
 
 **Answer**
-The R2, Coef of determination, formula is: SS-R / SS-T, i.e. the regression error divided by the total error and can be used as a easure of how well variations in x explain variations in y.
+The R2, Coef of determination, formula is: SS-R / SS-T, i.e. the regression error divided by the total error and can be used as a measure of how well variations in x explain variations in y.
 
 From video 1.6 : "Strength of the linear relationship between two quantitative variables"
+
+
 
 The closer the error explained by model is to total error, the closer the value is to 1 - which would be a model that explained 100% of the variability in y, i.e. a perfect model.
 
@@ -129,6 +136,10 @@ MS-R / MS-res, or explained error divided by unexplained error.
 
 **This is not working, what am I doing wrong??**
 
+2693.58
+
+1-pf(35.744,1,24)
+
 Expected values are:
 E(MS-R) = sigma^2 + B1^2(Sxx)
 E(MS-res) = sigma^2
@@ -142,8 +153,16 @@ sigma
 
 B1 <- 69.1044
 
-F0 <- (sigma^2 + (B1^2 * Sxx)) / sigma^2
+F0 <- (sigma + (B1^2 * Sxx)) / sigma
 F0
+
+F0_fromclass = 2693.58 / 75.36
+F0_fromclass
+
+p_fromclass = 1-pf(35.744,1,24)
+p_fromclass
+
+# how to find F-alpha,1,
 ```
 
 ## Question 9
