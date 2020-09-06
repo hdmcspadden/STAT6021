@@ -99,11 +99,11 @@ B1-hat - t-alpha/2,n-2(se(B1-hat)) <= B1-hat <= B1-hat + t-alpha/2,n-2(se(B1-hat
 **Answer**
 an increase in confidence level means that the abs(t-value) increases, so **the range of B1-hat increases.**
 ```{r}
-tvalue1 <- abs(qt(0.975, 8)) # tvalue for 95% 2-sided, with n==10
-print(tvalue1)
+tmulti1 <- abs(qt(0.975, 8)) # t multiplier for 95% 2-sided, with n==10
+print(tmulti1)
 
-tvalue2 <- abs(qt(0.995, 8)) # tvalue for 99% 2-sided, with n==10
-print(tvalue2)
+tmulti2 <- abs(qt(0.995, 8)) # t multiplier for 99% 2-sided, with n==10
+print(tmulti2)
 ```
 
 
@@ -146,7 +146,7 @@ At x-bar, the multiplier is 1/n, so the larger the sample size, the smaller the 
 
 ## 2. Describe, in your own words, what a confidence interval of the mean response tells us. 
  
-CI of the mean of y at a particular value of x tells us how well our model performs as x changes. The more stabel the CI as x changes from the mean, the better our model predcts at the extremes of x.
+CI of the mean of y at a particular value of x tells us how well our model performs as x changes. The more stable the CI as x changes from the mean, the better our model predcts at the extremes of x.
 
 # 2.5  Prediction Interval of a New Response
 
