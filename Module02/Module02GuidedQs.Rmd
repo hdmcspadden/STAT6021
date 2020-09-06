@@ -81,11 +81,15 @@ correction
 minB1hat <- b1hat - correction
 maxB1hat <- b1hat + correction
 
-minB1hat
-maxB1hat
+print(paste("Manual min B1-hat",minB1hat))
+print(paste("Manual max B1-hat",maxB1hat))
 
 #print("CI B1-hat: ", minB1hat, " - ", maxB1hat)
 
+# Can also use confint
+confint(model, level = 0.95)
+
+#print(paste("95% CI for B1-hat: ", B1CI))
 
 ```
 ** Maybe Answer **
