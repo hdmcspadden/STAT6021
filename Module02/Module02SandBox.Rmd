@@ -80,7 +80,7 @@ t0 = B1-hat / sqrt(MS-res / Sxx)
 
 square both top and bottom
 
-multiple bith top and bottom by Sxx
+multiple both top and bottom by Sxx
 
 == F0
 

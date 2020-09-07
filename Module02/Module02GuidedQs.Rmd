@@ -39,6 +39,7 @@ print(corvalue)
 ```
 ## 2b. Interpret this value contextually. How reliable is this interpretation?
 ** Want to talk about this **
+There is an "above average" linear relationship between weight and BP. Not sure how to answer the "reliable" question.
 
 
 ## 3a. What is the change in the predicted systolic blood pressure when weight increases by one pound? 

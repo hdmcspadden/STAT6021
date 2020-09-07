@@ -27,16 +27,13 @@ print(tmulti)
 #==================
 
 ##to produce 95% CIs for all regression coefficients
-CI <- confint(result, "hydro", level = 0.95) # added "hydro" to only get the confint for B1
+confint(result, level = 0.95) # added "hydro" to only get the confint for B1
 
-
-middle = CI[2] - ((CI[2] - CI[1]) / 2)
-print(middle) # confirm this is B1-hat
 
 #==============================
 
 ##to produce 95% CI for the mean response when x=1.2, and the 95% PI for the response of an observation when x=1.2
-
+newdata<-data.frame(hydro=1.2)
 print(newdata) # print newdata to understand what we get back
 
 predict.lm(result,newdata,level=0.95, interval="confidence") # 95% confidence that the mean of purity for a hydro value of 1.2 is within this range

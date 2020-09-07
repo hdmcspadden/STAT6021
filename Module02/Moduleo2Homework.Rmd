@@ -1,0 +1,194 @@
+---
+title: "Stat 6021: Homework Set 1, Name: H. Diana McSpadden, UID: hdm5s"
+author: "Diana McSpadden"
+date: "9/7/2020"
+output: html_document
+---
+
+# Name: H. Diana McSpadden
+
+# UID: hdm5s
+
+# Assignment: Homework Set 2
+
+# Question 1
+(R required) For this question, you will use the dataset "Copier.txt" for this question. This is the same data set that you used in the last homework. The Tri-City Office Equipment Corporation sells an imported copier on a franchise basis and performs preventive maintenance and repair service on this copier. The data have been collected from 45 recent calls on users to perform routine preventive maintenance service; for each call, Serviced is the number of copiers serviced and Minutes is the total number of minutes spent by the service person.
+
+It is hypothesized that the total time spent by the service person can be predicted using the number of copiers serviced. Fit an appropriate linear regression and answer the following questions:
+
+**Knowns**
+n = 45
+Serviced == number of copy machines serviced on a call
+Minutes == number minutes spent by service person on the call
+
+## 1a. Produce an appropriate scatterplot and comment on the relationship between the total time spent by the service person and the number of copiers serviced.
+
+```{r q1a}
+#getwd()
+copierData <- read.table('copier.txt', sep='\t', header = TRUE)
+head(copierData,5)
+attach(copierData)
+
+#use plot(...) to create a scatterplot
+plot(x=Serviced, y=Minutes, main='Plot Minutes Against Number Copiers Serviced', xlab = 'Number of Copiers Serviced', ylab = 'Service Time (minutes)')
+```
+
+## 1b. What is the correlation between the total time spent by the service person and the number of copiers serviced? Interpret this correlation contextually.
+
+```{r q1b}
+corvalue <- cor(x=Serviced,y=Minutes) 
+print(paste("Correlation between Service Time and Number of Copiers: ", corvalue))
+```
+Because the correlation value is so close to 1, i.e. 0.9785, I conclude there is a strong linear relationship between the predictor variable, number of copiers serviced, and the response variable, service time.
+
+## 1c. Can the correlation found in part 1b be interpreted reliably? Briey explain.
+
+**NEED TO ADD, ASK IN OFFICE HOURS**
+
+## 1d. Obtain the 95% confidence interval for the slope, B1.
+
+```{r q1d}
+
+# create a linear model
+copierModel <- lm(Minutes~Serviced)
+copierModel
+
+# get the 95% CI for the Serviced coef
+CIB1 = confint(copierModel, "Serviced", level = 0.95)
+
+print(paste("95% CI of slope: ", CIB1[1], " - ", CIB1[2]))
+
+```
+
+## 1e. Suppose a service person is sent to service 5 copiers. Obtain an appropriate 95% interval that predicts the total service time spent by the service person.
+```{r q1e}
+
+## 95% CI for response when x=5
+newdata<-data.frame(Serviced=5)
+#print(newdata) # print newdata to understand what we get back
+
+prediction = predict.lm(copierModel,newdata,level=0.95, interval="prediction")
+
+print(paste("The 95% CI for service minutes for a service call for 5 copiers is: ", prediction[2], " - ", prediction[3], " minutes"))
+
+```
+
+## 1f. What is the value of the residual for the first observation? Interpret this value contextually.
+
+```{r q1f}
+# get all the residuals from the model
+copierResiduals <- copierModel$residual
+
+# get the first residual
+copierResiduals[1]
+
+
+```
+The residual is the difference between the observed first data point, and the model's prediction for the first data point. So, the difference between y0 for the first x value, and y-hat for the first x value. So, the first value in our data set is 9.49 fewer minutes than predicted for a service call for 2 copiers (the first x data point).
+
+## 1g. What is the average value of the all the residuals? Is this value surprising (or not)? Briefly explain.
+
+```{r q1g}
+
+meanCopierResidual = mean(copierModel$residual)
+
+print(paste("The mean of the residuals is: ", meanCopierResidual, " minutes."))
+
+```
+
+** 1g Answer**
+
+No, this is not surprising. The mean of the residuals is 0, and -0.00000000000000026122 is basically 0 with some expected rounding error. Last we we proved mathematically that the sum of the residuals is always 0, so the mean (sum(residuals)/n) == (0/n) == 0.
+
+
+# Question 2 (No R required) 
+
+A substance used in biological and medical research is shipped by airfreight to users in cartons of 1000 ampules. The data consist of 10 shipments. The variables are number of times the carton was transferred from one aircraft to another during the shipment route (transfer), and the number of ampules found to be broken upon arrival (broken). We want to fit a simple linear regression. A simple linear regression model is fitted using R. The corresponding output from R is shown next, with some values missing.
+
+
+Call:
+lm(formula = broken ~ transfer)
+Coefficients:
+Estimate Std. Error t value Pr(>|t|)
+(Intercept) 10.2000 0.6633 ______ ________ ***
+transfer 4.0000 0.4690 ______ ________ ***
+Residual standard error: 1.483 on 8 degrees of freedom
+
+Analysis of Variance Table
+Response: broken
+Df Sum Sq Mean Sq F value Pr(>F)
+transfer 1 160.0 160.0 ______ ________ ***
+Residuals 8 17.6 2.2
+
+** Additional Knowns**
+
+x-bar = 1
+
+sum(((x-i) - (x-bar)^2) == 10
+
+## 2a. Carry out a hypothesis test to assess if there is a linear relationship between the variables of interest.
+
+H0: B1 = 0
+Ha: B1 != 0
+
+Our estimated equation is:
+y-hat = 10.2 + 4(x)
+
+The equation has B1-hat == 4.
+
+F0 = 160 / 2.2 = 72.7272, this is a pretty large number, and implies a t-value = sqrt(72.72.72) = 8.528
+
+**This is strong evidence for a linear relationship between the variables.**
+
+
+## 2b. Calculate a 95% confidence interval that estimates the unknown value of the population slope.
+
+B1-hat - t-alpha/2,n-2(se(B1-hat)) <= B1-hat <= B1-hat + t-alpha/2,n-2(se(B1-hat))
+
+4 - t-(.975,8)(se(B1-hat)) : 4 + t-(.975,8)(se(B1-hat)) # t-value from working through Module 2 
+
+4 - (2.306004)(se(B1-hat)) : 4 + (2.306004)(se(B1-hat)) # t-value from working through Module 2 
+
+and we know: t0 = B1-hat / se(B1-hat)
+
+se(B1-hat) = B1-hat / t0 == 4 / 2.306004
+se(B1-hat) = 1.7346
+
+So,
+4 - (2.306004)(1.7346) : 4 + (2.306004)(1.7346)
+
+95% CI for population slope is 0 - 8
+
+
+## 2c. A consultant believes the mean number of broken ampules when no transfers are made is different from 9. 
+Conduct an appropriate hypothesis test (state the hypotheses statements, calculate the test statistic, and write the corresponding conclusion in context, in response to his belief).
+
+H0: B0 = 9
+Ha: B0 != 9
+
+t0 = (B0-hat - 9) / se(B0-hat)
+
+se(B0-hat) == sqrt((MS-res)(1/n + ((x-bar)^2/Sxx))
+
+t0 = (10.2 - 9) / sqrt((2.2) * (.1 + (1)(.1))
+t0 = (10.2 - 9) / (1.4142) * (.2)
+
+t0 = 1.2 / .28284
+
+t0 = 4.2427 > 2.306004
+
+This test statistic is larger than t(0.975,8), a 95% confidence level which is 2.306004, so we reject the null hypothesis and say there is not enough evidence to support the mean number of broken ampules being 9 when no transfers are made.
+
+##2d. Calculate a 95% confidence interval for the mean number of broken ampules and a 95% prediction interval for the number of broken ampules when the number of transfers is 2.
+
+
+
+## 2e. What happens to the intervals from the previous part when the number of transfers is 1? (Describe what happens without calculating)
+
+
+## 2f. What is the value of the F statistic for the ANOVA table?
+
+
+##2g. Calculate the value of R2, and interpret this value in context.
+
+
