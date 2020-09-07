@@ -192,3 +192,19 @@ This test statistic is larger than t(0.975,8), a 95% confidence level which is 2
 ##2g. Calculate the value of R2, and interpret this value in context.
 
 
+# Question 3 (No R required) 
+**Suppose that the population slope for a straight-line relationship between y and x is 0.**
+
+## 3a. Describe how the straight line would look in a plot of y versus x.
+
+**Answer**
+The line would be a straight, perfectly horizontal line at some unknown y-intercept.
+
+
+## 3b. Explain why a slope that is equal to 0 would indicate that y and x are not linearly related, and why a slope that is not equal to 0 would indicate that y and x are linearly related.
+
+**Answer**
+
+A slope of zero mean that y never changes, no matter the value of x. x could be anything, and y remains stable. Like the speed of light, no matter what the hair color of a person is, the speed of light remains the same. That relationship **should** have a slope of zero.
+
+If the slope is not equal to 0, then the value of y does change, to some degree, as the value of x changes. That change expresses some type of linear relationship.
