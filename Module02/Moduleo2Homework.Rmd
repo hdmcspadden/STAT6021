@@ -145,7 +145,7 @@ F0 = 160 / 2.2 = 72.7272, this is a pretty large number, and implies a t-value =
 
 B1-hat - t-alpha/2,n-2(se(B1-hat)) <= B1-hat <= B1-hat + t-alpha/2,n-2(se(B1-hat))
 
-4 - t-(.975,8)(se(B1-hat)) : 4 + t-(.975,8)(se(B1-hat)) # t-value from working through Module 2 
+4 - t-(.975,8)(se(B1-hat)) : 4 + t(.975,8)(se(B1-hat)) # t-value from working through Module 2 
 
 4 - (2.306004)(se(B1-hat)) : 4 + (2.306004)(se(B1-hat)) # t-value from working through Module 2 
 
