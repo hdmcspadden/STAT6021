@@ -73,7 +73,7 @@ tmulti
 Sxx <- sum((weight - mean(weight))^2)
 Sxx
 
-seB1hat <- sigma(model) / Sxx
+seB1hat <- sqrt(sigma(model) / Sxx)
 seB1hat
 
 correction <- tmulti * seB1hat

@@ -181,15 +181,54 @@ This test statistic is larger than t(0.975,8), a 95% confidence level which is 2
 
 ##2d. Calculate a 95% confidence interval for the mean number of broken ampules and a 95% prediction interval for the number of broken ampules when the number of transfers is 2.
 
+**CI for mean number of broken ampules**
+10.2 + 4(2) +- (2.306004)sqrt((2.2)(.1 + ((2 - 1)^2/10))
+ 
+18.2 +- (2.306004) * sqrt((2.2)(.1 + .1))
+ 
+18.2 +- (2.306004) * sqrt(2.2 * .2)
+ 
+18.2 +- (2.306004) * (0.6633)
+ 
+18.2 +- 1.53
+ 
+**95% CI for mean ampules broken when there are 2 transfers is 16.67 - 19.73**
+
+** CI for predicted number of broken ampules when number of transfers is 2**
+
+10.2 + 4(2) +- (2.306004)sqrt((2.2)(1 + .1 + ((2 - 1)^2/10))
+
+18.2 +- (2.306004)(sqrt((2.2 * 1.2)))
+
+18.2 +- (2.306004)(1.6248)
+
+18.2 +- 3.7468
+
+**95% CI for the predicted number of ampules broken when there are 2 transfers is 14.4532 - 21.9468
 
 
 ## 2e. What happens to the intervals from the previous part when the number of transfers is 1? (Describe what happens without calculating)
 
+The range of the two confidence intervals will be smaller, and I can describe why both logically and mathematically:
+**Logically: ** 1 transfer is the mean number of transfers, so our predictions will be better, thus a smaller interval, because our predictive power is better at the mean of x.
+
+**Mathematically: ** The correction to y0 will be smaller because the numerator to part of the correction is (x0 - (x-bar)), which will be 1 - 1 == 0.
+
 
 ## 2f. What is the value of the F statistic for the ANOVA table?
 
+F0 = 160 / 2.2 = **72.7272**
+
 
 ##2g. Calculate the value of R2, and interpret this value in context.
+
+The R2, Coef of determination, formula is: SS-R / SS-T, i.e. the regression error divided by the total error and can be used as a measure of how well variations in x explain variations in y.
+
+R2 = 160 / (160 + 17.6)
+
+R2 = 160 / 177.6 == **.9009**
+
+This value is close to 1, and implies that our model does demonstrate a linear relationship between number of transfers and ampules broken.
 
 
 # Question 3 (No R required) 
