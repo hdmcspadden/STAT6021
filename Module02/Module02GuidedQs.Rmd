@@ -5,6 +5,10 @@ date: "9/5/2020"
 output: html_document
 ---
 
+#QUESTIONS
+1. what should we be using to decide if an F value is significant?
+
+
 # Stat 6021: Guided Question Set 2
 We will continue to use the dataset "bp.txt" that we saw in the last module. The dataset
 contains information on the weight (in pounds) and systolic blood pressure (in millimeters
@@ -41,6 +45,13 @@ print(corvalue)
 ** Want to talk about this **
 There is an "above average" linear relationship between weight and BP. Not sure how to answer the "reliable" question.
 
+Pair the correlation with how the graph looks. Need to think about both.
+
+Closer to +/- 1 then closer the relation.
+
+Correlation value can be high, BUT if the plot doesn't look right take that into consideration.
+
+.77 with only 26 data points, looks pretty strong.
 
 ## 3a. What is the change in the predicted systolic blood pressure when weight increases by one pound? 
 
@@ -76,14 +87,14 @@ Sxx
 seB1hat <- sqrt(sigma(model) / Sxx)
 seB1hat
 
-correction <- tmulti * seB1hat
-correction
+#correction <- tmulti * seB1hat
+#correction
 
-minB1hat <- b1hat - correction
-maxB1hat <- b1hat + correction
+#minB1hat <- b1hat - correction
+#maxB1hat <- b1hat + correction
 
-print(paste("Manual min B1-hat",minB1hat))
-print(paste("Manual max B1-hat",maxB1hat))
+#print(paste("Manual min B1-hat",minB1hat))
+#print(paste("Manual max B1-hat",maxB1hat))
 
 #print("CI B1-hat: ", minB1hat, " - ", maxB1hat)
 
@@ -93,10 +104,10 @@ confint(model, level = 0.95)
 #print(paste("95% CI for B1-hat: ", B1CI))
 
 ```
-** Maybe Answer **
-We are 95% confident that repeated samples of 26 weights will produce a model with a B1-hat between 0.4182 and 0.4206
+**Answer **
+We are 95% confident that repeated samples of 26 weights will produce a model with a B1-hat between 0.2746 and 0.5642
 
-Which means a 95% confidence that the BP will increase between 0.4182 and 0.4206 with each one pound increase.
+Which means a 95% confidence that the BP will increase between 0.2746 and 0.5642 with each one pound of weight increase for the population of adult males 25 - 30 years old. This CI is for the population.
 
 ## 4a. Conduct a hypothesis test to determine whether or not there is a linear association between weight and systolic blood pressure. 
 
@@ -116,7 +127,7 @@ The p-value of the F value is .000004 which is small enough to also indicate the
 
 ## 4b. State the hypotheses, p-value, and conclusion in context.
 
-**Hypothesis: ** H0: there is no linear relationship between weight and BP., Ha: There no an absence of linear relationship between weight and BP.
+**Hypothesis: ** H0: there is no linear relationship between weight and BP., 
 
 The p-value of the hypothesis test is .000004, which is small enough to reject H0.
 
@@ -128,7 +139,9 @@ We can conclude there is a linear relationship between weight and BP.
 
 **Answer**
 
-In part 3, the CI for 95% CI in slope was very small, which makes me think our model is pretty good, and then the F value and p-value also make me think we have a linear relationship. So, yes, I **think** they are consistent.
+t value is 5.97 which is really
+
+In part 3, the CI for 95% CI in slope was small, which makes me think our model is pretty good, and then the F value and p-value also make me think we have a linear relationship. So, yes, I **think** they are consistent.
 
 ## 6a. Estimate the mean systolic blood pressure for young males who weigh 200 pounds.
 ```{r q6a}
@@ -151,6 +164,9 @@ predict.lm(model,newweight,level=0.95, interval="prediction")
 **Is there significant evidence that males in the age group 25-30 are at an increased risk of heart disease?**
 
 Conduct an appropriate hypothesis test. 
+```{r}
+
+```
 
 **What is the null and alternative hypotheses, test statistic, and conclusion?**
 
@@ -158,21 +174,22 @@ Conduct an appropriate hypothesis test.
 H0: B1 = .35 # checking for a specific value of B1, not just B1 = 0
 H0: B1 > .35 # one-sided test
 
-I feel like question 3b answers this with the 95% confidence interval for B1-hat: 0.4182 and 0.4206
 
-0.35 is outside this range, thus, we can say that males age 25-30 are at increased risk.
+t = (.41 - .35) / .07015
 
-**Test Statistic**
-t0 = (B1-hat - .35) / se(B1-hat)
+t = (B1-hat) - .35 / standard error(B1-hat)
 
-```{r q8a}
-b1hat
-seB1hat
+I feel like question 3b answers this with the 95% confidence interval for B1-hat: 0.2746281  0.5642023
 
-t0 = (b1hat - .35) / seB1hat
-print(paste("t0: ",t0))
+```{r}
+tq8 = (.41 - .35) / .07015
+tq8
 ```
-**UMMM, is this right??**
-That is HUGE and would indicate that we should ABSOLUTELY reject H0.
+
+
+
+
+**The CI includes .35 so we do NOT reject H0.**
+
 
 

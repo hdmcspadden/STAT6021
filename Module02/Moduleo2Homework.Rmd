@@ -39,11 +39,11 @@ plot(x=Serviced, y=Minutes, main='Plot Minutes Against Number Copiers Serviced',
 corvalue <- cor(x=Serviced,y=Minutes) 
 print(paste("Correlation between Service Time and Number of Copiers: ", corvalue))
 ```
-Because the correlation value is so close to 1, i.e. 0.9785, I conclude there is a strong linear relationship between the predictor variable, number of copiers serviced, and the response variable, service time.
+Because the correlation value is so close to 1, i.e. 0.9785, and the plot supports a positive linear relationship between service time and copiers serviced, I conclude there is a linear relationship between the predictor variable, number of copiers serviced, and the response variable, service time.
 
 ## 1c. Can the correlation found in part 1b be interpreted reliably? Briey explain.
 
-**NEED TO ADD, ASK IN OFFICE HOURS**
+Yes, it can be reliably interpreted after also reviewing the plot to cofirm a linear relationship.
 
 ## 1d. Obtain the 95% confidence interval for the slope, B1.
 
@@ -52,6 +52,8 @@ Because the correlation value is so close to 1, i.e. 0.9785, I conclude there is
 # create a linear model
 copierModel <- lm(Minutes~Serviced)
 copierModel
+
+#summary(copierModel)
 
 # get the 95% CI for the Serviced coef
 CIB1 = confint(copierModel, "Serviced", level = 0.95)
@@ -68,6 +70,7 @@ newdata<-data.frame(Serviced=5)
 #print(newdata) # print newdata to understand what we get back
 
 prediction = predict.lm(copierModel,newdata,level=0.95, interval="prediction")
+#prediction
 
 print(paste("The 95% CI for service minutes for a service call for 5 copiers is: ", prediction[2], " - ", prediction[3], " minutes"))
 
@@ -78,13 +81,19 @@ print(paste("The 95% CI for service minutes for a service call for 5 copiers is:
 ```{r q1f}
 # get all the residuals from the model
 copierResiduals <- copierModel$residual
+#copierResiduals
 
 # get the first residual
-copierResiduals[1]
+print(paste("The value of the first residual is: ", copierResiduals[1]))
 
 
 ```
-The residual is the difference between the observed first data point, and the model's prediction for the first data point. So, the difference between y0 for the first x value, and y-hat for the first x value. So, the first value in our data set is 9.49 fewer minutes than predicted for a service call for 2 copiers (the first x data point).
+**1f Interpretation**
+The residual is the difference between the observed first data point, and the model's prediction for the first data point. So, the difference between y0 for the first x value, and y-hat for the first x value:
+
+Residual1 = (y1 - Y1-hat)
+
+So, the first value in our data set is **9.49 fewer minutes** than E(Y|x) for a service call for 2 copiers (the first x data point).
 
 ## 1g. What is the average value of the all the residuals? Is this value surprising (or not)? Briefly explain.
 
@@ -96,105 +105,126 @@ print(paste("The mean of the residuals is: ", meanCopierResidual, " minutes."))
 
 ```
 
-** 1g Answer**
+**1g Explanation**
 
-No, this is not surprising. The mean of the residuals is 0, and -0.00000000000000026122 is basically 0 with some expected rounding error. Last we we proved mathematically that the sum of the residuals is always 0, so the mean (sum(residuals)/n) == (0/n) == 0.
+No, this is not surprising. The mean of the residuals is 0, and -0.00000000000000026122 is basically 0 with some expected rounding error. Last week we proved mathematically that the sum of the residuals is 0, so the mean (sum(residuals)/n) == (0/n) == 0.
 
 
 # Question 2 (No R required) 
 
-A substance used in biological and medical research is shipped by airfreight to users in cartons of 1000 ampules. The data consist of 10 shipments. The variables are number of times the carton was transferred from one aircraft to another during the shipment route (transfer), and the number of ampules found to be broken upon arrival (broken). We want to fit a simple linear regression. A simple linear regression model is fitted using R. The corresponding output from R is shown next, with some values missing.
+A substance used in biological and medical research is shipped by airfreight to users in cartons of 1000 ampules. 
+The data consist of 10 shipments. The variables are number of times the carton was transferred from one aircraft to another during the shipment route (transfer), and the number of ampules found to be broken upon arrival (broken). 
+
+We want to fit a simple linear regression. A simple linear regression model is fitted using R. The corresponding output from R is shown next, with some values missing.
 
 
 Call:
 lm(formula = broken ~ transfer)
-Coefficients:
-Estimate Std. Error t value Pr(>|t|)
-(Intercept) 10.2000 0.6633 ______ ________ ***
-transfer 4.0000 0.4690 ______ ________ ***
+
+**Coefficients**:
+Estimate                Std. Error      t value         Pr(>|t|)
+(Intercept)     10.2000 0.6633          ______          ________ ***
+transfer        4.0000 0.4690           ______          ________ ***
+
 Residual standard error: 1.483 on 8 degrees of freedom
 
-Analysis of Variance Table
+**Analysis of Variance Table**
 Response: broken
-Df Sum Sq Mean Sq F value Pr(>F)
-transfer 1 160.0 160.0 ______ ________ ***
-Residuals 8 17.6 2.2
+                Df      Sum Sq  Mean Sq         F value         Pr(>F)
+transfer        1       160.0   160.0           ______          ________ ***
+Residuals       8       17.6    2.2
 
-** Additional Knowns**
+**Additional Knowns**
+
+Predictor Variable, x: Number of transfers
+
+Response variable, y: Number of broken ampules
+
+n = 10
 
 x-bar = 1
 
-sum(((x-i) - (x-bar)^2) == 10
+Sxx, sum(((x-i) - (x-bar)^2) == 10
 
 ## 2a. Carry out a hypothesis test to assess if there is a linear relationship between the variables of interest.
 
 H0: B1 = 0
+
 Ha: B1 != 0
 
-Our estimated equation is:
-y-hat = 10.2 + 4(x)
+Our estimated equation is: E(y|x) = 10.2 + 4(x)
 
 The equation has B1-hat == 4.
 
 F0 = 160 / 2.2 = 72.7272, this is a pretty large number, and implies a t-value = sqrt(72.72.72) = 8.528
 
-**This is strong evidence for a linear relationship between the variables.**
+**This is evidence for a linear relationship between the variables.**
 
 
 ## 2b. Calculate a 95% confidence interval that estimates the unknown value of the population slope.
 
 B1-hat - t-alpha/2,n-2(se(B1-hat)) <= B1-hat <= B1-hat + t-alpha/2,n-2(se(B1-hat))
 
-4 - t-(.975,8)(se(B1-hat)) : 4 + t(.975,8)(se(B1-hat)) # t-value from working through Module 2 
+4 - t-(.975,8)(se(B1-hat)) <= B1-hat <= 4 + t(.975,8)(se(B1-hat)) 
 
-4 - (2.306004)(se(B1-hat)) : 4 + (2.306004)(se(B1-hat)) # t-value from working through Module 2 
+4 - (2.306)(se(B1-hat)) <= B1-hat <=  4 + (2.306)(se(B1-hat)) # t-value from textbook for 0.025 and 8 df
 
-and we know: t0 = B1-hat / se(B1-hat)
+se(B1-hat) = B1-hat / sqrt((MS-res)(Sxx))
 
-se(B1-hat) = B1-hat / t0 == 4 / 2.306004
-se(B1-hat) = 1.7346
+se(B1-hat) = 4 / sqrt((2.2)(10))
+
+sq(B1-hat) = 4 / 4.6904
 
 So,
-4 - (2.306004)(1.7346) : 4 + (2.306004)(1.7346)
+4 - (2.306)(0.8528) <= B1-hat <=  4 + (2.306)(0.8528)
 
-95% CI for population slope is 0 - 8
+4 - 1.9666 <= B1-hat <= 4 + 1.9666
+
+**95% CI for population slope is 2.0334 - 5.9666**
 
 
 ## 2c. A consultant believes the mean number of broken ampules when no transfers are made is different from 9. 
+
 Conduct an appropriate hypothesis test (state the hypotheses statements, calculate the test statistic, and write the corresponding conclusion in context, in response to his belief).
 
 H0: B0 = 9
+
 Ha: B0 != 9
 
 t0 = (B0-hat - 9) / se(B0-hat)
 
 se(B0-hat) == sqrt((MS-res)(1/n + ((x-bar)^2/Sxx))
 
-t0 = (10.2 - 9) / sqrt((2.2) * (.1 + (1)(.1))
-t0 = (10.2 - 9) / (1.4142) * (.2)
+t0 = (10.2 - 9) / sqrt((2.2) * (.1 + .1)) # MS-res of 2.2 comes from ANOVA table
 
-t0 = 1.2 / .28284
+t0 = (10.2 - 9) / sqrt(.44)
 
-t0 = 4.2427 > 2.306004
+t0 = 1.2 / .6633
 
-This test statistic is larger than t(0.975,8), a 95% confidence level which is 2.306004, so we reject the null hypothesis and say there is not enough evidence to support the mean number of broken ampules being 9 when no transfers are made.
+t0 = 1.8091 < 2.306004
+
+This test statistic is smaller than t(0.975,8), a 95% confidence level which is 2.306, so we do not reject the null hypothesis. There is not evidence to suggest the intercept does not equal 9.
 
 ##2d. Calculate a 95% confidence interval for the mean number of broken ampules and a 95% prediction interval for the number of broken ampules when the number of transfers is 2.
 
-**CI for mean number of broken ampules**
-10.2 + 4(2) +- (2.306004)sqrt((2.2)(.1 + ((2 - 1)^2/10))
+**MEAN CI: CI for mean number of broken ampules**
+
+E(y|2) +- t(.0975,8)(sqrt((MS-res)(1/n + (2 - 1)/Sxx))
+
+(10.2 + (4*2)) +- (2.306)sqrt((2.2)(.1 + ((2 - 1)^2/10)) # t value for 0.025 with df = 8 is from textbook, and MS-res is 2.2
  
-18.2 +- (2.306004) * sqrt((2.2)(.1 + .1))
+18.2 +- (2.306) * sqrt((2.2)(.1 + .1))
  
-18.2 +- (2.306004) * sqrt(2.2 * .2)
+18.2 +- (2.306) * sqrt(2.2 * .2)
  
-18.2 +- (2.306004) * (0.6633)
+18.2 +- (2.306) * (0.6633)
  
 18.2 +- 1.53
  
 **95% CI for mean ampules broken when there are 2 transfers is 16.67 - 19.73**
 
-** CI for predicted number of broken ampules when number of transfers is 2**
+
+**PREDICTED VALUE CI: CI for predicted number of broken ampules when number of transfers is 2**
 
 10.2 + 4(2) +- (2.306004)sqrt((2.2)(1 + .1 + ((2 - 1)^2/10))
 
@@ -204,15 +234,16 @@ This test statistic is larger than t(0.975,8), a 95% confidence level which is 2
 
 18.2 +- 3.7468
 
-**95% CI for the predicted number of ampules broken when there are 2 transfers is 14.4532 - 21.9468
+**95% CI for the predicted number of ampules broken when there are 2 transfers is 14.4532 - 21.9468**
 
 
 ## 2e. What happens to the intervals from the previous part when the number of transfers is 1? (Describe what happens without calculating)
 
 The range of the two confidence intervals will be smaller, and I can describe why both logically and mathematically:
+
 **Logically: ** 1 transfer is the mean number of transfers, so our predictions will be better, thus a smaller interval, because our predictive power is better at the mean of x.
 
-**Mathematically: ** The correction to y0 will be smaller because the numerator to part of the correction is (x0 - (x-bar)), which will be 1 - 1 == 0.
+**Mathematically: ** The correction (+/-) to y0 will be smaller because the numerator to part of the correction is (x0 - (x-bar)), which will be 1 - 1 == 0.
 
 
 ## 2f. What is the value of the F statistic for the ANOVA table?
@@ -237,13 +268,13 @@ This value is close to 1, and implies that our model does demonstrate a linear r
 ## 3a. Describe how the straight line would look in a plot of y versus x.
 
 **Answer**
-The line would be a straight, perfectly horizontal line at some unknown y-intercept.
+The line would be a straight, perfectly horizontal line at some unknown y-intercept. There would be y values above and below the line at about the same y value for all x values.
 
 
 ## 3b. Explain why a slope that is equal to 0 would indicate that y and x are not linearly related, and why a slope that is not equal to 0 would indicate that y and x are linearly related.
 
 **Answer**
 
-A slope of zero mean that y never changes, no matter the value of x. x could be anything, and y remains stable. Like the speed of light, no matter what the hair color of a person is, the speed of light remains the same. That relationship **should** have a slope of zero.
+A slope of zero mean that y never changes, no matter the value of x. x could be anything, and y remains stable. Like the speed of light, no matter what the hair color of a person is, the speed of light remains the same. That relationship has a slope of zero.
 
-If the slope is not equal to 0, then the value of y does change, to some degree, as the value of x changes. That change expresses some type of linear relationship.
+If the slope is not equal to 0, then the value of y does change, to some degree, as the value of x changes. As the change in x increases/decreases from the mean of x, the change in y will also increase/decrease from y's mean. That change expresses some type of linear relationship with a non-0 slope.
