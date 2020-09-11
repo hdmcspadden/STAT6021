@@ -1,0 +1,108 @@
+---
+title: "Module03Sandbox"
+author: "Diana McSpadden"
+date: "9/10/2020"
+output: html_document
+---
+
+# Module 3: Model Diagnostics and Remedial Measures in Simple Linear Regression
+
+The simple linear regression model involves several assumptions that need to be met in order for our analyses to be valid. In this module, you will explore ways to assess the various assumptions in regression models. The goal is for you to be able to assess the appropriateness of a simple linear regression (SLR) for the data, diagnose which assumptions are not met, apply remedial measures when assumptions are not met, and then continue to build your regression model for your data.
+
+##ESSENTIAL QUESTIONS
+1. How do we assess whether the regression assumptions are met in our linear regression model?
+2. What remedies can we perform when the constant variance assumption is not met? 
+(Is this that B1-hat ! = 0)
+3. What remedies can we perform when the linearity assumption is not met?
+
+
+## Book Section 4.1
+**Assumptions**
+1. The relationship between response y and the regressors is linear, at least approximately.
+
+2. The error term, e, has a zero mean.
+
+3. The error term e has constant variance sigma^2.
+
+4. The errors are uncorrelated.
+
+5. The errors are normally distributed.
+
+4 & 5 mean that errors are independent random variables.
+
+5 is required for hypothesis testing.
+
+**We must always consider whether these assumptions are valid**
+
+**t, F, and R2 do NOT ensure model adequacy**
+
+## 3.2 Assumptions in Regression Models
+
+1. Write down the assumptions for a regression model. 
+
+**See above**
+
+What are the consequences when the assumptions are not met? 
+
+**A model that does not perform well and could even give an opposite result with a different sample from the same population.**
+
+Explain how we can use a scatter plot and a residual plot to assess the assumptions for a regression model. 
+
+Remember, **residuals** are difference between observed value, yi, and predicted value, yi-hat
+yi - yi-hat
+
+**studentized residuals** have constant variance. Are method for correcting for x values disconnected from main group of x points that have an undue affect on the model. Example: leverage point, or influential point.
+
+###Scatter plot** 
+of data can help us visualize if it looks like there is a linear relationship, and if there are outliers, leverage points, or influential points. Want to see general pattern is linear, data points evenly scattered around fitted line. Vertical variation of data points constant.
+
+straight line
+data points evenly scattered around fitted line
+
+
+###Residual 
+
+residual plot is residuals against y-hat
+
+residuals (hopefully externally studenized residuals) against y 
+y predicted values on x
+
+residuals evenly scattered around horizontal axis without apparent pattern
+
+residuals should have similar vertical variation across the horizontal axis.
+
+x axis == y-hat-i
+y axis = e-i
+
+###Autocorrelation Plot
+ACF function
+
+4th assumption: errors uncorrelated
+
+residuals against various lags
+
+lags = residuals with lag of 1 time point
+
+**QUESTION** Is the plot of point 1 the lag is correlation of all the  to each other of lag of 1? And plot of point 2 is the correlation value of all residuals to each other at a lag of 2?
+
+What all values inside the significance lines.
+
+###Normal Probability Plot of Residuals**
+Assumption number 5: normality
+
+This is the least crucial of all the assumptions.
+
+PLots the expected value of residuals if we do have a normal distribution of residuals. Are the residuals close to expected values of residuals.
+
+Checks that the residuals are normally distributed. If not, then outliers can too heavily influence model.
+
+If the residuals are cummulatively normally distributed, then the plot will produce a straight line.
+
+plots externally studentize residuals against Probablity (i - 1/2)/n. Should produce a straight line.
+
+Emphasize central points. Not extremes.
+
+
+
+Explain how we can use an autocorrelation plot to assess the assumptions for a regression model. 
+Explain how we can use a normal probability (QQ) plot to assess the assumptions for a regression model.
