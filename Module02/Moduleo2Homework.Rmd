@@ -1,8 +1,10 @@
 ---
-title: "Stat 6021: Homework Set 1, Name: H. Diana McSpadden, UID: hdm5s"
+title: 'Stat 6021: Homework Set 1, Name: H. Diana McSpadden, UID: hdm5s'
 author: "Diana McSpadden"
 date: "9/7/2020"
-output: html_document
+output:
+  word_document: default
+  html_document: default
 ---
 
 # Name: H. Diana McSpadden
@@ -10,6 +12,8 @@ output: html_document
 # UID: hdm5s
 
 # Assignment: Homework Set 2
+
+### Worked with Chelsea AAlvarado, David Fuentes, Caprill Wright, and Abby Bernhardt
 
 # Question 1
 (R required) For this question, you will use the dataset "Copier.txt" for this question. This is the same data set that you used in the last homework. The Tri-City Office Equipment Corporation sells an imported copier on a franchise basis and performs preventive maintenance and repair service on this copier. The data have been collected from 45 recent calls on users to perform routine preventive maintenance service; for each call, Serviced is the number of copiers serviced and Minutes is the total number of minutes spent by the service person.
@@ -43,7 +47,7 @@ Because the correlation value is so close to 1, i.e. 0.9785, and the plot suppor
 
 ## 1c. Can the correlation found in part 1b be interpreted reliably? Briey explain.
 
-Yes, it can be reliably interpreted after also reviewing the plot to cofirm a linear relationship.
+Yes, it can be reliably interpreted as a number after also analyzing the scatter plot to confirm a linear relationship. Both confirm a linear relationship. The correlation is not a reliable predictor unless both the scatter plot and correlation value are reviewed.
 
 ## 1d. Obtain the 95% confidence interval for the slope, B1.
 
@@ -107,7 +111,7 @@ print(paste("The mean of the residuals is: ", meanCopierResidual, " minutes."))
 
 **1g Explanation**
 
-No, this is not surprising. The mean of the residuals is 0, and -0.00000000000000026122 is basically 0 with some expected rounding error. Last week we proved mathematically that the sum of the residuals is 0, so the mean (sum(residuals)/n) == (0/n) == 0.
+No, this is not surprising. The mean of the residuals is 0, and -0.00000000000000026122 is basically 0 with some expected rounding error. Last week we proved mathematically that the sum of the residuals is 0, so the mean (sum(residuals)/n) == (0/n) == 0. This is the result of the definition of BLUE.
 
 
 # Question 2 (No R required) 
@@ -156,7 +160,10 @@ Our estimated equation is: E(y|x) = 10.2 + 4(x)
 
 The equation has B1-hat == 4.
 
-F0 = 160 / 2.2 = 72.7272, this is a pretty large number, and implies a t-value = sqrt(72.72.72) = 8.528
+F0 = 160 / 2.2 = 72.7272, this is a pretty large number, and implies a t-value = sqrt(72.7272) = 8.528
+
+Using the t-value comparison, 8.528 is greater than 2.306 so we rejecting H0, and determine there is a linear relationship.
+
 
 **This is evidence for a linear relationship between the variables.**
 
@@ -169,18 +176,17 @@ B1-hat - t-alpha/2,n-2(se(B1-hat)) <= B1-hat <= B1-hat + t-alpha/2,n-2(se(B1-hat
 
 4 - (2.306)(se(B1-hat)) <= B1-hat <=  4 + (2.306)(se(B1-hat)) # t-value from textbook for 0.025 and 8 df
 
-se(B1-hat) = B1-hat / sqrt((MS-res)(Sxx))
 
-se(B1-hat) = 4 / sqrt((2.2)(10))
+se(B1-hat) = 0.4690 
 
-sq(B1-hat) = 4 / 4.6904
+se(B1-hat) = 4 / 4.6904
 
 So,
-4 - (2.306)(0.8528) <= B1-hat <=  4 + (2.306)(0.8528)
+4 - (2.306)(0.4690) <= B1-hat <=  4 + (2.306)(0.4690)
 
-4 - 1.9666 <= B1-hat <= 4 + 1.9666
+4 - 1.0815 <= B1-hat <= 4 + 1.0815
 
-**95% CI for population slope is 2.0334 - 5.9666**
+**95% CI for population slope is 2.918 - 5.0814**
 
 
 ## 2c. A consultant believes the mean number of broken ampules when no transfers are made is different from 9. 
@@ -202,6 +208,7 @@ t0 = (10.2 - 9) / sqrt(.44)
 t0 = 1.2 / .6633
 
 t0 = 1.8091 < 2.306004
+
 
 This test statistic is smaller than t(0.975,8), a 95% confidence level which is 2.306, so we do not reject the null hypothesis. There is not evidence to suggest the intercept does not equal 9.
 
@@ -259,7 +266,7 @@ R2 = 160 / (160 + 17.6)
 
 R2 = 160 / 177.6 == **.9009**
 
-This value is close to 1, and implies that our model does demonstrate a linear relationship between number of transfers and ampules broken.
+This value is close to 1, and implies that our model does demonstrate a linear relationship between number of transfers and ampules broken. R2 can be unreliable without seeing the data and a scatter plot of the data.
 
 
 # Question 3 (No R required) 
@@ -268,13 +275,13 @@ This value is close to 1, and implies that our model does demonstrate a linear r
 ## 3a. Describe how the straight line would look in a plot of y versus x.
 
 **Answer**
-The line would be a straight, perfectly horizontal line at some unknown y-intercept. There would be y values above and below the line at about the same y value for all x values.
+The line would be a straight, perfectly horizontal line at some unknown y-intercept. 
 
 
 ## 3b. Explain why a slope that is equal to 0 would indicate that y and x are not linearly related, and why a slope that is not equal to 0 would indicate that y and x are linearly related.
 
 **Answer**
 
-A slope of zero mean that y never changes, no matter the value of x. x could be anything, and y remains stable. Like the speed of light, no matter what the hair color of a person is, the speed of light remains the same. That relationship has a slope of zero.
+A slope of zero describes a y value that does not change, no matter the value of x. x could be anything, and y remains stable. Y is independent of x. An example is the speed of light, no matter what the hair color of a person is, the speed of light remains the same. That relationship has a slope of zero.
 
 If the slope is not equal to 0, then the value of y does change, to some degree, as the value of x changes. As the change in x increases/decreases from the mean of x, the change in y will also increase/decrease from y's mean. That change expresses some type of linear relationship with a non-0 slope.
