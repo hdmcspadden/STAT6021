@@ -9,7 +9,7 @@ output: html_document
 
 The simple linear regression model involves several assumptions that need to be met in order for our analyses to be valid. In this module, you will explore ways to assess the various assumptions in regression models. The goal is for you to be able to assess the appropriateness of a simple linear regression (SLR) for the data, diagnose which assumptions are not met, apply remedial measures when assumptions are not met, and then continue to build your regression model for your data.
 
-##ESSENTIAL QUESTIONS
+## ESSENTIAL QUESTIONS
 1. How do we assess whether the regression assumptions are met in our linear regression model?
 2. What remedies can we perform when the constant variance assumption is not met? 
 (Is this that B1-hat ! = 0)
@@ -22,11 +22,11 @@ The simple linear regression model involves several assumptions that need to be 
 
 2. The error term, e, has a zero mean.
 
-3. The error term e has constant variance sigma^2.
+3. The error term e has constant variance sigma^2. - This means that variance of errors of y when x = 2 is similar to the variance when x = 3 or 4 or 5.
 
 4. The errors are uncorrelated.
 
-5. The errors are normally distributed.
+5. The errors are normally distributed. - Errors for each fixed x are normally distributed. THat way the mean of ei = 0.
 
 4 & 5 mean that errors are independent random variables.
 
@@ -42,39 +42,44 @@ The simple linear regression model involves several assumptions that need to be 
 
 **See above**
 
-What are the consequences when the assumptions are not met? 
+**What are the consequences when the assumptions are not met**
 
-**A model that does not perform well and could even give an opposite result with a different sample from the same population.**
+A model that does not perform well and could even give an opposite result with a different sample from the same population.
 
-Explain how we can use a scatter plot and a residual plot to assess the assumptions for a regression model. 
+The model is no longer reliable.
+
+**Explain how we can use a scatter plot and a residual plot to assess the assumptions for a regression model. **
 
 Remember, **residuals** are difference between observed value, yi, and predicted value, yi-hat
 yi - yi-hat
 
 **studentized residuals** have constant variance. Are method for correcting for x values disconnected from main group of x points that have an undue affect on the model. Example: leverage point, or influential point.
 
-###Scatter plot** 
+### Scatter plot
 of data can help us visualize if it looks like there is a linear relationship, and if there are outliers, leverage points, or influential points. Want to see general pattern is linear, data points evenly scattered around fitted line. Vertical variation of data points constant.
 
 straight line
 data points evenly scattered around fitted line
 
 
-###Residual 
+### Residual Plot
+Assumptions 1 & 3
 
 residual plot is residuals against y-hat
 
-residuals (hopefully externally studenized residuals) against y 
+residuals (hopefully externally studentized residuals) against y 
 y predicted values on x
 
 residuals evenly scattered around horizontal axis without apparent pattern
 
-residuals should have similar vertical variation across the horizontal axis.
+residuals should have similar vertical variation across the horizontal axis. == spread/variance. Variance is measured in small groups.
 
 x axis == y-hat-i
 y axis = e-i
 
-###Autocorrelation Plot
+OR
+
+### Autocorrelation Plot
 ACF function
 
 4th assumption: errors uncorrelated
@@ -87,7 +92,7 @@ lags = residuals with lag of 1 time point
 
 What all values inside the significance lines.
 
-###Normal Probability Plot of Residuals**
+### Normal Probability Plot of Residuals**
 Assumption number 5: normality
 
 This is the least crucial of all the assumptions.
@@ -96,13 +101,117 @@ PLots the expected value of residuals if we do have a normal distribution of res
 
 Checks that the residuals are normally distributed. If not, then outliers can too heavily influence model.
 
-If the residuals are cummulatively normally distributed, then the plot will produce a straight line.
+If the residuals are cumulatively normally distributed, then the plot will produce a straight line.
 
 plots externally studentize residuals against Probablity (i - 1/2)/n. Should produce a straight line.
 
 Emphasize central points. Not extremes.
 
+## Explain how we can use an autocorrelation plot to assess the assumptions for a regression model. 
+
+ACF Plot: residuals against various lags, lags = residuals with lag of 1 time point
+
+Determines if residuals are correlated with any of the other values. This confirms whether residuals are random/uncorrelated.
+
+## Explain how we can use a normal probability (QQ) plot to assess the assumptions for a regression model.
+
+The QQ plot checks whether the residuals follow a plot of the normal probability of what we would expect from residuals of the model.
+
+If they diverge from the normal distribution plot line, it could mean that the residuals are not normally distributed.
 
 
-Explain how we can use an autocorrelation plot to assess the assumptions for a regression model. 
-Explain how we can use a normal probability (QQ) plot to assess the assumptions for a regression model.
+# 3.3 Remedial Measures: Variance Stabilizing Transformation 
+
+**Read Sections 5.1, 5.2, and 5.4.1 of your textbook.**
+
+**Assumptions**
+1. Model errors have mean zero and constant variance and are uncorrelated.
+2. The model errors have a normal distribution - need in order to perform hypothesis tests since we compare against, t and F values
+3. Errors are independent.
+4. The form of the model, including specification of regressors (i.e. predictors) is correct.
+
+## METHOD
+When both issues 1 and 2 are present, we transform response variable first (because it may address mean problem), then if mena is still not 0, then we transform the predictor.
+
+* Always produce a scatter plot.
+
+* Always produce a residual plot.
+
+* May also produce a Box Cox plot
+
+* Assess plots to determine transformation. Not trial and error
+
+* Transform one variable at a time. Assess plots after transformation.
+
+* Assess if we need another transformation.
+
+
+
+
+## 1. When do we consider transforming the response variable? 
+
+**Answer: **When the residuals do NOT have a constant VARIANCE.
+
+NOTE: This may help with mean zero residuals problem too.
+
+We consider transformations when some of the assumptions above are violated.
+Example: errors or residuals do not have constant variance
+Example: Model errors do not have a normal distribution
+
+**Why do we transform the response variable to correct for non-equal variance?**
+Var(Y|x) = Var(B0 + B1(x) + e|x) = Var(e|x) == sigma^2
+
+Since B0 and B1 are parameters (ie fixed), the distribution of the response variable is conditioned on the predictor (which we also view as fixed), therefor, to fix issues with constant variance, we transform the response variable to provide a constant/fixed signma^2.
+
+Transforming the x will not actually transform the variance.
+
+**Equal Variance Assumption**
+equal / constant variance
+
+When "y follows a probability distribution in with variance is related to the mean." - textbook page 172
+
+If we do not correct non constant error variance, then our model will still be unbiased, BUT will not have minimum variance
+
+## 2. How do we interpret the estimated regression coefficients after applying a log transformation to the response variable? 
+
+The predicted response variable is multiplied by a factor of exp(β1-hat1) when the predictor increases by one unit.
+
+* see attached document in Module 3.4
+
+**HELP**
+
+log(base b)(x) = y == b^y = x
+
+log2(64) = 6, as 2^6 = 64.
+
+## 3. When considering a Box-Cox transformation, describe how we can use a plot of the profile log-likelihood against the parameter λ to decide how to transform the response variable.
+
+Box-Cox is an analytical way to evaluate the constant variance, and normality assumption.
+Box Cox looks like a parabola (in either vert direction), 95% confidence is selected, then the intersections of confidence horizontal line mark the lambda CI. Any value in confidence interval, the transformation will work.
+
+If 1 lies inside lambda CI, then we do NOT need a transformation on response variable for variance.
+
+If lambda = 0, then we use a ln transformation for variable. If 0 is in lambda CI. Then we can make some assumptions about B1.
+
+The Box-Con plot of the residual sum of squares SS-res(lambda) vs. lamda 
+**HELP**
+
+# 3.4: Remedial Measures: Linearization Transformation
+
+Read Section 5.3 of your textbook. As you read, take notes on the following.
+
+Book page 177, Figure 5.4 shows various regressor transformations.
+ 
+## When do we consider transforming the predictor variable instead of the response variable?
+
+**Answer :** When the mean of the residuals is not equal to zero.
+
+We consider when the investigation of the straight-line/linear model (i.e. scatter plot) may show a non-linear relationship, and when investigation of the regressors via residual plot shows a non linear relationship between yi-hat and ei.
+
+
+## How do we interpret the estimated regression coefficients after applying a log transformation to the predictor variable?
+
+In general, for an a% increase in the predictor, the predicted response increases by (1 + a/100 )β1-hat.
+
+* see attached document in Module 3.4
+

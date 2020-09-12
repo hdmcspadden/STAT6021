@@ -5,26 +5,123 @@ date: "9/10/2020"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+# Stat 6021: Guided Question Set 3
+
+A glass bottle manufacturing company has recorded data on the average number of defects per 10,000 bottles due to stones (small pieces of rock embedded in the bottle wall) and the number of weeks since the last furnace overhaul. Download the dataset defects.txt".
+
+## Question 1
+
+Plot defects, the average number of defects per 10,000 bottles, against weeks, the number of weeks since the last furnace overhaul. Comment on the appearance of the plot. Do any assumptions or conditions for simple linear regression appear to be violated? If so, which ones?
+
+```{r getdata}
+data <- read.table("defects.txt", header = TRUE, sep = "\t")
+head(data, 5)
+#data
+
+attach(data) # attach data so that we can refer directly to column headers
+```
+```{r q1 create simple linear model}
+
+model = lm(defects~weeks)
+
 ```
 
-## R Markdown
+```{r q1scatterplot}
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+plot(x=weeks, y=defects, main='Plot Defects Against Weeks Since Maintenance', xlab = 'weeks', ylab = 'Defects (per 10,000 bottles')
+abline(model,col="red")
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+```
+**Answer**
+It appears to violate the mean of 0 for residuals are each x. The predictions appear to be above the fitted line then below, then above again.
 
-```{r cars}
-summary(cars)
+I am not sure about variance, or normality.
+
+## Question 2
+Create a residual plot. Describe the appearance of the graph of residuals versus fitted values, and comment if assumptions are not met for simple linear regression.
+
+```{r q2ResidualPlot}
+
+# plot the residuals against the fitted values
+plot(model$fitted.values,model$residuals, main="Plot of Residuals against Fitted Values")
+abline(h=0,col="red")
+
+```
+Residuals **should** be evenly scattered around horizontal axis without apparent pattern. Residuals **should** have similar vertical variation across the horizontal axis. == spread/variance. Variance is measured in small groups.
+
+**Answer**
+The residuals are NOT evenly scattered around the horizontal axis. They are above, then below, the above again.
+
+And, the variance does not seem standard. The difference of each point from horizontal axis varies as x changes.
+
+## Question 3
+Based on your answers to parts 1 and 2, do we need to transform at least one of the variables?
+
+**Answer**
+Yes, I think we need to alter both the response and the predictor variables.
+
+## Question 4
+One of your classmates says that since she is not sure if the variance is constant, she should use the Box-Cox method to see if the response variable should be transformed First. Do you agree with her idea? Briefy explain.
+
+**Answer**
+Yes, I agree, I think the variance looks unstable. Box-Cox is an analytical method to evaluate the constant variance, and normality assumption. If 0 lies within the Box-Cox CI, then we can use a ln transformation.
+
+If 1 lies within the Box-Cox CI then we do not need to transform the response variable.
+
+## Question 5
+Regardless of your answer to part 4, use R to produce a plot of the profile log-likelihoods for the parameter, gamma, of the Box-Cox power transformation. What transformation, if any, would you apply to the response variable? Briefy explain.
+
+```{r q5BoxCox}
+library(MASS)
+#boxcox(model)
+boxcox(model, lambda = seq(-1.5, 1.5, 0.01))
+```
+**Answer**
+
+0 lies within our Box-Cox CI. I think we can use a ln transformation on y, which also matches up with the scatter plot interpretation on page 177 and 178 of our textbook, i.e. the plot looks like Figure 5.4c to which our textbook recommends a natural log transformation (Table 5.4)
+
+## Question 6
+
+Apply the transformation you specified in part 5. Then fit another simple linear regression model and produce the residual plot to assess if the assumptions are met.
+
+```{r q6applyln}
+
+# y'  = ln(y)
+
+ln.defects <- log(defects) # In R, log == ln
+model.ln <-lm(ln.defects ~ weeks)
+
+#model.ln
+
+#residual plot of transformed y
+plot(model.ln$fitted.values,model.ln$residuals, main="TRANSFORMED: Plot of Residuals against Fitted Values")
+abline(h=0,col="red")
+
 ```
 
-## Including Plots
+**Answer** This is much better on the mean 0 residuals assumption. I still think the variance around fitted value 3.8 looks a little odd.
 
-You can also embed plots, for example:
+## QUESTION 7
+Create an ACF plot of the residuals. Comment if assumptions are not met for simple linear regression.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r q7ACFPlot}
+acf(model.ln$residuals, main="ACF of Residuals")
+
 ```
+**Answer**
+This looks good. All residuals are within the blue band (except 0, which is always theoretically 1).
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+The assumption that residuals are random and uncorrelated.
+
+## Question 8
+
+Create a QQ plot of the residuals. Comment if assumptions are not met for simple linear regression.
+
+```{r}
+qqnorm(model.ln$residuals)
+qqline(model.ln$residuals, col="red")
+
+```
+**Answer**
+The QQ plot looks pretty good. The assumption that the residuals follow a normal distribution of mean = 0, sd = 1 is met.
+
