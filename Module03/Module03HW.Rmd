@@ -6,26 +6,175 @@ date: "9/10/2020"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+# Assignment: Stat 6021: Homework Set 3
+
+### Name: H. Diana McSpadden
+### UID: hdm5s
+
+### References
+In addition to the textbook and Module 3, I also read: https://data.library.virginia.edu/interpreting-log-transformations-in-a-linear-model/
+
+
+## Question 1 (No R required) 
+
+In your own words, try to explain the following question an undergraduate student asks you: "Why do we transform the response variable when the constant
+variance assumption is not met, instead of transforming the predictor variable?"
+
+**Answer**
+A lack of constant variance means that as x changes, the difference between The predicted y and actual y is increasing, decreasing, or displaying some other pattern, i.e. the variance of e|x changes as x changes. Transforming x would not have an affect on the lack of constant (yi - yi-hat) , because x would still be changing values even with the transformation, the variance is still affected.
+
+I would also show them the formula for the variance of y given x:
+
+Var(Y|x) = Var(B0 + B1(x) + e|x) 
+
+I would explain that both B0 and B1 are fixed values, and y's non-stable variance is based on x. Var(y|x) = Var(e|x) == sigma^2
+
+Therefor, to fix issues with constant variance, we transform y (the response variable) to provide a constant/fixed signma^2.
+
+Transforming x will not actually transform the variance of y.
+
+## Question 2
+For this question, we will use the cornnit data set from the faraway package. Be sure to install and load the faraway package first, and then load the data set. The data explore the relationship between corn yield (bushels per acre) and nitrogen (pounds per acre) fertilizer application in a study carried out in Wisconsin.
+
+```{r q2loaddata}
+library(faraway)
+#summary(cornnit)
+
+head(cornnit, 5)
+attach(cornnit)
+
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+### 2a:What is the response variable and predictor for this study? 
+**Answer**
+The predictor variable is **nitrogen**
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+The response variable is **yield**
 
-```{r cars}
-summary(cars)
+
+Create a **scatterplot** of the data, and interpret the scatterplot.
+
+```{r q2ascatterplot}
+# create a model
+cornModel <- lm(yield~nitrogen)
+
+#plot the model and the linear model
+plot(x=nitrogen, y=yield, main='Plot Corn Yield Against Nitrogen', xlab = 'Nitrogen (lbs per acre)', ylab = 'Yield (bushels per acre')
+abline(cornModel,col="red")
+
+```
+**Interpretation**
+While the yield appears to increase as nitrogen increases, the points are not evenly spread above and below the linear model, and the variance appears smaller at the 100 and 300 nitrogen levels. I need to see more.
+
+
+
+### 2b: Fit a linear regression without any transformations. 
+
+**Create the corresponding residual plot.** 
+```{r q2bregressionplot}
+plot(cornModel$fitted.values,cornModel$residuals, main="Plot of Residuals against Fitted Values")
+abline(h=0,col="red")
 ```
 
-## Including Plots
+**Based only on the residual plot, what transformation will you consider first? Be sure to explain your reason.**
+**Answer**
 
-You can also embed plots, for example:
+The variance is most different at the value of nitrogen = 0, and the non-zero mean of residuals also is reduced if the nitrogen = 0 records are not included.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+I am contemplating removing the nitrogen = 0 records from the dataset. I do not think it would chnage our inquiry as to whether there is a relationshop between nitrogen applied and yield. We could restate the question to: if nitrogen is applied, does the amount of nitrogen affect yield?
+
+This looks similar to the windmill data in the textbook and in the tutorial, where the residual plot first increases, then decreases. So, I am recommending a natural log applied to y transformation to address the non zero mean of residuals. Applying a natural log transforation to x
+
+
+### 2c: Create a Box Cox plot for the profile log likelihoods. 
+```{r q2cBoxCox}
+
+library(MASS)
+#boxcox(cornModel)
+boxcox(cornModel, lambda = seq(1.4, 4.5, 0.01))
+
+```
+**How does this plot aid in your data transformation?**
+0 does not lie within the confidence interval, thus, we do not recommend a ln transformation.
+
+1 does not lie within the confidence interval, thus we may need  to apply a transformation to the response variable.
+
+### 2d: Perform the necessary transformation to the data. 
+Refit the regression with the transformed variable(s) and assess the regression assumptions. You may have to apply transformations a number of times. Be sure to explain the reason behind each of your transformations. Perform the needed transformations until the regression assumptions are met. What is the regression equation that you will use?
+ 
+Note: in part 2d, there are a number of solutions that will work. You must clearly document your reasons for each of your transformations.
+
+
+************Tried a Small Correction, It Created Clusters, Argh!!!!***************
+
+**First**, I want to address the non-0 mean of the residuals, and I a still unsure about the variance issues. Because the scatter plot demonstrates a negative curvature, but not necessarily a limit, I will try the log 10 transformation.
+
+Because there are values of 0 for nitrogen, I will use a small correction to nitrogen of .01; the data values for x large enough I believe the .01 correction is appropriate.
+
+```{r q2dLnTransform}
+
+# x'  = log10(x)
+
+log10.nitrogen <- log10(nitrogen + .01) # In R, log == ln
+cornModel.xlog <-lm(yield~log10.nitrogen)
+
+#model.ln
+
+#residual plot of transformed y
+plot(cornModel.xlog$fitted.values,cornModel.xlog$residuals, main="TRANSFORMED: Plot of Residuals against Fitted Values")
+abline(h=0,col="red")
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Question 3 (No R required) 
+A chemist studied the concentration of a solution, y, over time, x, by fitting a simple linear regression. The scatterplot of the dataset, and the residual plot from the regression model are shown in Figure 1.
+
+
+### 3a: Based only on Figure 1, would you recommend transforming the predictor, x, or the response, y,first? 
+Briefy explain your choice.
+
+**Answer**
+We recommend transforming the response variable first because addressing the lack of constant variance of the residuals, we may be able to address the non-zero mean of the residuals.
+
+### 3b: The profile log-likelihoods for the parameter, gamma, of the Box-Cox power transformation, is shown in Figure 2. 
+Your classmate says that you should apply a log transformation to the response variable first. Do you agree with your classmate?
+Be sure to justify your answer.
+
+**Answer**
+Yes, I do agree with my classmate, because the 95% CI for gamma, which, based on Module 3 instruction, indicates a natural log transformation will be helpful to reduce residual variance. Response variable variance was apparent in the residual plot in Figure 1.
+
+### 3c: Your classmate is adament on applying the log transformation to the response variable, and fits the regression model. 
+The R output is shown in Figure 3. Write down the estimated regression equation for this model. 
+How do we interpret the regression coefficients B1-hat and B0-hat in context?
+
+**Answer**
+After transformation, the regression coefficients are:
+B0-hat: 1.50792
+
+B1-hat: -0.44993
+
+The chemist is studying the concentration of a solution over time.
+
+A ln transformation was applied to the response variable, y.
+
+**Interpretation of B1 after an ln transformation on y**
+For each change in x, y by the multiple (-)exp(0.44993).
+
+If we want to present this as a percentage:
+y, the solution concentration, decreases by (exp(0.44993) - 1) * 100 % == **decreases by 56.8202%** for every unit increase in x, time.
+
+```{r}
+(exp(0.44993) - 1) * 100
+```
+
+**Interpretation of B0 after an ln transformation on y**
+The y intercept is ln(B0). In our case, the y intercept is exp(1.50792) (e^1.50792), or 4.5173.
+```{r}
+exp(1.50792)
+```
+
+
+
+
