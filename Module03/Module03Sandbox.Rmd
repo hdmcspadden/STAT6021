@@ -131,7 +131,7 @@ If they diverge from the normal distribution plot line, it could mean that the r
 4. The form of the model, including specification of regressors (i.e. predictors) is correct.
 
 ## METHOD
-When both issues 1 and 2 are present, we transform response variable first (because it may address mean problem), then if mena is still not 0, then we transform the predictor.
+When both issues 1 and 2 are present, we transform response variable first (because it may address mean problem), then if mean is still not 0, then we transform the predictor.
 
 * Always produce a scatter plot.
 

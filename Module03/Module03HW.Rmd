@@ -43,6 +43,8 @@ library(faraway)
 head(cornnit, 5)
 attach(cornnit)
 
+cornnit
+
 ```
 
 
@@ -106,26 +108,90 @@ Refit the regression with the transformed variable(s) and assess the regression 
 Note: in part 2d, there are a number of solutions that will work. You must clearly document your reasons for each of your transformations.
 
 
-************Tried a Small Correction, It Created Clusters, Argh!!!!***************
+**First**, I am going to start with the variance issue, because it may address the non-zero mean issue.
 
-**First**, I want to address the non-0 mean of the residuals, and I a still unsure about the variance issues. Because the scatter plot demonstrates a negative curvature, but not necessarily a limit, I will try the log 10 transformation.
+I believe the original scatterplot demonstrated a negative curvature, indicating an inverse transformation on y
 
-Because there are values of 0 for nitrogen, I will use a small correction to nitrogen of .01; the data values for x large enough I believe the .01 correction is appropriate.
 
-```{r q2dLnTransform}
+```{r q2dTransform1}
+#par(mfrow=c(2,2))
 
-# x'  = log10(x)
+##y' = log10(y)
+#log.yield <- log10(yield) # In R, log == ln
+#cornModel.ylog <-lm(log.yield~nitrogen)
+##residual plot of transformed y
+#plot(cornModel.ylog$fitted.values,cornModel.ylog$residuals, main="TRANSFORMED: Plot of Residuals against Fitted Values")
+#abline(h=0,col="red")
 
-log10.nitrogen <- log10(nitrogen + .01) # In R, log == ln
-cornModel.xlog <-lm(yield~log10.nitrogen)
+## y'  = log(y)
+#ln.yield <- log(yield) # In R, log == ln
+#cornModel.yln <-lm(ln.yield~nitrogen)
+##residual plot of transformed y
+#plot(cornModel.yln$fitted.values,cornModel.yln$residuals, main="TRANSFORMED: Plot of Residuals against Fitted Values")
+#abline(h=0,col="red")
 
-#model.ln
+## y' = log(y)
+#log.yield <- log(yield)
+#cornModel.log <-lm(log.yield~nitrogen)
+##residual plot of transformed y
+#plot(cornModel.log$fitted.values,cornModel.log$residuals, main="TRANSFORMED: Plot of Residuals against Fitted Values")
+#abline(h=0,col="red")
 
+# y' = 1/y
+inv.yield <- 1/yield 
+cornModel.invy <-lm(inv.yield~nitrogen)
 #residual plot of transformed y
-plot(cornModel.xlog$fitted.values,cornModel.xlog$residuals, main="TRANSFORMED: Plot of Residuals against Fitted Values")
+plot(cornModel.invy$fitted.values,cornModel.invy$residuals, main="TRANSFORMED: Plot of Residuals against Fitted Values")
 abline(h=0,col="red")
+```
+
+The inverse transformation, one its own did not address the residual variance in the cornnit data. Additional transformations are needed if there is a simple linear relationship between nitrogen and yield.
+
+Investigate of residual correlation is also of interest to determine if there is a linear relationship between nitrogen and yield. Two ACF graphs with the original and transformed data set are presented.
+
+```{r q2dACFComparisonTransformation1}
+par(mfrow=c(1,2))
+acf(cornModel$residuals, main="ACF of Residuals: Original")
+
+acf(cornModel.invy$residuals, main="ACF of Residuals: Tranform 1")
 
 ```
+
+Both ACF charts show correlation between residuals at multiple lag values. This finding demonstrates that a simple linear relationship does not exist between nitrogen and yield.
+
+However, addressing the non-zero mean of residuals will be attempted with a transformation of the x variable: nitrogen.
+
+Because of the 0 values, before applying a inverse function a correction to the x value must be made. The correction will be determined by investigating the min value of x, then correcting all values by + (min-non-zero(x)/2). Then a 1/x transformation will be applied.
+
+The residual plot of the 1/y transformation will be placed next to the residual plot of the 1/y & 1/x transformation for comparison.
+
+```{r qdTransformation2}
+
+par(mfrow=c(1,2))
+plot(cornModel.invy$fitted.values,cornModel.invy$residuals, main="TRANSFORM 1: 1/y")
+abline(h=0,col="red")
+
+
+#x' = (x + ((min(x)/2)))
+minimumNonZeroNit = min(nitrogen[nitrogen > 0])
+inv.nitrogen = 1 / (nitrogen + (minimumNonZeroNit /2))
+cornModel.invyx <-lm(inv.yield~inv.nitrogen)
+#residual plot of transformed y
+plot(cornModel.invyx$fitted.values,cornModel.invyx$residuals, main="TRANSFORM 2: 1/y & 1/x")
+abline(h=0,col="red")
+
+
+```
+
+The 1/x transformation successfully addresses the non-zero mean of the residuals, but also results in two clusters. The clusters represent the data results where 0 nitrogen was applied to the field, and where nitrogen was applied to the field. 
+
+The non constant variance is caused by the data for fields where no nitrogen was applied to the field. If these data were excluded the constant variance and the non-zero mean of residuals would be addressed and a linear model may be possible. 
+
+Whether the residuals are uncorrelated when the 0 nitrogen values have been excluded must also be investigated.
+```{r}
+
+```
+
 
 
 ## Question 3 (No R required) 

@@ -25,7 +25,7 @@ abline(h=0,col="red")
 
 #------
 
-##ACF plot of residuals - tests variance of residuals
+##ACF plot of residuals - tests correlation of residuals
 par(mfrow=c(2,1))
 acf(result$residuals, main="ACF of Residuals")
 
