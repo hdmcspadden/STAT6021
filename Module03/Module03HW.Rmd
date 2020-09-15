@@ -114,29 +114,6 @@ I believe the original scatterplot demonstrated a negative curvature, indicating
 
 
 ```{r q2dTransform1}
-#par(mfrow=c(2,2))
-
-##y' = log10(y)
-#log.yield <- log10(yield) # In R, log == ln
-#cornModel.ylog <-lm(log.yield~nitrogen)
-##residual plot of transformed y
-#plot(cornModel.ylog$fitted.values,cornModel.ylog$residuals, main="TRANSFORMED: Plot of Residuals against Fitted Values")
-#abline(h=0,col="red")
-
-## y'  = log(y)
-#ln.yield <- log(yield) # In R, log == ln
-#cornModel.yln <-lm(ln.yield~nitrogen)
-##residual plot of transformed y
-#plot(cornModel.yln$fitted.values,cornModel.yln$residuals, main="TRANSFORMED: Plot of Residuals against Fitted Values")
-#abline(h=0,col="red")
-
-## y' = log(y)
-#log.yield <- log(yield)
-#cornModel.log <-lm(log.yield~nitrogen)
-##residual plot of transformed y
-#plot(cornModel.log$fitted.values,cornModel.log$residuals, main="TRANSFORMED: Plot of Residuals against Fitted Values")
-#abline(h=0,col="red")
-
 # y' = 1/y
 inv.yield <- 1/yield 
 cornModel.invy <-lm(inv.yield~nitrogen)
@@ -187,12 +164,92 @@ The 1/x transformation successfully addresses the non-zero mean of the residuals
 
 The non constant variance is caused by the data for fields where no nitrogen was applied to the field. If these data were excluded the constant variance and the non-zero mean of residuals would be addressed and a linear model may be possible. 
 
-Whether the residuals are uncorrelated when the 0 nitrogen values have been excluded must also be investigated.
-```{r}
+Whether the residuals are uncorrelated when the 0 nitrogen values have been excluded must also be investigated. Removing nitrogen = 0 values will change the inquiry to: "When nitrogen has been applied to field, is there a linear relationship between amount of nitrogen added, and yield?"
 
+First, create a new data set that has removed the x = 0 values.
+
+```{r q2dRemovex=0}
+#head(cornnit)
+cornnitFiltered = cornnit[cornnit[, "nitrogen"]>0, ]
+
+cornnitFilteredModel = lm(cornnitFiltered$yield~cornnitFiltered$nitrogen)
+#head(cornnitFiltered)
 ```
 
+Compare the the following (each is a row in a 2 x 2 comparison of plots)
+1. Original data set scatter plot to 0-filtered data set scatter plot
+2. Original data set residual plot to 0-filtered data set residual plot
 
+
+``` {r q2dRunScatterResidualPlots}
+par(mfrow=c(2,2))
+
+# Original data set scatter plot
+plot(x=cornnit$nitrogen, y=cornnit$yield, main='Original Scatter Plot', xlab = 'Nitrogen (lbs per acre)', ylab = 'Yield (bushels per acre')
+abline(cornModel,col="red")
+
+# 0-filtered data set scatter plot
+plot(x=cornnitFiltered$nitrogen, y=cornnitFiltered$yield, main='0-Filtered Scatter Plot', xlab = 'Nitrogen (lbs per acre)', ylab = 'Yield (bushels per acre')
+abline(cornnitFilteredModel,col="red")
+
+# Original data set residual plot
+plot(cornModel$fitted.values,cornModel$residuals, main="Original Residuals Plot")
+abline(h=0,col="red")
+
+# 0-filtered data set residual plot
+plot(cornnitFilteredModel$fitted.values,cornnitFilteredModel$residuals, main="0-Filtered Residual Plot")
+abline(h=0,col="red")
+```
+The non-zero residual mean issue has been addressed by removing the x = 0 values.
+
+Investigate if the correlation of the residuals has been addressed by removing the x = 0 values.
+
+Plot the Original data set ACF plot and compare to the 0-filtered data set ACF plot
+
+``` {r q2dACFComparison}
+par(mfrow=c(1,2))
+
+# Original ACF
+acf(cornModel$residuals, main="ACF of Residuals: Original")
+
+# 0-filtered ACF
+acf(cornnitFilteredModel$residuals, main="ACF of Residuals: 0-Filtered")
+```
+From the ACF plots we see that removing the x = 0 values has addressed the correlation of residuals issue.
+
+
+There is still issue of the non-standard variance of the residuals.
+
+Use the 1/y transformation on the o-filtered data set, and then compare the 1/y residual plots of the original and the filtered data sets.
+
+
+``` {r q2dRunPlots}
+par(mfrow=c(1,2))
+
+# Original data set w/ inv y transformation residual plot
+plot(cornModel.invy$fitted.values,cornModel.invy$residuals, main="Original: 1/y")
+abline(h=0,col="red")
+
+# run the inv y transformation on the cornnitFilteredModel
+inv.yieldFiltered <- 1/cornnitFiltered$yield
+cornnitFilteredModel.invy <-lm(inv.yieldFiltered~cornnitFiltered$nitrogen)
+
+# 0-filtered data set w/ inv y transformation residual plot
+plot(cornnitFilteredModel.invy$fitted.values,cornnitFilteredModel.invy$residuals, main="0-Filtered: 1/y")
+abline(h=0,col="red")
+
+```
+The variance of the residuals is less on both data sets after the 1/y transformation, but markedly improved on the 0-Filtered 1/y transformed data set.
+
+What is the linear model after the removal of x = 0 values, and a 1/y transformation?
+
+``` {r q2d0FilteredInvYTransformedModel}
+cornnitFilteredModel.invy
+
+```
+The linearized function for the relationship of yield vs nitrogen for field where nitrogen is applied:
+
+y = x / (7.619e-3(x) + 2.350e-6))
 
 ## Question 3 (No R required) 
 A chemist studied the concentration of a solution, y, over time, x, by fitting a simple linear regression. The scatterplot of the dataset, and the residual plot from the regression model are shown in Figure 1.
