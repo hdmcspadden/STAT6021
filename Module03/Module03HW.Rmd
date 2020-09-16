@@ -82,12 +82,9 @@ abline(h=0,col="red")
 **Based only on the residual plot, what transformation will you consider first? Be sure to explain your reason.**
 **Answer**
 
-The variance is most different at the value of nitrogen = 0, and the non-zero mean of residuals also is reduced if the nitrogen = 0 records are not included.
+THe residual plot both displays a lack of standard variance in the residuals and a non-0 mean of the residuals. I recommend a transformation on the response variable first, to attempt to address the variance issue, because it may also address the non-zero mean issue.
 
-I am contemplating removing the nitrogen = 0 records from the dataset. I do not think it would chnage our inquiry as to whether there is a relationshop between nitrogen applied and yield. We could restate the question to: if nitrogen is applied, does the amount of nitrogen affect yield?
-
-This looks similar to the windmill data in the textbook and in the tutorial, where the residual plot first increases, then decreases. So, I am recommending a natural log applied to y transformation to address the non zero mean of residuals. Applying a natural log transforation to x
-
+I recommend an inverse y transformation because the original scatter plot resembles a negative curvature. I do not see a y limit demonstrated in the plot which would recommend a log transformation.
 
 ### 2c: Create a Box Cox plot for the profile log likelihoods. 
 ```{r q2cBoxCox}
@@ -100,7 +97,7 @@ boxcox(cornModel, lambda = seq(1.4, 4.5, 0.01))
 **How does this plot aid in your data transformation?**
 0 does not lie within the confidence interval, thus, we do not recommend a ln transformation.
 
-1 does not lie within the confidence interval, thus we may need  to apply a transformation to the response variable.
+1 does not lie within the confidence interval, thus I recommend applying a transformation to the response variable: yield.
 
 ### 2d: Perform the necessary transformation to the data. 
 Refit the regression with the transformed variable(s) and assess the regression assumptions. You may have to apply transformations a number of times. Be sure to explain the reason behind each of your transformations. Perform the needed transformations until the regression assumptions are met. What is the regression equation that you will use?
@@ -110,7 +107,7 @@ Note: in part 2d, there are a number of solutions that will work. You must clear
 
 **First**, I am going to start with the variance issue, because it may address the non-zero mean issue.
 
-I believe the original scatterplot demonstrated a negative curvature, indicating an inverse transformation on y
+I believe the original scatter plot demonstrates a negative curvature, indicating an inverse transformation on y.
 
 
 ```{r q2dTransform1}
@@ -124,19 +121,7 @@ abline(h=0,col="red")
 
 The inverse transformation, one its own did not address the residual variance in the cornnit data. Additional transformations are needed if there is a simple linear relationship between nitrogen and yield.
 
-Investigate of residual correlation is also of interest to determine if there is a linear relationship between nitrogen and yield. Two ACF graphs with the original and transformed data set are presented.
-
-```{r q2dACFComparisonTransformation1}
-par(mfrow=c(1,2))
-acf(cornModel$residuals, main="ACF of Residuals: Original")
-
-acf(cornModel.invy$residuals, main="ACF of Residuals: Tranform 1")
-
-```
-
-Both ACF charts show correlation between residuals at multiple lag values. This finding demonstrates that a simple linear relationship does not exist between nitrogen and yield.
-
-However, addressing the non-zero mean of residuals will be attempted with a transformation of the x variable: nitrogen.
+I will attempt to address the non-zero mean of residuals with a transformation of the x variable: nitrogen.
 
 Because of the 0 values, before applying a inverse function a correction to the x value must be made. The correction will be determined by investigating the min value of x, then correcting all values by + (min-non-zero(x)/2). Then a 1/x transformation will be applied.
 
@@ -162,9 +147,19 @@ abline(h=0,col="red")
 
 The 1/x transformation successfully addresses the non-zero mean of the residuals, but also results in two clusters. The clusters represent the data results where 0 nitrogen was applied to the field, and where nitrogen was applied to the field. 
 
-The non constant variance is caused by the data for fields where no nitrogen was applied to the field. If these data were excluded the constant variance and the non-zero mean of residuals would be addressed and a linear model may be possible. 
+The lack of constant variance is caused by the data for fields where no nitrogen was applied to the field. If these data were excluded the constant variance and the non-0 mean of residuals may be addressed and a linear model made possible. 
 
-Whether the residuals are uncorrelated when the 0 nitrogen values have been excluded must also be investigated. Removing nitrogen = 0 values will change the inquiry to: "When nitrogen has been applied to field, is there a linear relationship between amount of nitrogen added, and yield?"
+Before attempting additional transformation, residual correlation or lack of correlation is of interest to determine if additional linear model assumptions are violated. The ACF graph with the original data set is presented.
+
+```{r q2dACFComparisonTransformation1}
+par(mfrow=c(1,2))
+acf(cornModel$residuals, main="ACF of Residuals: Original")
+
+```
+
+The ACF chart shows correlation between residuals at multiple lag values: 2,4,6,8,12, and 16. This finding demonstrates that a simple linear relationship does not exist between nitrogen and yield with this data set.
+
+Whether the residuals are uncorrelated when the 0 nitrogen values have been excluded is of interest. Removing nitrogen = 0 values will change the inquiry to: "When nitrogen has been applied to field, is there a linear relationship between yield, and nitrogen amount?"
 
 First, create a new data set that has removed the x = 0 values.
 
@@ -200,9 +195,10 @@ abline(h=0,col="red")
 plot(cornnitFilteredModel$fitted.values,cornnitFilteredModel$residuals, main="0-Filtered Residual Plot")
 abline(h=0,col="red")
 ```
+
 The non-zero residual mean issue has been addressed by removing the x = 0 values.
 
-Investigate if the correlation of the residuals has been addressed by removing the x = 0 values.
+We must investigate if the correlation of the residuals has been addressed by removing the x = 0 values.
 
 Plot the Original data set ACF plot and compare to the 0-filtered data set ACF plot
 
@@ -217,11 +213,14 @@ acf(cornnitFilteredModel$residuals, main="ACF of Residuals: 0-Filtered")
 ```
 From the ACF plots we see that removing the x = 0 values has addressed the correlation of residuals issue.
 
+Let's look at the p value from the filtered model which demonstrated we do not yet have a reliable linear model.
 
+```{r}
+anova(cornnitFilteredModel)
+```
 There is still issue of the non-standard variance of the residuals.
 
-Use the 1/y transformation on the o-filtered data set, and then compare the 1/y residual plots of the original and the filtered data sets.
-
+Use the log y transformation on the 0-filtered data set, and then compare the log residual plots of the original and the filtered data sets.
 
 ``` {r q2dRunPlots}
 par(mfrow=c(1,2))
@@ -230,12 +229,12 @@ par(mfrow=c(1,2))
 plot(cornModel.invy$fitted.values,cornModel.invy$residuals, main="Original: 1/y")
 abline(h=0,col="red")
 
-# run the inv y transformation on the cornnitFilteredModel
+# run the log y transformation on the cornnitFilteredModel
 inv.yieldFiltered <- 1/cornnitFiltered$yield
 cornnitFilteredModel.invy <-lm(inv.yieldFiltered~cornnitFiltered$nitrogen)
 
 # 0-filtered data set w/ inv y transformation residual plot
-plot(cornnitFilteredModel.invy$fitted.values,cornnitFilteredModel.invy$residuals, main="0-Filtered: 1/y")
+plot(cornnitFilteredModel.invy$fitted.values,cornnitFilteredModel.invy$residuals, main="0-Filtered: inv(y)")
 abline(h=0,col="red")
 
 ```
@@ -251,6 +250,21 @@ The linearized function for the relationship of yield vs nitrogen for field wher
 
 y = x / (7.619e-3(x) + 2.350e-6))
 
+Let's look at our 
+
+```{r}
+anova(cornnitFilteredModel.invy)
+```
+The model looks linear, but the p-value does not indicate we should use the resulting model.
+
+```{r}
+inv.nitrogenFiltered <- 1/cornnitFiltered$nitrogen
+cornnitFilteredModel.invxy <-lm(inv.yieldFiltered~inv.nitrogenFiltered)
+anova(cornnitFilteredModel.invxy)
+```
+
+**My conclusion is that we need more predictor data than nitrogen applied to predict yield using a linear model.**
+
 ## Question 3 (No R required) 
 A chemist studied the concentration of a solution, y, over time, x, by fitting a simple linear regression. The scatterplot of the dataset, and the residual plot from the regression model are shown in Figure 1.
 
@@ -259,7 +273,7 @@ A chemist studied the concentration of a solution, y, over time, x, by fitting a
 Briefy explain your choice.
 
 **Answer**
-We recommend transforming the response variable first because addressing the lack of constant variance of the residuals, we may be able to address the non-zero mean of the residuals.
+We recommend transforming the response variable first because by addressing the lack of constant variance of the residuals, we may be able to address the non-zero mean of the residuals.
 
 ### 3b: The profile log-likelihoods for the parameter, gamma, of the Box-Cox power transformation, is shown in Figure 2. 
 Your classmate says that you should apply a log transformation to the response variable first. Do you agree with your classmate?
@@ -283,7 +297,7 @@ The chemist is studying the concentration of a solution over time.
 A ln transformation was applied to the response variable, y.
 
 **Interpretation of B1 after an ln transformation on y**
-For each change in x, y by the multiple (-)exp(0.44993).
+For each change in x, y changes by the multiple (-)exp(0.44993).
 
 If we want to present this as a percentage:
 y, the solution concentration, decreases by (exp(0.44993) - 1) * 100 % == **decreases by 56.8202%** for every unit increase in x, time.
