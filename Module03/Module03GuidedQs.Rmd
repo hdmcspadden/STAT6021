@@ -64,7 +64,7 @@ Yes, I think we need to alter both the response and the predictor variables.
 One of your classmates says that since she is not sure if the variance is constant, she should use the Box-Cox method to see if the response variable should be transformed First. Do you agree with her idea? Briefy explain.
 
 **Answer**
-Yes, I agree, I think the variance looks unstable. Box-Cox is an analytical method to evaluate the constant variance, and normality assumption. If 0 lies within the Box-Cox CI, then we can use a ln transformation.
+Yes, I agree, I think the variance looks non constant Box-Cox is an analytical method to evaluate the constant variance, and normality assumption. If 0 lies within the Box-Cox CI, then we can use a ln transformation.
 
 If 1 lies within the Box-Cox CI then we do not need to transform the response variable.
 
@@ -99,7 +99,10 @@ abline(h=0,col="red")
 
 ```
 
-**Answer** This is much better on the mean 0 residuals assumption. I still think the variance around fitted value 3.8 looks a little odd.
+**Answer** This is much better on the mean 0 residuals assumption. I still think the variance around fitted value 3.4 and 3.8 looks a little odd.
+```{r}
+boxcox(model.ln, lambda = seq(-2, 4, 0.01))
+```
 
 ## QUESTION 7
 Create an ACF plot of the residuals. Comment if assumptions are not met for simple linear regression.

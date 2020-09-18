@@ -139,27 +139,66 @@ minimumNonZeroNit = min(nitrogen[nitrogen > 0])
 inv.nitrogen = 1 / (nitrogen + (minimumNonZeroNit /2))
 cornModel.invyx <-lm(inv.yield~inv.nitrogen)
 #residual plot of transformed y
-plot(cornModel.invyx$fitted.values,cornModel.invyx$residuals, main="TRANSFORM 2: 1/y & 1/x")
+plot(cornModel.invyx$fitted.values,cornModel.invyx$residuals, main="TRANSFORM 2: 1/y & 1/(transformed x)")
 abline(h=0,col="red")
 
 
 ```
-
 The 1/x transformation successfully addresses the non-zero mean of the residuals, but also results in two clusters. The clusters represent the data results where 0 nitrogen was applied to the field, and where nitrogen was applied to the field. 
 
-The lack of constant variance is caused by the data for fields where no nitrogen was applied to the field. If these data were excluded the constant variance and the non-0 mean of residuals may be addressed and a linear model made possible. 
+The lack of constant variance is caused by the data for fields where no nitrogen was applied to the field. If these data were excluded the constant variance and the non-0 mean of residuals may be addressed and a linear model made possible.
+
+
+Checking the Box-Cox after the 1/y transformation can confirm, or not, the y transformation.
+
+These show that that the 1/y is not the correct response variable transformation.
+```{r}
+par(mfrow=c(1,2))
+boxcox(cornModel.invy, lambda = seq(-4, -1.2, 0.01))
+
+boxcox(cornModel.invyx, lambda = seq(-3, -1, 0.01))
+```
+
+1 is not within the 95% CI for lambda, thus, the 1/y transformation was not an appropriate choice for a transformation.
+
+Attempt a y' = y^2 on the cornModel.invyx the based on the cornModel.invyx model's Box-Cox. This is done understanding that there will not be a straightforward linearization of the model.
+
+Plot the residual plot and Box-Cox for this model
+
+```{r}
+secondtrans.yield = inv.yield^(-2)
+
+cornModel.secondyinvx <-lm(secondtrans.yield~inv.nitrogen)
+
+par(mfrow=c(1,2))
+
+plot(cornModel.secondyinvx$fitted.values,cornModel.secondyinvx$residuals, main="1/x (1/y)^-2: Residuals against Fitted Values")
+abline(h=0,col="red")
+
+boxcox(cornModel.secondyinvx, lambda = seq(0.5, 2, 0.01))
+```
+
+1 is now within my CI for lambda after the (1/y)^-2. The residual plot demonstrated that the mean of the residuals is approximately 0, and the variance of the residuals appears approximately standard. I now have a model that appears to meet several of the linear model assumptions, ***but** I have two clusters of values.
+
+My current transformations are:
+x' = 1/x
+y'1 = (1/y)
+y'2 = (y'1)^-2
+
 
 Before attempting additional transformation, residual correlation or lack of correlation is of interest to determine if additional linear model assumptions are violated. The ACF graph with the original data set is presented.
 
 ```{r q2dACFComparisonTransformation1}
-par(mfrow=c(1,2))
-acf(cornModel$residuals, main="ACF of Residuals: Original")
+par(mfrow=c(1,1))
+acf(cornModel.secondyinvx$residuals, main="ACF of Residuals: 1/x, (1/y)^-2")
 
 ```
 
-The ACF chart shows correlation between residuals at multiple lag values: 2,4,6,8,12, and 16. This finding demonstrates that a simple linear relationship does not exist between nitrogen and yield with this data set.
+The ACF chart shows no correlation between residuals after the transformations.
 
-Whether the residuals are uncorrelated when the 0 nitrogen values have been excluded is of interest. Removing nitrogen = 0 values will change the inquiry to: "When nitrogen has been applied to field, is there a linear relationship between yield, and nitrogen amount?"
+I must still address the 2 clusters of values. I believe these are caused by the nitrogen = 0 
+
+Removing nitrogen = 0 values will change the inquiry to: "When nitrogen has been applied to field, is there a linear relationship between yield, and nitrogen amount?"
 
 First, create a new data set that has removed the x = 0 values.
 
@@ -216,52 +255,77 @@ From the ACF plots we see that removing the x = 0 values has addressed the corre
 Let's look at the p value from the filtered model which demonstrated we do not yet have a reliable linear model.
 
 ```{r}
-anova(cornnitFilteredModel)
+summary(cornnitFilteredModel)
 ```
-There is still issue of the non-standard variance of the residuals.
+!!!!!!
+HELP HERE !!!!!
+The model does meet the critical value test, but the F-statistic is not statistically significant.
+!!!!!!
 
-Use the log y transformation on the 0-filtered data set, and then compare the log residual plots of the original and the filtered data sets.
+There is still issue of the non-standard variance of the residuals. I will investigate the Box-Cox for the 0-filtered dataset.
+```{r}
+par(mfrow=c(1,1))
+boxcox(cornnitFilteredModel, lambda = seq(-2, 5, 0.01))
+```
+Both 0 and 1 are within the CI of lambda. The peak is closer to 1, which indicates we do not need to transform the response variable.
+
+I want to compare plots of three models:
+1. the original data set: ORIGINAL
+2. the  1/x, (1/y)^-2: MANY TRANSFORMATIONS
+3. the 0-filtered: 0-FILTERED
+
+
 
 ``` {r q2dRunPlots}
-par(mfrow=c(1,2))
+par(mfrow=c(1,3))
 
-# Original data set w/ inv y transformation residual plot
-plot(cornModel.invy$fitted.values,cornModel.invy$residuals, main="Original: 1/y")
+# Original data set residual plot
+plot(cornModel$fitted.values,cornModel$residuals, main="ORIGINAL")
 abline(h=0,col="red")
 
-# run the log y transformation on the cornnitFilteredModel
-inv.yieldFiltered <- 1/cornnitFiltered$yield
-cornnitFilteredModel.invy <-lm(inv.yieldFiltered~cornnitFiltered$nitrogen)
+# 1/x (1/y)^-2
+plot(cornModel.secondyinvx$fitted.values,cornModel.secondyinvx$residuals, main="MANY TRANSFORMATIONS")
+abline(h=0,col="red")
 
-# 0-filtered data set w/ inv y transformation residual plot
-plot(cornnitFilteredModel.invy$fitted.values,cornnitFilteredModel.invy$residuals, main="0-Filtered: inv(y)")
+# 0-filtered
+plot(cornnitFilteredModel$fitted.values,cornnitFilteredModel$residuals, main="0 filtered")
 abline(h=0,col="red")
 
 ```
-The variance of the residuals is less on both data sets after the 1/y transformation, but markedly improved on the 0-Filtered 1/y transformed data set.
+The 0-filtered model appears to address the variance and mean-0 assumptions, and does not create the two-cluster problem.
 
-What is the linear model after the removal of x = 0 values, and a 1/y transformation?
+I also want to compare the three models on the ACF plot:
+```{r}
+par(mfrow=c(1,3))
 
-``` {r q2d0FilteredInvYTransformedModel}
-cornnitFilteredModel.invy
+# Original ACF
+acf(cornModel$residuals, main="ORIGINAL")
 
+# 1/x (1/y)^-2 ACF
+acf(cornModel.secondyinvx$residuals, main="ORIGINAL")
+
+# 0-filtered ACF
+acf(cornnitFilteredModel$residuals, main="0 Filtered")
 ```
-The linearized function for the relationship of yield vs nitrogen for field where nitrogen is applied:
+Both the "MANY TRANSFORMATIONS" and "0-Filtered" models address the correlation of residuals issue in the original model.
 
-y = x / (7.619e-3(x) + 2.350e-6))
-
-Let's look at our 
+What are the summaries for each model?
 
 ```{r}
-anova(cornnitFilteredModel.invy)
+summary(cornModel.secondyinvx)
 ```
-The model looks linear, but the p-value does not indicate we should use the resulting model.
+The "Many Transformations" model is statistically significant based on the p-value.
 
 ```{r}
-inv.nitrogenFiltered <- 1/cornnitFiltered$nitrogen
-cornnitFilteredModel.invxy <-lm(inv.yieldFiltered~inv.nitrogenFiltered)
-anova(cornnitFilteredModel.invxy)
+summary(cornnitFilteredModel)
 ```
+
+
+**Conclusion:**
+
+If we need to include the nitrogen=0 observations in our model, then the 1/x, (1/y)^-2 model meets the assumptions necessary for a linear model. However, this model is difficult to express in a linearized function.
+
+If we change the hypothesis to whether there is a linear relationship between yield and nitrogen applied, only when a non-zero amount of nitrogen is applied, then the 0-filtered model, with no transformations get's us close to a linear model, but the F-statistic is still not significant.
 
 **My conclusion is that we need more predictor data than nitrogen applied to predict yield using a linear model.**
 

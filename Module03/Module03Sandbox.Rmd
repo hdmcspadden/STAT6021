@@ -54,6 +54,10 @@ Remember, **residuals** are difference between observed value, yi, and predicted
 yi - yi-hat
 
 **studentized residuals** have constant variance. Are method for correcting for x values disconnected from main group of x points that have an undue affect on the model. Example: leverage point, or influential point.
+- scaled version of a residual: regular residual divided by "something".
+-it turns out after scaling residuals they follow a t-distribution.
+
+
 
 ### Scatter plot
 of data can help us visualize if it looks like there is a linear relationship, and if there are outliers, leverage points, or influential points. Want to see general pattern is linear, data points evenly scattered around fitted line. Vertical variation of data points constant.
