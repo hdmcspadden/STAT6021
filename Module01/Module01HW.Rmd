@@ -138,9 +138,9 @@ SS-res = SUM[((y-i) - (y-hat))^2]
 
 |  | DF | SS |  MS | F-stat | p-value |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| Regression | 1 |  190 | 190 / 1 == **190**  | (190 / 7.5) == **25.3333**  | 0.0099 |
+| Regression | 1 |  160 | 160 / 1 == **160**  | (160 / 7.5) == **25.3333**  | 0.0099 |
 | Residual |  n-2 | 30 |  30 / (6-2) == **7.5**  | *** | *** |
-| Total | n-1  |  190 + 30 == **220** | *** | *** | *** |
+| Total | n-1  |  160 + 30 == **190** | *** | *** | *** |
 
 
 ## 2.c Calculate the sample estimate of the variance sigma^2 for the regression model.

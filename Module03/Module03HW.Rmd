@@ -11,14 +11,15 @@ output: html_document
 ### Name: H. Diana McSpadden
 ### UID: hdm5s
 
+**Attended a Study Group With**: David Fuentes, Jing Huang, Caprill Wright, Arne Newman, Michael Kastanowski, Abby Bernhardt, Loren Bushkar
+
 ### References
 In addition to the textbook and Module 3, I also read: https://data.library.virginia.edu/interpreting-log-transformations-in-a-linear-model/
 
 
 ## Question 1 (No R required) 
 
-In your own words, try to explain the following question an undergraduate student asks you: "Why do we transform the response variable when the constant
-variance assumption is not met, instead of transforming the predictor variable?"
+In your own words, try to explain the following question an undergraduate student asks you: "Why do we transform the response variable when the constant variance assumption is not met, instead of transforming the predictor variable?"
 
 **Answer**
 A lack of constant variance means that as x changes, the difference between The predicted y and actual y is increasing, decreasing, or displaying some other pattern, i.e. the variance of e|x changes as x changes. Transforming x would not have an affect on the lack of constant (yi - yi-hat) , because x would still be changing values even with the transformation, the variance is still affected.
@@ -27,9 +28,15 @@ I would also show them the formula for the variance of y given x:
 
 Var(Y|x) = Var(B0 + B1(x) + e|x) 
 
-I would explain that both B0 and B1 are fixed values, and y's non-stable variance is based on x. Var(y|x) = Var(e|x) == sigma^2
+I would explain that both B0 and B1 are fixed values, and y's non-stable variance is based on x. 
 
-Therefor, to fix issues with constant variance, we transform y (the response variable) to provide a constant/fixed signma^2.
+V(y|x) = Var(CONSTANT + e|x)
+
+Var(y|x) = Var(e|x) == sigma^2
+
+The only way to create a constant sigms^2 is to transform y.
+
+Therefor, to fix issues with constant variance, we transform y to provide a constant/fixed sigma^2.
 
 Transforming x will not actually transform the variance of y.
 
@@ -82,7 +89,7 @@ abline(h=0,col="red")
 **Based only on the residual plot, what transformation will you consider first? Be sure to explain your reason.**
 **Answer**
 
-THe residual plot both displays a lack of standard variance in the residuals and a non-0 mean of the residuals. I recommend a transformation on the response variable first, to attempt to address the variance issue, because it may also address the non-zero mean issue.
+The residual plot both displays a lack of standard variance in the residuals and a non-0 mean of the residuals. I recommend a transformation on the response variable first, to attempt to address the variance issue, because it may also address the non-zero mean issue.
 
 I recommend an inverse y transformation because the original scatter plot resembles a negative curvature. I do not see a y limit demonstrated in the plot which would recommend a log transformation.
 
@@ -337,14 +344,14 @@ A chemist studied the concentration of a solution, y, over time, x, by fitting a
 Briefy explain your choice.
 
 **Answer**
-We recommend transforming the response variable first because by addressing the lack of constant variance of the residuals, we may be able to address the non-zero mean of the residuals.
+I recommend transforming the response variable first because by addressing the lack of constant variance of the residuals which I do see in the scatter plot. By transforming the response variable, we may be able to address the non-zero mean of the residuals.
 
 ### 3b: The profile log-likelihoods for the parameter, gamma, of the Box-Cox power transformation, is shown in Figure 2. 
 Your classmate says that you should apply a log transformation to the response variable first. Do you agree with your classmate?
 Be sure to justify your answer.
 
 **Answer**
-Yes, I do agree with my classmate, because the 95% CI for gamma, which, based on Module 3 instruction, indicates a natural log transformation will be helpful to reduce residual variance. Response variable variance was apparent in the residual plot in Figure 1.
+Yes, I do agree with my classmate, because 0 is within the 95% CI for gamma, which, based on Module 3 instruction, indicates a natural log transformation will be helpful to reduce residual variance. Response variable variance was apparent in the residual plot in Figure 1.
 
 ### 3c: Your classmate is adament on applying the log transformation to the response variable, and fits the regression model. 
 The R output is shown in Figure 3. Write down the estimated regression equation for this model. 
@@ -364,6 +371,7 @@ A ln transformation was applied to the response variable, y.
 For each change in x, y changes by the multiple (-)exp(0.44993).
 
 If we want to present this as a percentage:
+
 y, the solution concentration, decreases by (exp(0.44993) - 1) * 100 % == **decreases by 56.8202%** for every unit increase in x, time.
 
 ```{r}
@@ -375,7 +383,7 @@ The y intercept is ln(B0). In our case, the y intercept is exp(1.50792) (e^1.507
 ```{r}
 exp(1.50792)
 ```
-
+When time is 0, the concentration is 4.5173.
 
 
 
