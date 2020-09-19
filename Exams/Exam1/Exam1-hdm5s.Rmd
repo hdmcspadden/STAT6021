@@ -262,8 +262,6 @@ sum of residuals = 0
 
 
 
-
-
 ## (b) Based only on property (1), what should we expect to see in a scatterplot of Y against X? (2)
 
 
