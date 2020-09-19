@@ -160,26 +160,50 @@ DF-Residual/Error = n-2 = 272 - 2 = **270**
 
 DF-Total = n-1 = 272 - 1 = **271**
 
-SS-Regression = B1-hat * Sxy = 10.7296 * Sxy
+seB1-hat = .3148
 
-SS-Residual/Error = sigma^2 * (n-2) = 34.9754 * 270 == **9443.358**
+MS-Residual = 5.914^2 = **34.9754** == sigma^2 
 
-SS-Total = 
+and
 
-MS-Regression = SS-Regression/1
+SS-Residual = sigma^2 * (n-2) = 34.9754 * 270 == **9443.358**
 
-MS-Residual/Error = 5.914^2 = **34.9754** 
+and
 
-F-stat = MS-R / MS-res = 
+seB1-hat = sqrt(MS-res / Sxx)
+
+Sxx = MS-res / (seB1-hat)^2 = 34.9754 / (.3148)^2 = **352.9338**
+
+and
+
+B1-hat = Sxy/Sxx
+
+Sxy = B1-hat * Sxx = 10.7296 * 352.9338 = **375.2721**
+
+and
+
+SS-R = B1-hat * Sxy = 10.7296 * 375.2721 = **4026.5195**
+
+and
+
+SS-Total = SS-R + SS-Res = 4026.5195 + 9443.358 = 
+
+and 
+
+MS-Regression = SS-Regression / 1 = **4026.5195**
+
+and 
+
+F-stat = MS-R / MS-res = 4026.5195 / 34.9754 = **115.1243**
 
 
 | Source of Variation   | DF      | SS    |  MS                   | F-stat    |
 
 |:---:|:---:|:---:|:---:|:---:|:---:|
 
-| Regression            | 1       |             |                 |           | 
-| Error                 | **270** | **9443.358**|   **34.9754**   | ***       |
-| Total                 | **271** |             | ***             | ***       |
+| Regression            | 1       | **4026.5195** | **4026.5195** | **115.1243** | 
+| Error                 | **270** | **9443.358**  | **34.9754**   | ***       |
+| Total                 | **271** | **13469.88**  | ***           | ***
 
 
 ## (c) A researcher believes ...
@@ -188,8 +212,67 @@ that the expected waiting time for the next eruption increases by more than 10 m
 
 Carry out a corresponding hypothesis test to test this belief. Be sure to state your null and alternative hypotheses, calculate your test statistic, and state your conclusion in context. (8)
 
+**2c Work**
+
+H0: B1 = 10
+Ha: B1 > 10
+
+**Hypothesis Test**
+H0: B1 = 10 # checking for a specific value of B1, not just B1 = 0
+H0: B1 > 10 # one-sided test
+
+Need to run the test.
+
+**Test Statistic**
+t0 = (10.7296 - 10) / .3148
+```{r q2c1}
+t0 = (10.7296 - 10) / .3148
+t0
+```
+Compare to critical value
+```{r q2c1}
+
+critvalueq2c = qt(.95,270) # one-sided, so use .95 instead of .975 which we would use for a two-sided test
+critvalueq2c
+
+```
+2.3177 is greater than 1.6505, so we reject the null hypothesis. There is evidence that the population slope is greater than 10.
+
+**There is evidence that the expected waiting time for the next eruption is greater than 10 minutes per minute increase in the current eruption.**
+
 
 ## (d) The 95% confidence interval ...
-for the mean time to next eruption for current eruptions lasting 4.5 minutes is (80.8134, 82.7022) minutes. Compute the corresponding 95% prediction interval for the time to next eruption if the next eruption lasts 4.5 minutes. (6)
+for the mean time to next eruption for current eruptions lasting 4.5 minutes is (80.8134, 82.7022) minutes. 
+
+Compute the corresponding 95% prediction interval for the time to next eruption if the next eruption lasts 4.5 minutes. (6)
+
+**2d Work**
 
 
+
+# Question 3 (Do not use R) 
+An experiment is conducted to study the relationship between the speed of a car, in miles per hour (mph), and its stopping distance, in feet (ft). It is proposed to study this relationip using a simple linear regression model, Y = B0+B1X+e. Using least squares, the estimators of the regression coeficients are
+
+.....
+
+
+The output for this question consists of some printout from R: scatterplot of Y against X, the residual plot, and a plot of the prole log-likelihoods for the parameter, lambda, of the Box-Cox power transformation.
+
+One property of the residuals is that
+
+(1)
+sum of residuals = 0
+
+
+## (a) Based only on property (1), what should we expect to see in a residual plot (plot of residuals against fitted values)? (2)
+
+
+
+
+
+## (b) Based only on property (1), what should we expect to see in a scatterplot of Y against X? (2)
+
+
+
+## (c) Based on the output, comment on ...
+whether, and how (if necessary), you would transform the response variable or the predictor, or both. Be sure to address what the scatterplot, the residual plot, and the plot of the prole log-likelihoods of the Box-Cox transformation are informing you regarding the need to transform any of the variables. (4)

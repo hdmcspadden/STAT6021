@@ -92,40 +92,69 @@ acf(cornModel.yield2.sqrtx$residuals, main="ACF of Residuals: y^2 sqrt(x)")
 cornnitFiltered = cornnit[cornnit[, "nitrogen"]>0, ]
 
 
-#q2dfilteredplots}
+#q2dWorkWithFiltered}
 detach(cornnit)
 attach(cornnitFiltered)
 
-yield2.filtered = yield^2 # square the filtered y
-
-sqrt.nitrogen.filtered = sqrt(nitrogen)
-
-cornModel.filtered.yield2.sqrtx <-lm(yield2.filtered~sqrt.nitrogen.filtered)
+cornModel.filtered <-lm(yield~nitrogen)
 
 par(mfrow=c(1,2)) # 1 rows, 2 columns - there will be three panes to look through
 
-# scatter plot filtered yield2, invx
-plot(x=sqrt.nitrogen.filtered, y=yield2.filtered, main='Scatter Plot Filtered y^2 sqrt(x)', xlab = 'sqrt(nitrogen)', ylab = 'Yield^2')
-abline(cornModel.filtered.yield2.sqrtx,col="red")
+# scatter plot filtered model
+plot(x=nitrogen, y=yield, main='Scatter Plot Filtered', xlab = 'nitrogen', ylab = 'yield')
+abline(cornModel.filtered,col="red")
 
-#residual plot filtered yield2, invx
-plot(cornModel.filtered.yield2.sqrtx$fitted.values,cornModel.filtered.yield2.sqrtx$residuals, main="Residual Plot: filtered y^2 sqrt(x)")
+#residual plot filtered model
+plot(cornModel.filtered$fitted.values,cornModel.filtered$residuals, main="Residual Plot: Filtered")
 abline(h=0,col="red")
 
-# boxcox of filtered y^2 sqrt(x) model
-boxcox(cornModel.filtered.yield2.sqrtx, lambda = seq(-0.5, 2.5, 0.01))
+# boxcox of filtered model
+boxcox(cornModel.filtered, lambda = seq(-0.5, 2.5, 0.01))
 
-#QQ plot of filtered y^2 sqrt(x) model
-qqnorm(cornModel.filtered.yield2.sqrtx$residuals) 
-qqline(cornModel.filtered.yield2.sqrtx$residuals, col="red")
+#QQ plot of filtered model
+qqnorm(cornModel.filtered$residuals) 
+qqline(cornModel.filtered$residuals, col="red")
 
 #ACF plot
-acf(cornModel.filtered.yield2.sqrtx$residuals, main="ACF of Residuals: Filtered y^2 sqrt(x)")
+acf(cornModel.filtered$residuals, main="ACF of Residuals: Filtered")
+
+#q2dAnovaFiltered}
+anova(cornModel.filtered)
+
+#q2dFilteredTransformations}
+yield.t.filtered = 1/yield
+
+cornModel.t.filtered <-lm(yield.t.filtered~nitrogen)
+
+par(mfrow=c(1,2)) # 1 rows, 2 columns - there will be three panes to look through
+
+# scatter plot filtered transformed
+plot(x=nitrogen, y=yield.t.filtered, main='Scatter Plot Filtered 1/y', xlab = 'nitrogen', ylab = '1/y')
+abline(cornModel.t.filtered,col="red")
+
+#residual plot filtered transformed
+plot(cornModel.t.filtered$fitted.values,cornModel.t.filtered$residuals, main="Residual Plot: filtered 1/y")
+abline(h=0,col="red")
+
+#QQ plot of filtered transformed
+qqnorm(cornModel.t.filtered$residuals) 
+qqline(cornModel.t.filtered$residuals, col="red")
+
+#ACF plot
+acf(cornModel.t.filtered$residuals, main="ACF of Residuals: Filtered 1/y")
+
+anova(cornModel.t.filtered)
 
 #q2dsummaryAnovaFiltered}
-summary(cornModel.filtered.yield2.sqrtx)
-anova(cornModel.filtered.yield2.sqrtx)
+summary(cornModel.t.filtered)
+anova(cornModel.t.filtered)
 
 #q2dsummaryAnovaUnfiltered}
 summary(cornModel.yield2.sqrtx)
 anova(cornModel.yield2.sqrtx)
+
+#q3c1}
+(exp(-0.44993) - 1) * 100
+
+#q3c2}
+exp(1.50792)

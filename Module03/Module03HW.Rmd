@@ -210,46 +210,86 @@ cornnitFiltered = cornnit[cornnit[, "nitrogen"]>0, ]
 
 ```
 
-Next, apply the y^2 transformation and the sqrt(x) transformation, create the model, and plot the data.
+First determine what transformations I would like to make on the cornnitFiltered data set by creating various plots
 
-```{r q2dfilteredplots}
+```{r q2dWorkWithFiltered}
 detach(cornnit)
 attach(cornnitFiltered)
 
-yield2.filtered = yield^2 # square the filtered y
-
-sqrt.nitrogen.filtered = sqrt(nitrogen)
-
-cornModel.filtered.yield2.sqrtx <-lm(yield2.filtered~sqrt.nitrogen.filtered)
+cornModel.filtered <-lm(yield~nitrogen)
 
 par(mfrow=c(1,2)) # 1 rows, 2 columns - there will be three panes to look through
 
-# scatter plot filtered yield2, invx
-plot(x=sqrt.nitrogen.filtered, y=yield2.filtered, main='Scatter Plot Filtered y^2 sqrt(x)', xlab = 'sqrt(nitrogen)', ylab = 'Yield^2')
-abline(cornModel.filtered.yield2.sqrtx,col="red")
+# scatter plot filtered model
+plot(x=nitrogen, y=yield, main='Scatter Plot Filtered', xlab = 'nitrogen', ylab = 'yield')
+abline(cornModel.filtered,col="red")
 
-#residual plot filtered yield2, invx
-plot(cornModel.filtered.yield2.sqrtx$fitted.values,cornModel.filtered.yield2.sqrtx$residuals, main="Residual Plot: filtered y^2 sqrt(x)")
+#residual plot filtered model
+plot(cornModel.filtered$fitted.values,cornModel.filtered$residuals, main="Residual Plot: Filtered")
 abline(h=0,col="red")
 
-# boxcox of filtered y^2 sqrt(x) model
-boxcox(cornModel.filtered.yield2.sqrtx, lambda = seq(-0.5, 2.5, 0.01))
+# boxcox of filtered model
+boxcox(cornModel.filtered, lambda = seq(-0.5, 2.5, 0.01))
 
-#QQ plot of filtered y^2 sqrt(x) model
-qqnorm(cornModel.filtered.yield2.sqrtx$residuals) 
-qqline(cornModel.filtered.yield2.sqrtx$residuals, col="red")
+#QQ plot of filtered model
+qqnorm(cornModel.filtered$residuals) 
+qqline(cornModel.filtered$residuals, col="red")
 
 #ACF plot
-acf(cornModel.filtered.yield2.sqrtx$residuals, main="ACF of Residuals: Filtered y^2 sqrt(x)")
+acf(cornModel.filtered$residuals, main="ACF of Residuals: Filtered")
+```
+Analysis of the filtered scatter and residual plot: The residual variance is not standard; however the zero mean of the residuals holds.
+
+Analysis of the Box-Cox plot: 1 is within the CI for lambda so we don't have an obvious exponential transformation.
+
+Analysis of the NOrmal Q-Q plot: the residuals do have a very nice normal distribution,
+
+Analysis of the ACF plot: The residuals are uncorrelated.
+
+What does the ANOVA table tell us about these data?
+
+```{r q2dAnovaFiltered}
+anova(cornModel.filtered)
+```
+Our p-value is not significant from the ANOVA table. The y needs a transformation to correct the variance, but because 1 is within the CI of lambda there is not an obvious exponential transformation.
+
+x does not need a transformation because the mean of the residuals is 0.
+
+As a final effort to create a meaningful linear model from the filtered data I will apply an inverse transformation to y because in the original plot there seemed to be a plateau curve, but without a y limit.
+
+``` {r q2dFilteredTransformations}
+yield.t.filtered = 1/yield
+
+cornModel.t.filtered <-lm(yield.t.filtered~nitrogen)
+
+par(mfrow=c(1,2)) # 1 rows, 2 columns - there will be three panes to look through
+
+# scatter plot filtered transformed
+plot(x=nitrogen, y=yield.t.filtered, main='Scatter Plot Filtered 1/y', xlab = 'nitrogen', ylab = '1/y')
+abline(cornModel.t.filtered,col="red")
+
+#residual plot filtered transformed
+plot(cornModel.t.filtered$fitted.values,cornModel.t.filtered$residuals, main="Residual Plot: filtered 1/y")
+abline(h=0,col="red")
+
+#QQ plot of filtered transformed
+qqnorm(cornModel.t.filtered$residuals) 
+qqline(cornModel.t.filtered$residuals, col="red")
+
+#ACF plot
+acf(cornModel.t.filtered$residuals, main="ACF of Residuals: Filtered 1/y")
+
+anova(cornModel.t.filtered)
 
 ```
-The model still has more variance in the residuals than I would expect; however, the mean of residuals issue has been addressed. There are no longer two clusters. The residuals are uncorrelated.
 
-I will check the summary and anova tables for the filtered y^2 sqrt(x) model:
+After trying several transformations on yield (above I show the inverse y transformation results), the model displays more variance in the residuals than I would expect; however, the mean of residuals issue has been addressed. There are no longer two clusters. The residuals are uncorrelated.
+
+I will check the summary and anova tables for the filtered transformed:
 
 ```{r q2dsummaryAnovaFiltered}
-summary(cornModel.filtered.yield2.sqrtx)
-anova(cornModel.filtered.yield2.sqrtx)
+summary(cornModel.t.filtered)
+anova(cornModel.t.filtered)
 ```
 
 I also want to review the anova table for the unfiltered y^2 sqrt(x) model:
@@ -305,13 +345,14 @@ If we want to present this as a percentage:
 
 y, the solution concentration, decreases by (exp(-0.44993) - 1) * 100 % == **decreases by 36.2327%** for every unit increase in x: time.
 
-```{r}
+```{r q3c1}
 (exp(-0.44993) - 1) * 100
+
 ```
 
 **Interpretation of B0 after an ln transformation on y**
 The y intercept is ln(B0). In our case, the y intercept is exp(1.50792) (e^1.50792), or 4.5173.
-```{r}
+```{r q3c2}
 exp(1.50792)
 ```
 When time is 0, the concentration is 4.5173.
