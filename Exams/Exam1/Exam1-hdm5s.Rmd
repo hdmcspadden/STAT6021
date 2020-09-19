@@ -166,44 +166,37 @@ MS-Residual = 5.914^2 = **34.9754** == sigma^2
 
 and
 
-SS-Residual = sigma^2 * (n-2) = 34.9754 * 270 == **9443.358**
+SS-Residual = MS-Residual * (n-2) = 34.9754 * 270 == **9443.358**
 
 and
 
-seB1-hat = sqrt(MS-res / Sxx)
+R2 = 0.8115
 
-Sxx = MS-res / (seB1-hat)^2 = 34.9754 / (.3148)^2 = **352.9338**
+R2 = 1 - (SS-E / SS-T)
 
-and
+SS-T = 9443.358 / (1 - 0.8115) = **50097.3899**
 
-B1-hat = Sxy/Sxx
-
-Sxy = B1-hat * Sxx = 10.7296 * 352.9338 = **375.2721**
-
-and
-
-SS-R = B1-hat * Sxy = 10.7296 * 375.2721 = **4026.5195**
-
-and
-
-SS-Total = SS-R + SS-Res = 4026.5195 + 9443.358 = 
+SS-R = SS-T - SS-E = **40654.0319**
 
 and 
 
-MS-Regression = SS-Regression / 1 = **4026.5195**
+MS-Regression = SS-R / 1 = **40654.0319**
 
 and 
 
-F-stat = MS-R / MS-res = 4026.5195 / 34.9754 = **115.1243**
+F-stat = MS-R / MS-res = 40654.0319 / 34.9754 = **1162.3607**
 
 
 | Source of Variation   | DF      | SS    |  MS                   | F-stat    |
 
 |:---:|:---:|:---:|:---:|:---:|:---:|
 
-| Regression            | 1       | **4026.5195** | **4026.5195** | **115.1243** | 
+| Regression            | 1       | **40654.0319** | **40654.0319** | **1162.3607** | 
 | Error                 | **270** | **9443.358**  | **34.9754**   | ***       |
-| Total                 | **271** | **13469.88**  | ***           | ***
+| Total                 | **271** | **50097.3899**  | ***           | ***
+```{r}
+67247.4268 / 34.9754
+```
 
 
 ## (c) A researcher believes ...
@@ -248,7 +241,7 @@ Compute the corresponding 95% prediction interval for the time to next eruption 
 
 **2d Work**
 
-
+NEED TO DO!!!
 
 # Question 3 (Do not use R) 
 An experiment is conducted to study the relationship between the speed of a car, in miles per hour (mph), and its stopping distance, in feet (ft). It is proposed to study this relationip using a simple linear regression model, Y = B0+B1X+e. Using least squares, the estimators of the regression coeficients are
@@ -265,6 +258,7 @@ sum of residuals = 0
 
 
 ## (a) Based only on property (1), what should we expect to see in a residual plot (plot of residuals against fitted values)? (2)
+
 
 
 
