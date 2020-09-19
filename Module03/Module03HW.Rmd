@@ -1,9 +1,11 @@
 ---
 title: "Module03HW"
 author: "Diana McSpadden"
-UID: hdm5s
 date: "9/10/2020"
-output: html_document
+output:
+  word_document: default
+  html_document: default
+UID: hdm5s
 ---
 
 # Assignment: Stat 6021: Homework Set 3
@@ -91,7 +93,7 @@ abline(h=0,col="red")
 
 The residual plot both displays a lack of standard variance in the residuals and a non-0 mean of the residuals. I recommend a transformation on the response variable first, to attempt to address the variance issue, because it may also address the non-zero mean issue.
 
-I recommend an inverse y transformation because the original scatter plot resembles a negative curvature. I do not see a y limit demonstrated in the plot which would recommend a log transformation.
+I recommend reviewing the Box-Cox to determine the correct y transformation.
 
 ### 2c: Create a Box Cox plot for the profile log likelihoods. 
 ```{r q2cBoxCox}
@@ -107,6 +109,8 @@ boxcox(cornModel, lambda = seq(1.4, 4.5, 0.01))
 1 does not lie within the confidence interval, thus I recommend applying a transformation to the response variable: yield.
 
 ### 2d: Perform the necessary transformation to the data. 
+
+
 Refit the regression with the transformed variable(s) and assess the regression assumptions. You may have to apply transformations a number of times. Be sure to explain the reason behind each of your transformations. Perform the needed transformations until the regression assumptions are met. What is the regression equation that you will use?
  
 Note: in part 2d, there are a number of solutions that will work. You must clearly document your reasons for each of your transformations.
@@ -114,227 +118,154 @@ Note: in part 2d, there are a number of solutions that will work. You must clear
 
 **First**, I am going to start with the variance issue, because it may address the non-zero mean issue.
 
-I believe the original scatter plot demonstrates a negative curvature, indicating an inverse transformation on y.
+Based on the Box-Cox plot I will select a lambda of 2, which if within the 95% CI for lambda. I am using lambda 2 because it is easier for me to conceptualize than other choices within the CI.
 
 
 ```{r q2dTransform1}
-# y' = 1/y
-inv.yield <- 1/yield 
-cornModel.invy <-lm(inv.yield~nitrogen)
+# y' = y^2
+yield2 <- yield^2
+cornModel.yield2 <-lm(yield2~nitrogen)
+
+par(mfrow=c(1,2)) # 1 rows, 2 columns - there will be three panes to look through
+
+# scatter plot transformed y
+plot(x=nitrogen, y=yield2, main='Scatter Plot y^2 Trans', xlab = 'Nitrogen (lbs per acre)', ylab = 'Yield^2')
+abline(cornModel.yield2,col="red")
+
 #residual plot of transformed y
-plot(cornModel.invy$fitted.values,cornModel.invy$residuals, main="TRANSFORMED: Plot of Residuals against Fitted Values")
+plot(cornModel.yield2$fitted.values,cornModel.yield2$residuals, main="Residual Plot: y^2")
 abline(h=0,col="red")
+
+# boxcox of y^2 model
+boxcox(cornModel.yield2, lambda = seq(0.5, 2.5, 0.01))
+
+#QQ plot
+qqnorm(cornModel.yield2$residuals) 
+qqline(cornModel.yield2$residuals, col="red")
+
+#ACF plot
+acf(cornModel.yield2$residuals, main="ACF of Residuals: y^2")
 ```
 
-The inverse transformation, one its own did not address the residual variance in the cornnit data. Additional transformations are needed if there is a simple linear relationship between nitrogen and yield.
+Analysis of the residual plot: I am still not thrilled with the variance, and the non-0 mean problem still exists.
 
-I will attempt to address the non-zero mean of residuals with a transformation of the x variable: nitrogen.
+Analysis of the Box-Cox plot: 1 is within the CI for lambda so we don't have an obvious exponential transformation.
 
-Because of the 0 values, before applying a inverse function a correction to the x value must be made. The correction will be determined by investigating the min value of x, then correcting all values by + (min-non-zero(x)/2). Then a 1/x transformation will be applied.
+Analysis of the NOrmal Q-Q plot: the residuals do have a very nice normal distribution,
 
-The residual plot of the 1/y transformation will be placed next to the residual plot of the 1/y & 1/x transformation for comparison.
+Analysis of the ACF plot: The residuals ARE correlated, this issue needs to be addressed.
+
+I want to try to address two issue: the non-0 mean, and the correlation of the residuals. My next transformation will be of the predictor variable. My transformation is based on the appearance of the scatter plot, which I believe appears to have decreasing parabola curve, so I will use a sqrt(x) transformation.
+
 
 ```{r qdTransformation2}
 
-par(mfrow=c(1,2))
-plot(cornModel.invy$fitted.values,cornModel.invy$residuals, main="TRANSFORM 1: 1/y")
+#x' = sqrt(x)
+
+sqrt.nitrogen = sqrt(nitrogen)
+
+
+cornModel.yield2.sqrtx <-lm(yield2~sqrt.nitrogen)
+
+
+par(mfrow=c(1,2)) # 1 rows, 2 columns - there will be three panes to look through
+
+# scatter plot yield2, sqrt(x)
+plot(x=sqrt.nitrogen, y=yield2, main='Scatter Plot y^2 sqrt(x)', xlab = 'sqrt(nitrogen)', ylab = 'Yield^2')
+abline(cornModel.yield2.sqrtx,col="red")
+
+#residual plot yield2, sqrt(x)
+plot(cornModel.yield2.sqrtx$fitted.values,cornModel.yield2.sqrtx$residuals, main="Residual Plot: y^2 sqrt(x)")
 abline(h=0,col="red")
 
+# boxcox of y^2 model, sqrt(x)
+boxcox(cornModel.yield2.sqrtx, lambda = seq(0.5, 2.5, 0.01))
 
-#x' = (x + ((min(x)/2)))
-minimumNonZeroNit = min(nitrogen[nitrogen > 0])
-inv.nitrogen = 1 / (nitrogen + (minimumNonZeroNit /2))
-cornModel.invyx <-lm(inv.yield~inv.nitrogen)
-#residual plot of transformed y
-plot(cornModel.invyx$fitted.values,cornModel.invyx$residuals, main="TRANSFORM 2: 1/y & 1/(transformed x)")
-abline(h=0,col="red")
+#QQ plot of y^2 model, sqrt(x)
+qqnorm(cornModel.yield2.sqrtx$residuals) 
+qqline(cornModel.yield2.sqrtx$residuals, col="red")
+
+#ACF plot of y^2 model, sqrt(x)
+acf(cornModel.yield2.sqrtx$residuals, main="ACF of Residuals: y^2 sqrt(x)")
 
 
 ```
-The 1/x transformation successfully addresses the non-zero mean of the residuals, but also results in two clusters. The clusters represent the data results where 0 nitrogen was applied to the field, and where nitrogen was applied to the field. 
+The  y^2 and sqrt(x) transformations successfully address the non-zero mean of the residuals, but also results in two clusters. The clusters represent the data results where no nitrogen was applied to the field, and where nitrogen was applied to the field. 
 
-The lack of constant variance is caused by the data for fields where no nitrogen was applied to the field. If these data were excluded the constant variance and the non-0 mean of residuals may be addressed and a linear model made possible.
+The variance of the residual values for the group where nitrogen was applied seems close to constant. The nitrogen=0 cluster has a different variance than the other cluster, which also leads me to want to filter the nitrogen = 0 values from the data set.
 
+The Box-Cox plot still has 1 within the CI, indicating we do not need an exponential transformation of y.
 
-Checking the Box-Cox after the 1/y transformation can confirm, or not, the y transformation.
+The QQ plot shows normal distribution of residuals.
 
-These show that that the 1/y is not the correct response variable transformation.
-```{r}
-par(mfrow=c(1,2))
-boxcox(cornModel.invy, lambda = seq(-4, -1.2, 0.01))
+The sqrt(x) transformation addressed the correlation of residuals and they are now uncorrelated.
 
-boxcox(cornModel.invyx, lambda = seq(-3, -1, 0.01))
-```
+Other than the clustering I am pleased with the model.
 
-1 is not within the 95% CI for lambda, thus, the 1/y transformation was not an appropriate choice for a transformation.
-
-Attempt a y' = y^2 on the cornModel.invyx the based on the cornModel.invyx model's Box-Cox. This is done understanding that there will not be a straightforward linearization of the model.
-
-Plot the residual plot and Box-Cox for this model
-
-```{r}
-secondtrans.yield = inv.yield^(-2)
-
-cornModel.secondyinvx <-lm(secondtrans.yield~inv.nitrogen)
-
-par(mfrow=c(1,2))
-
-plot(cornModel.secondyinvx$fitted.values,cornModel.secondyinvx$residuals, main="1/x (1/y)^-2: Residuals against Fitted Values")
-abline(h=0,col="red")
-
-boxcox(cornModel.secondyinvx, lambda = seq(0.5, 2, 0.01))
-```
-
-1 is now within my CI for lambda after the (1/y)^-2. The residual plot demonstrated that the mean of the residuals is approximately 0, and the variance of the residuals appears approximately standard. I now have a model that appears to meet several of the linear model assumptions, ***but** I have two clusters of values.
-
-My current transformations are:
-x' = 1/x
-y'1 = (1/y)
-y'2 = (y'1)^-2
-
-
-Before attempting additional transformation, residual correlation or lack of correlation is of interest to determine if additional linear model assumptions are violated. The ACF graph with the original data set is presented.
-
-```{r q2dACFComparisonTransformation1}
-par(mfrow=c(1,1))
-acf(cornModel.secondyinvx$residuals, main="ACF of Residuals: 1/x, (1/y)^-2")
-
-```
-
-The ACF chart shows no correlation between residuals after the transformations.
-
-I must still address the 2 clusters of values. I believe these are caused by the nitrogen = 0 
-
-Removing nitrogen = 0 values will change the inquiry to: "When nitrogen has been applied to field, is there a linear relationship between yield, and nitrogen amount?"
-
-First, create a new data set that has removed the x = 0 values.
+To address the clusters, first, create a new data set that has removed the x = 0 values.
 
 ```{r q2dRemovex=0}
 #head(cornnit)
 cornnitFiltered = cornnit[cornnit[, "nitrogen"]>0, ]
 
-cornnitFilteredModel = lm(cornnitFiltered$yield~cornnitFiltered$nitrogen)
-#head(cornnitFiltered)
 ```
 
-Compare the the following (each is a row in a 2 x 2 comparison of plots)
-1. Original data set scatter plot to 0-filtered data set scatter plot
-2. Original data set residual plot to 0-filtered data set residual plot
+Next, apply the y^2 transformation and the sqrt(x) transformation, create the model, and plot the data.
 
+```{r q2dfilteredplots}
+detach(cornnit)
+attach(cornnitFiltered)
 
-``` {r q2dRunScatterResidualPlots}
-par(mfrow=c(2,2))
+yield2.filtered = yield^2 # square the filtered y
 
-# Original data set scatter plot
-plot(x=cornnit$nitrogen, y=cornnit$yield, main='Original Scatter Plot', xlab = 'Nitrogen (lbs per acre)', ylab = 'Yield (bushels per acre')
-abline(cornModel,col="red")
+sqrt.nitrogen.filtered = sqrt(nitrogen)
 
-# 0-filtered data set scatter plot
-plot(x=cornnitFiltered$nitrogen, y=cornnitFiltered$yield, main='0-Filtered Scatter Plot', xlab = 'Nitrogen (lbs per acre)', ylab = 'Yield (bushels per acre')
-abline(cornnitFilteredModel,col="red")
+cornModel.filtered.yield2.sqrtx <-lm(yield2.filtered~sqrt.nitrogen.filtered)
 
-# Original data set residual plot
-plot(cornModel$fitted.values,cornModel$residuals, main="Original Residuals Plot")
+par(mfrow=c(1,2)) # 1 rows, 2 columns - there will be three panes to look through
+
+# scatter plot filtered yield2, invx
+plot(x=sqrt.nitrogen.filtered, y=yield2.filtered, main='Scatter Plot Filtered y^2 sqrt(x)', xlab = 'sqrt(nitrogen)', ylab = 'Yield^2')
+abline(cornModel.filtered.yield2.sqrtx,col="red")
+
+#residual plot filtered yield2, invx
+plot(cornModel.filtered.yield2.sqrtx$fitted.values,cornModel.filtered.yield2.sqrtx$residuals, main="Residual Plot: filtered y^2 sqrt(x)")
 abline(h=0,col="red")
 
-# 0-filtered data set residual plot
-plot(cornnitFilteredModel$fitted.values,cornnitFilteredModel$residuals, main="0-Filtered Residual Plot")
-abline(h=0,col="red")
-```
+# boxcox of filtered y^2 sqrt(x) model
+boxcox(cornModel.filtered.yield2.sqrtx, lambda = seq(-0.5, 2.5, 0.01))
 
-The non-zero residual mean issue has been addressed by removing the x = 0 values.
+#QQ plot of filtered y^2 sqrt(x) model
+qqnorm(cornModel.filtered.yield2.sqrtx$residuals) 
+qqline(cornModel.filtered.yield2.sqrtx$residuals, col="red")
 
-We must investigate if the correlation of the residuals has been addressed by removing the x = 0 values.
-
-Plot the Original data set ACF plot and compare to the 0-filtered data set ACF plot
-
-``` {r q2dACFComparison}
-par(mfrow=c(1,2))
-
-# Original ACF
-acf(cornModel$residuals, main="ACF of Residuals: Original")
-
-# 0-filtered ACF
-acf(cornnitFilteredModel$residuals, main="ACF of Residuals: 0-Filtered")
-```
-From the ACF plots we see that removing the x = 0 values has addressed the correlation of residuals issue.
-
-Let's look at the p value from the filtered model which demonstrated we do not yet have a reliable linear model.
-
-```{r}
-summary(cornnitFilteredModel)
-```
-!!!!!!
-HELP HERE !!!!!
-The model does meet the critical value test, but the F-statistic is not statistically significant.
-!!!!!!
-
-There is still issue of the non-standard variance of the residuals. I will investigate the Box-Cox for the 0-filtered dataset.
-```{r}
-par(mfrow=c(1,1))
-boxcox(cornnitFilteredModel, lambda = seq(-2, 5, 0.01))
-```
-Both 0 and 1 are within the CI of lambda. The peak is closer to 1, which indicates we do not need to transform the response variable.
-
-I want to compare plots of three models:
-1. the original data set: ORIGINAL
-2. the  1/x, (1/y)^-2: MANY TRANSFORMATIONS
-3. the 0-filtered: 0-FILTERED
-
-
-
-``` {r q2dRunPlots}
-par(mfrow=c(1,3))
-
-# Original data set residual plot
-plot(cornModel$fitted.values,cornModel$residuals, main="ORIGINAL")
-abline(h=0,col="red")
-
-# 1/x (1/y)^-2
-plot(cornModel.secondyinvx$fitted.values,cornModel.secondyinvx$residuals, main="MANY TRANSFORMATIONS")
-abline(h=0,col="red")
-
-# 0-filtered
-plot(cornnitFilteredModel$fitted.values,cornnitFilteredModel$residuals, main="0 filtered")
-abline(h=0,col="red")
+#ACF plot
+acf(cornModel.filtered.yield2.sqrtx$residuals, main="ACF of Residuals: Filtered y^2 sqrt(x)")
 
 ```
-The 0-filtered model appears to address the variance and mean-0 assumptions, and does not create the two-cluster problem.
+The model still has more variance in the residuals than I would expect; however, the mean of residuals issue has been addressed. There are no longer two clusters. The residuals are uncorrelated.
 
-I also want to compare the three models on the ACF plot:
-```{r}
-par(mfrow=c(1,3))
+I will check the summary and anova tables for the filtered y^2 sqrt(x) model:
 
-# Original ACF
-acf(cornModel$residuals, main="ORIGINAL")
-
-# 1/x (1/y)^-2 ACF
-acf(cornModel.secondyinvx$residuals, main="ORIGINAL")
-
-# 0-filtered ACF
-acf(cornnitFilteredModel$residuals, main="0 Filtered")
+```{r q2dsummaryAnovaFiltered}
+summary(cornModel.filtered.yield2.sqrtx)
+anova(cornModel.filtered.yield2.sqrtx)
 ```
-Both the "MANY TRANSFORMATIONS" and "0-Filtered" models address the correlation of residuals issue in the original model.
 
-What are the summaries for each model?
-
-```{r}
-summary(cornModel.secondyinvx)
-```
-The "Many Transformations" model is statistically significant based on the p-value.
-
-```{r}
-summary(cornnitFilteredModel)
+I also want to review the anova table for the unfiltered y^2 sqrt(x) model:
+```{r q2dsummaryAnovaUnfiltered}
+summary(cornModel.yield2.sqrtx)
+anova(cornModel.yield2.sqrtx)
 ```
 
 
 **Conclusion:**
 
-If we need to include the nitrogen=0 observations in our model, then the 1/x, (1/y)^-2 model meets the assumptions necessary for a linear model. However, this model is difficult to express in a linearized function.
+Surprisingly, the unfiltered y^2 sqrt(x) model has passes the hypothesis test. This model meets the assumptions necessary for a linear model. However, this model is difficult to express in a linearized function.
 
-If we change the hypothesis to whether there is a linear relationship between yield and nitrogen applied, only when a non-zero amount of nitrogen is applied, then the 0-filtered model, with no transformations get's us close to a linear model, but the F-statistic is still not significant.
+If we change the hypothesis to whether there is a linear relationship between yield and nitrogen applied, only when a non-zero amount of nitrogen is applied, then the 0-filtered model with the y^2 sqrt(x) transformations still displays excess variance in the residuals, and the F-statistic does not pass the hypothesis test.
 
-**My conclusion is that we need more predictor data than nitrogen applied to predict yield using a linear model.**
+**With multiple transformations (y' = y^2 and x = sqrt(x)) I was able to create a model that meets the linear regression assumptions.**
 
 ## Question 3 (No R required) 
 A chemist studied the concentration of a solution, y, over time, x, by fitting a simple linear regression. The scatterplot of the dataset, and the residual plot from the regression model are shown in Figure 1.
@@ -368,14 +299,14 @@ The chemist is studying the concentration of a solution over time.
 A ln transformation was applied to the response variable, y.
 
 **Interpretation of B1 after an ln transformation on y**
-For each change in x, y changes by the multiple (-)exp(0.44993).
+For each change in x, y changes by the multiple exp(-0.44993).
 
 If we want to present this as a percentage:
 
-y, the solution concentration, decreases by (exp(0.44993) - 1) * 100 % == **decreases by 56.8202%** for every unit increase in x, time.
+y, the solution concentration, decreases by (exp(-0.44993) - 1) * 100 % == **decreases by 36.2327%** for every unit increase in x: time.
 
 ```{r}
-(exp(0.44993) - 1) * 100
+(exp(-0.44993) - 1) * 100
 ```
 
 **Interpretation of B0 after an ln transformation on y**
