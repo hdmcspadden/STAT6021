@@ -64,7 +64,7 @@ criticalValue
 
 ### Answer 1b
 
-The test statistic is **1.551** which is not greater than the criticalValue: 2.0639, and our model has a p-value of **0.134** which is not less than a 0.05 significance level. This model does not reject our null hypothesis.
+The test statistic is **1.551** which is not greater than the criticalValue: 2.0639, and our model has a p-value of **0.134** which is not less than a 0.05 significance level. Based on this, I fail to reject the null hypothesis.
 
 ## (c) Use R to derive the 95% confidence interval for the population slope of the regression line. 
 
@@ -158,45 +158,68 @@ DF-Regression = 1
 
 DF-Residual/Error = n-2 = 272 - 2 = **270**
 
+
 DF-Total = n-1 = 272 - 1 = **271**
 
-seB1-hat = .3148
+seB1-hat = .3148 # given in summary table
 
-MS-Residual = 5.914^2 = **34.9754** == sigma^2 
+MSE = 5.914^2 = **34.9754** == sigma^2 # 5.914 given in summary table
+```{r}
+MSE = 5.914^2
+MSE
+```
 
 and
 
-SS-Residual = MS-Residual * (n-2) = 34.9754 * 270 == **9443.358**
+SS-Error = MS-Residual * (n-2) = 34.9754 * 270 == **9443.358**
+```{r}
+SSE = MSE * 270
+SSE
+```
 
 and
 
-R2 = 0.8115
+R2 = 0.8115 # given in summary table
 
 R2 = 1 - (SS-E / SS-T)
 
-SS-T = 9443.358 / (1 - 0.8115) = **50097.3899**
+SS-T = 9443.358 / (1 - 0.8115) = **50097.38**
+```{r}
+SST = SSE / (1 - .8115)
+SST
+```
 
 SS-R = SS-T - SS-E = **40654.0319**
+```{r}
+SSR = SST - SSE
+SSR
+```
 
 and 
 
-MS-Regression = SS-R / 1 = **40654.0319**
+MSR = SSR / 1 = **40654.03**
+```{r}
+MSR = SSR / 1
+MSR
+```
 
 and 
 
-F-stat = MS-R / MS-res = 40654.0319 / 34.9754 = **1162.3607**
+F-stat = MSR / MSE = 40654.0319 / 34.9754 = **1162.361**
+```{r}
+FSTAT = MSR / MSE
+FSTAT
+```
+
 
 
 | Source of Variation   | DF      | SS    |  MS                   | F-stat    |
 
 |:---:|:---:|:---:|:---:|:---:|:---:|
 
-| Regression            | 1       | **40654.0319** | **40654.0319** | **1162.3607** | 
+| Regression            | 1       | **40654.03** | **40654.03** | **1162.361** | 
 | Error                 | **270** | **9443.358**  | **34.9754**   | ***       |
-| Total                 | **271** | **50097.3899**  | ***           | ***
-```{r}
-67247.4268 / 34.9754
-```
+| Total                 | **271** | **50097.38**  | ***           | ***
 
 
 ## (c) A researcher believes ...
@@ -229,19 +252,70 @@ critvalueq2c = qt(.95,270) # one-sided, so use .95 instead of .975 which we woul
 critvalueq2c
 
 ```
-2.3177 is greater than 1.6505, so we reject the null hypothesis. There is evidence that the population slope is greater than 10.
+2.3177 is greater than 1.6505; I reject the null hypothesis. There is evidence that the population slope is greater than 10.
 
 **There is evidence that the expected waiting time for the next eruption is greater than 10 minutes per minute increase in the current eruption.**
 
 
 ## (d) The 95% confidence interval ...
-for the mean time to next eruption for current eruptions lasting 4.5 minutes is (80.8134, 82.7022) minutes. 
+for the mean time to next eruption for current eruptions lasting 4.5 minutes is (80.8134, 82.7022) minutes.
 
 Compute the corresponding 95% prediction interval for the time to next eruption if the next eruption lasts 4.5 minutes. (6)
 
 **2d Work**
+```{r}
+criticalvalue2d = qt(.975,270)
+print(paste("Our Critical Value: ",criticalvalue2d))
 
-NEED TO DO!!!
+yhatforx = 33.4744 + (10.7296 * 4.5)
+print(paste("Our y0-hat: ",yhatforx))
+
+print(paste("Our MS-residual: ",MSE))
+
+n = 272
+print(paste("Our n: ",n))
+
+OneOvern = 1/272
+print(paste("Our 1/n: ",OneOvern))
+
+x0 = 4.5
+print(paste("Our x0: ", x0))
+```
+Also, from the CI for the mean that:
+82.7022 = 81.7576 + (1.969) * (sqrt((34.9754) * (.00367 + UNKNOWNPART))
+
+UNKNOWNPART = (x0 - x-bar)^2 / Sxx
+
+We need UNKNOWNPART to calculate the 95% prediction interval.
+
+Using R as a calculator I will solve for UNKNOWNPART
+
+```{r}
+progress1 = 82.7022 - 81.7576
+
+progress2 = progress1 / criticalvalue2d
+#progress2
+
+progress3 = progress2^2
+#progress3
+
+progress4  = progress3 / MSE
+#progress4
+
+UNKNOWNPART = progress4 - OneOvern
+print(paste("Our UNKNOWNPART is: ",UNKNOWNPART))
+
+```
+Our equation to create the 95% CI for the predicted value of minutes until next eruption (y) given x = 4.5 (current erruption minutes) is
+
+81.7576 +- (criticalvalue2d) * sqrt((MSE) * (1 + OneOvern + UNKNOWNPART))
+```{r}
+lower.prediction  = 81.7576 - ((criticalvalue2d) * sqrt((MSE) * (1 + OneOvern + UNKNOWNPART)))
+
+upper.prediction = 81.7576 + ((criticalvalue2d) * sqrt((MSE) * (1 + OneOvern + UNKNOWNPART)))
+
+print(paste("Our 95% CI prediction interval for x of 4.5 is: ", lower.prediction, " - ", upper.prediction))
+```
 
 # Question 3 (Do not use R) 
 An experiment is conducted to study the relationship between the speed of a car, in miles per hour (mph), and its stopping distance, in feet (ft). It is proposed to study this relationip using a simple linear regression model, Y = B0+B1X+e. Using least squares, the estimators of the regression coeficients are
@@ -249,7 +323,7 @@ An experiment is conducted to study the relationship between the speed of a car,
 .....
 
 
-The output for this question consists of some printout from R: scatterplot of Y against X, the residual plot, and a plot of the prole log-likelihoods for the parameter, lambda, of the Box-Cox power transformation.
+The output for this question consists of some printout from R: scatter plot of Y against X, the residual plot, and a plot of the profile log-likelihoods for the parameter, lambda, of the Box-Cox power transformation.
 
 One property of the residuals is that
 
@@ -259,12 +333,20 @@ sum of residuals = 0
 
 ## (a) Based only on property (1), what should we expect to see in a residual plot (plot of residuals against fitted values)? (2)
 
+If the relationship is a simple linear relationship of stopping distance vs. speed, then the residual plot will show the residual value points with approximately the same space above and below a "imagined" or plotted horizontal line for any given x. Using only property (1) I cannot say that for every x the distance is the same/similar, but that for any given x, the space above the horizontal line and the space below the horizontal line is the same/similar.
 
+Looking at the residual plot in "Exam1output.pdf" I see that the points are evenly spaced above and below the plotted y = 0 line, indicating that the mean of the residuals, for a given x, is 0.
 
 
 ## (b) Based only on property (1), what should we expect to see in a scatterplot of Y against X? (2)
 
+Assuming property (1) holds, the scatter plot of stopping distance vs. speed will look like the residual plot, but shifted so that the  plotted or imaginary line plotting the mean point between y's for an x is shifted by the slope of the linear relationship.
 
+I do see this expected plot, and the slope appear positive indicating a positive relationship between stopping distance and speed. At the extreme x end of the chart I do see three points for the extreme x values that only lie above the E(y|x) line, bit for the other values of x the mean = 0 assumption holds.
 
 ## (c) Based on the output, comment on ...
-whether, and how (if necessary), you would transform the response variable or the predictor, or both. Be sure to address what the scatterplot, the residual plot, and the plot of the prole log-likelihoods of the Box-Cox transformation are informing you regarding the need to transform any of the variables. (4)
+whether, and how (if necessary), you would transform the response variable or the predictor, or both. Be sure to address what the scatterplot, the residual plot, and the plot of the profile log-likelihoods of the Box-Cox transformation are informing you regarding the need to transform any of the variables. (4)
+
+The Box-Cox plot indicates that neither lambda = 0, or lambda = 1 are contained within the 95% CI for lambda. 1 not within the 95% CI of lambda indicates that the variance of y as x changes is not standard, which matches what I see on the scatter and residual plots. It appears that the variance increases as x increases (except at the extreme end of x, possibly due to fewer data points, or a real characteristic of the data). The Box-Cox indicates a .5 exponent transformation is appropriate to correct for the lack of contant variance, as .5 is within the CI. So a y' = sqrt(y) transformation is my first choice. This is a transformation on the response variable. I am doing this transformation first for two reasons: 1) if there was a non-zero mean issue with the data the variance correction may address it and 2) I did not see a non-zero mean issue in the scatter or residual plots, thus, I do not recommend a predictor variable transformation.
+
+
