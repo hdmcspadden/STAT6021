@@ -1,0 +1,144 @@
+---
+title: "Module04Sandbox"
+author: "Diana McSpadden"
+date: "9/20/2020"
+output: html_document
+---
+
+# Module 4: Introduction to Multiple Linear Regression
+
+MLR: Multiple linear regression == multiple predictor variables on a single response variable
+
+
+## Essential Questions
+
+1. How is the multiple linear regression model set up?
+
+2. How do we use a multiple linear regression model to assess the relationship between the response variable and the multiple predictors?
+
+3. How similar and different are the MLR and SLR models?
+
+## Learning 
+
+1.  the setup of the multiple linear regression model.
+
+2. Compare and contrast the multiple linear regression model with the simple linear regression model, especially in terms of **interpreting model coefficients** and **results from hypothesis tests** and **confidence intervals**.
+
+3. Use a multiple linear regression model to answer questions regarding the relationship between a quantitative response variable and several predictors, and make predictions.
+
+4. Describe what questions are addressed by the various confidence intervals and hypothesis tests in a multiple linear regression. 
+
+5. Given a data set and a question of interest, **identify what inferential procedure to use in a multiple linear regression setting.**
+
+6. Assess the appropriateness of your multiple linear regression model for data analysis and apply remedial measures to address common problems in building regression models.
+
+## Reading: 
+Sections 3.1 to 3.3.2, 3.4, 3.5.
+
+## 4.1: Introduction to the Lesson
+
+MLR models allow us to examine the effect of multiple predictors on the response variable simultaneously.
+
+Q1: How similar is the MLR model to the SLR model? 
+
+Q2: What are the differences between the MLR model and the SLR model?
+
+## 4.2: Multiple Linear Regression
+
+Read Section 3.1
+
+**Write down the multiple linear regression equation and the multiple linear regression model.**
+
+MLR Equation:
+?????
+
+E(y) = B0 + B1x1 + B2x2 + ... + Bnxn
+
+MLR Module:
+
+y = B0 + B1x1 + B2x2 + ... + Bkxk + e
+
+**Compare and contrast the multiple linear regression equation and the multiple linear regression model. What do each of these describe?**
+
+the MLR module describe k-dimensional space of the regressor variables: x1 ... xj
+
+empirical models == approximating models (adequate of certain ranges of the regressor variables)
+
+Can include polynomials.
+
+Can include **interaction effects**: y = B0 + B1x1 + B2x2 + B12x1x2 + e
+
+Even contour plots that are not linear are considered MLR.
+
+Polynomials and Interaction effects are okay.
+
+Similarities are that you can describe the relationship in the y = B0 + B1x1 + B2x2 + ... + Bnxn notation.
+
+
+**How do we interpret the (partial) regression parameter βj in multiple linear regression, and how does this differ from the interpretation in simple linear regression?**
+
+B0 = if all xi = 0 are in the range of the data, then B0 is mean value of y when xi(0..j) are == 0.
+
+Bj = the expected change in y for xj when all other x's are held constant, i.e. xi(i != j)
+
+## 4.3 Estimating Regression Coefficients in Multiple Linear Regression
+
+### Matrix Notation
+
+Two m x n matrices, A and B. (m rows, n columns)
+
+A(m x n) and B(m x n)
+
+entries in matrix A are aij
+
+entires in matrix B are bij
+
+#### Matrix Addition
+can only happen when two matrices have the same dimensions.
+Add each aij to each bij
+
+A + B = C where cij = aij + bij
+
+Matrix Addition is communtative and associative.
+
+#### Matrix Multiplication
+number of columns in first matrix must equal number of rows in second matrix
+ A(m x n)   E(n x q)
+ 
+**Read Section 3.2**
+
+1. Write down the assumptions for a multiple linear regression model. You may state the assumptions using equations, and then describe what these equations mean. How do these assumptions differ from simple linear regression? Explain how you would assess if the regression assumptions are met.
+
+
+2. Write down the multiple linear regression model using matrix notation. Be sure to write what each matrix is.
+
+
+3. Write down the least-squares estimator of β.
+
+
+4. Write down the hat matrix using matrix notation.
+
+
+5. Write down the predicted / fitted values using matrix notation and using the hat matrix.
+
+
+
+6. Write down the residuals using matrix notation and using the hat matrix.
+
+
+
+7. Write down the expected value and variance of the least-squares estimator, β^.
+
+
+8. Write down the formula for the estimated variance, σ^2, of a multiple linear regression model. How does this differ from simple linear regression?
+
+**In SLR:** sigma^2 = MS-residual == SS-residual / n-2
+
+ 
+ 
+
+
+
+
+
+
