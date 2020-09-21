@@ -107,34 +107,133 @@ number of columns in first matrix must equal number of rows in second matrix
  
 **Read Section 3.2**
 
-1. Write down the assumptions for a multiple linear regression model. You may state the assumptions using equations, and then describe what these equations mean. How do these assumptions differ from simple linear regression? Explain how you would assess if the regression assumptions are met.
+**1. Write down the assumptions for a multiple linear regression model.** You may state the assumptions using equations, and then describe what these equations mean. How do these assumptions differ from simple linear regression? Explain how you would assess if the regression assumptions are met.
+
+**Assumptions**
+1. E(e) = 0
+
+2. Var(e) = sigma^2
+
+3. x1,x2,...,xk measured without error
+
+4. obeservations on each regressor are independent
+
+5. distribution of regressors does not depend on regression coefficients (B's) or sigma^2
+
+6. distribution of y given x1,x2,...,xk is normal wiht mean B0 + B1x1 + B2x2 + ... + Bkxk
+
+7. Variance of y os sigma^2
 
 
-2. Write down the multiple linear regression model using matrix notation. Be sure to write what each matrix is.
+
+**2. Write down the multiple linear regression model using matrix notation. Be sure to write what each matrix is.**
+
+p = k + 1 == the number of normal equations to calculate the regressors (B0 ... Bk) == k + 1
+
+y = XB + e
+
+y = vector, or (n x 1) matrix of response values
+
+X  = (n x p) matrix of a (n x 1) identity matrix and regressor values for each "observation" row.
+
+B = (p x n) matrix of regression coefficients (B0 - Bk)
+
+e = (n x 1) vector of random errors for each observation
 
 
-3. Write down the least-squares estimator of β.
+**3. Write down the least-squares estimator of β.**
+
+**B-hat = ((X'X)^(-1)) * (X'y)**
+  
+    provided  (X'X)^-1 exists, it will exist if regressors are linearly independent
+    
+    (X'X) is a p x p symmetric matrix and X'y is a (p x 1) column vector
+    
+    diagonal elements of X'X are the sum of squares of the elements in the columns of X
+    
+    **off-diagonal elements are the sums of the cross products of the elements in columns of X** - NEED HELP UNDERSTANDING SIGNIFICANCE
+    
+    X'y are the sums of cross products of the columns of X and the observations yi (== each regressor * y observations)
+
+```{r sampleRMatrix}
+A <- matrix(c(2, 4, 3, 1, 5, 7), nrow=2, ncol=3, byrow = TRUE)        # fill matrix by rows 
+A
+
+A.trans = t(A) # t() is matrix transpose
+A.trans
+
+A.A.trans.inv = (A %*% A.trans)^-1 # %*% is matrix multiplication
+A.A.trans.inv
+```
 
 
-4. Write down the hat matrix using matrix notation.
+**4. Write down the hat matrix using matrix notation.**
+
+Bottom of page 73
+
+**hat matrix is the matrix that maps vector of observed values (y column vector) to the vector of fitted values (y-hat column vector)
+
+**H = (X) (X'X))^-1 (X')** 
+
+???? ISN'T THIS (XX') / (X'X) === ???
+
+The difference between observed value and fitted value == residuals == ei = yi = yi-hat
+
+**5. Write down the predicted / fitted values using matrix notation and using the hat matrix.**
+
+y-hat = **Hy**
+
+y-hat = (X)(B-hat)
+
+y-hat = (X) (X'X))^-1 (X')(y)
 
 
-5. Write down the predicted / fitted values using matrix notation and using the hat matrix.
+
+**6. Write down the residuals using matrix notation and using the hat matrix.**
+
+e = y - X(B-hat)
+
+e = y - Hy
+
+e = (I - H)y
+
+**7. Write down the expected value and variance of the least-squares estimator, β^.**
+
+B-hat = ((X'X)^-1) (X'y)
+
+This results in a (p x 1) column vector That gives B0, B1, ..., Bk
+
+thus, y-hat = (B-hat)(X)
+
+BUT WHAT IS THE **VARIANCE**
+
+**Var(B-hat) = (sigma^2)((X'X)^-1)** page 80
+
+
+**8. Write down the formula for the estimated variance, σ^2, of a multiple linear regression model.**
+
+As with SLR sigma^2 can be obtained from the SS-E
+
+SS-E = e'e
+
+substituting e = y - X(B-hat)
+
+SS-E = (y'y) - (B-hatX'y)
+
+There are n - p degrees freedom = observations - (residuals + 1) *not surprising, this is how you solve a polynomial)
+
+MS-E = SS-E / (n-p) == sigma^2
 
 
 
-6. Write down the residuals using matrix notation and using the hat matrix.
+How does this differ from simple linear regression?
 
-
-
-7. Write down the expected value and variance of the least-squares estimator, β^.
-
-
-8. Write down the formula for the estimated variance, σ^2, of a multiple linear regression model. How does this differ from simple linear regression?
+**Differences
+DF is n - p, instead of n - 2?
 
 **In SLR:** sigma^2 = MS-residual == SS-residual / n-2
 
- 
+### QUESTIONS: I get totally lost on page 79.
  
 
 
