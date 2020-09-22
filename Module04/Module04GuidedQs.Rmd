@@ -5,26 +5,301 @@ date: "9/20/2020"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+# Stat 6021: Guided Question Set 4
+
+For this question, we will use the data set "nfl.txt", which contains data on NFL team performance from the 1976 season. The variables are:
+ y: Games won (14-game season)
+
+ x1: Rushing yards (season)
+
+ x2: Passing yards (season)
+
+ x3: Punting average (yards/punt)
+
+ x4: Field goal percentage (FGs made/FGs attempted)
+
+ x5: Turnover differential (turnovers acquired - turnovers lost)
+
+ x6: Penalty yards (season)
+
+ x7: Percent rushing (rushing plays/total plays)
+
+ x8: Opponents' rushing yards (season)
+
+ x9: Opponents' passing yards (season)
+
+
+Instead of creating separate scatterplots for each pair of variables, you can create a scatterplot matrix. 
+
+The function to use is pairs(). 
+
+The arguments to add is a dataframe containing the variables you wish to create scatterplots for. I like to add an optional argu-
+ment lower.panel = NULL. Try using the pairs() function with and without this optional argument to see which you prefer.
+
+You can also use the function cor() to find the correlation between all pairs of variables.
+The argument to add is a dataframe containing the variables you wish to find the correlation
+between.
+
+## Q1 Create a scatterplot matrix and find the correlation between all pairs of variables for this data set.
+
+**1a: Which predictors appear to be linearly related to the number of wins?**
+
+and 
+**Which predictors do not appear to have a linear relationhsip with the number of wins?**
+
+```{r q1a1}
+
+# load the data
+nflData <- read.table("nfl.txt", header=TRUE ,sep="")
+attach(nflData)
+
+head(nflData)
+
+dim(nflData)
+```
+```{r q1a2, fig.width=14, fig.height=12}
+#pairs(nflData)
+pairs(nflData,lower.panel = NULL)
+```
+```{r q1a3}
+cor(nflData)
+```
+```{r q1a4}
+
+nflData.cor = cor(nflData)
+
+threshold <- 0.6 # set a correlation threshold
+
+corWorking <- nflData.cor
+
+diag(corWorking) <- 0 # set diagonal to 0 so 1's of unrelated don't get caught in threshold
+
+nflData.cor.related <- apply(abs(corWorking) >= threshold, 1, any) # apply the filter to the absolute value of the correlations between variables.
+
+nflData.cor[nflData.cor.related, nflData.cor.related]
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+**Answer 1a**
 
-```{r cars}
-summary(cars)
+**From Charts**
+y appears positvely linearly correlated to x1, x4, x5, (possibly x6), and x7, and negatively linearly correlated to x8
+
+The predictors x2, x3, and x9 appear to have **no** linear correlation. x9 may have a very small decreasing linear correlation to y.
+
+**From cor()**
+
+x8 has the strongest correlation with y (negative relationship)
+
+Followed by positive correlation with x1, x5, and x7. From cor() x4 and x6 do not have strong correlations in the presence of other predictors.
+
+
+**1b: Do you notice if any of the predictors are highly correlated with one another?** If so, which ones?
+
+**Answer 1b**
+x1 : x5+, x7+, x8-
+
+x5: x1+, x7+
+
+x7: x1+, x5+, x8-
+
+x8: x1-, x7-
+
+**1c What predictors would you first consider to use in a multiplie linear regression?** Briefly explain your choices.
+
+**Answer 1c**
+
+Definitely x8, it has the highest correlation with y.
+
+From there I need to decide whether to include x1, x5, and x7.
+
+I will not use x5. It was returned from my threshold filter because it is correlated to x7, and x7 is more highly correlated with y. 
+Between x1 and x7 - I will include x1. x1 is highly correlated with x7, and x1 is slightly better correlated with y.
+
+**My choices are x1 and x8.** This is a balance of selected predictors and not overcomplicating the model.
+
+## Question 2: 
+
+Regardless of your answer to the previous question, fit a multiple regression model for the number of games won against the following three predictors: the team's passing
+yardage, the percentage of rushing plays, and the opponents' yards rushing. Write the estimated regression equation.
+
+x2: Passing yards (season)
+x7: Percent rushing (rushing plays/total plays)
+x8: Opponents' rushing yards (season)
+
+```{r q2-1}
+
+nflModel.x2x7x8 <-lm(y ~ x2 + x7 + x8)
+
+nflModel.x2x7x8
+
 ```
 
-## Including Plots
+**Answer 2**
 
-You can also embed plots, for example:
+**E(y) = -1.808 + .0036(x2) + .194(x7) - .0048(x8)**
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+## Question 3: Interpret the estimated coefficient for the predictor x7 in context.
+
+**Answer 3**
+
+x7's regression coefficient, .194, represents the expected change in season whens per unit change in percent rushing yards, when all the passing yards, and opponents rushing yards are held constant.
+
+**My model estimates .194 additional season wins for each 1 percent increase in rushing yards, when controlling for the effect of the other predictors: passing yards, and opponents rushing yards.**
+
+## Question 4: A team with x2 = 2000 yards, x7 = 48 percent, and x8 = 2350 yards
+
+would like to estimate the number of games it would win. Also provide a relevant interval for this estimate with 95% confidence.
+
+```{r q4-1}
+
+estimated.wins <- -1.808 + (.0036 * 2000) + (.194 * 48) - (.0048 * 2350)
+estimated.wins
+
+```
+**Answer 4**
+
+My model estimates **3 wins.**
+
+## Question 5: Using the output for the multiple linear regression model from part 2,
+answer the following question from a client: 
+
+"Is this regression model useful in predicting the number of wins during the 1976 season?" 
+
+Be sure to write the null and alternative hypotheses, state the value of the test statistic, state the p-value, and state a relevant
+conclusion. What is the critical value associated with this hypothesis test? Perform the test at 0.05 significance level.
+
+**Answer 5 Work**
+
+**Hypothesis Statements**
+
+H0: B1, B2, B3 = 0
+
+Ha: B1 != 0 or B2 != 0 or B3 != 0
+
+____
+
+F0 > F alpha, k, n-k-1
+
+where k = number of regressors, n = number of observations
+
+df1 = 3
+df2 = 28 - 3 - 1 == 24
+
+```{r q5-1}
+summary(nflModel.x2x7x8)
+
+anova(nflModel.x2x7x8)
+
+criticalValue = qf(0.95, df1=3, df2 = 24)
+print(paste('criticalValue: ', criticalValue))
+
+```
+state the value of the test statistic: **F0 = 29.44**
+
+state the p-value: **p-value = 0.00000003273** = 3.273e-8
+
+state a relevant conclusion. **I reject H0 because p-value < .0.05** 
+
+**QUESTION** Is this the conclusion???? The model estimates the season wins better than B0 = -1.808 ???
+
+What is the critical value associated with this hypothesis test? Perform the test at 0.05 significance level.
+
+Is F0 > 3.008, **I reject H0 because, 29.44 > 3.008**
+
+## Question 6: Report the value of the t statistic for the predictor x7. 
+
+**6a: ** What is the relevant conclusion from this t statistic? 
+
+**Answer 6a**
+
+The value of x7's t-statistic is **2.198**.
+
+The p-value for that t-statistic is 0.037815.
+
+This means that you would expect to see a t-value as large or larger than 2.198 less than 3.8% of the time if the true relationship x7 (percent rushing) and y (season wins) in the presence of x2 (Passing yards) and x8 (Opponents rushing yards) is 0.
+
+
+**6b: ** Also report the critical value for this hypothesis test. Perform the test at 0.05 significance level.
+
+```{r q6b1}
+
+x7.criticalValue = qt(.975, 22)
+  
+print(paste("x7 critical value: ", x7.criticalValue))
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Question 7: Check the regression assumptions by creating a residual plot, an ACF plot of the residuals, and a QQ plot of the residuals. 
+
+Comment on these plots.
+
+```{r q7-1, fig.width=10, fig.height=8}
+
+par(mfrow=c(2,2)) # 2 rows, 2 columns - there will be three panes to look through
+
+# Residual plot
+plot(nflModel.x2x7x8$fitted.values,nflModel.x2x7x8$residuals, main="MLR: Residuals vs. Fitted Values")
+abline(h=0,col="red")
+
+# ACF Plot
+acf(nflModel.x2x7x8$residuals, main="MLR: ACF of Residuals")
+
+# QQ Plot of Residuals
+qqnorm(nflModel.x2x7x8$residuals)
+qqline(nflModel.x2x7x8$residuals, col="red")
+
+# Can't run BoxCox because there is a 0 value
+#library(MASS)
+#boxcox(nflModel.x2x7x8, lambda = seq(0, 1, 0.01))
+
+```
+**Answer 7: Comments on Plots**
+
+**Residual Plot: ** The mean of the residuals appears ~0. However, the variance seems all over the place and non-standard.
+
+
+**ACF Plot:** The ACF plot so no correlation between residuals at lags of x.
+
+**Normal Q-Q Plot** The plot does not follow the normal probability line, indicating the distribution of residuals is not normal. The deviations are significant around the mean of 0, which really bothers me.
+
+## Consider adding another predictor, x1, the team's rushing yards for the season, 
+to the model. Interpret the results of the t test for the coefficient of this predictor. 
+A classmate says: 
+
+Since the result of the t test is insignificant, the team's rushing yards for the season is not linearly related to the number of wins." 
+
+Do you agree with your classmate's statement?
+
+**Question 8 Work**
+
+x1 = rushing yards
+
+```{r q8-1}
+
+# create the new model
+nflModel.x1x2x7x8 <-lm(y ~ x1 + x2 + x7 + x8)
+
+nflModel.x1x2x7x8
+
+summary(nflModel.x1x2x7x8)
+
+```
+The t-test for the predictor, x1, can be interpreted as: 
+
+"you would expect to see a t-value as large or larger than |-0.107| less than 59% of the time if the true relationship x1 (percent rushing) and y (season wins) in the presence of x2, x7, and x8 regressors."
+
+This t-value is not statistically significant in this model, but this model includes x2,x7 and x8. x1 was highly correlated with x7 so this is not surprising. x1 was also moderately correlated with x8
+
+Run a model with x1, and x2 and let's see what happens with the t-values of the regression coefficients. All of a sudden x1 is statistically significant.
+
+```{r}
+# create the new model
+nflModel.x1x2 <-lm(y ~ x1 + x2)
+
+nflModel.x1x2
+
+summary(nflModel.x1x2)
+```
+

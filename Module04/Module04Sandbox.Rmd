@@ -273,13 +273,11 @@ where k = number of regressors, n = number of observations
 
 # run an example with a two-sided alpha 5% k = 5 and n = 8
 
-Fcompare = qf(.975, df1=5, df2=2) 
+Fcompare = qf(.95, df1=5, df2=2) 
 Fcompare
 
-FcompareExample = pf(.975, df1 = 5, df2 = 2)
-FcompareExample
-
-?pf
+#FcompareExample = qf(.95, df1 = 5, df2 = 2)
+#FcompareExample
 
 ```
 
@@ -399,7 +397,7 @@ Bj-hat +- delta * se(Bj-hat)
 
 remember diagonal elements in the (X'X)^-1 is B-hat, so se(Bj-hat) == sqrt((sigma^2 * bjj))
 
-Bonderroni allows us a 95% CI for all B's instead of just one. If we have n intervals, we want 95% confidence in all n intervals.
+Bonferroni allows us a 95% CI for all B's instead of just one. If we have n intervals, we want 95% confidence in all n intervals.
 
 Bonferroni intervals are easier to construct that a confidence ellipse, but you can get a CI for joint intervals of B.
 
@@ -417,20 +415,20 @@ he likes "when controlling for the effect of other predictors"
 **Interpretation of Bj**
 
 Page 68:
-"the parameter represents the expected change in the response y per unit change in xj when all the remaining regressor variables xi (i != j) are held constant.
+"the parameter Bj represents the expected change in the response y per unit change in xj when all the remaining regressor variables xi (i != j) are held constant.
 
 
 **Interpretation of ANOVA / hypothesis tests**
-ANOVA F test is not very useful in MLR expect in some settings. Will explore more in Module 5.
+ANOVA F test is not very useful in MLR except in some settings. Will explore more in Module 5.
 
 
 
 **t test in MLR**
-tests is an individual coefficient is 0. Can we drop a particular xj from the model in the presence of the other predictors.
+tests if an individual coefficient is 0. Can we drop a particular xj from the model in the presence of the other predictors.
 
 If xj is highly correlated with at least one other predictor, or a linear combination of other predictors, xj will probably be insignificant as the addition of xj doesn't improve our model. xj MAY still be linearly related to the response variable, but not needed for the model.
 
-Only not useful **in the presence of the other predictors.**
+"Only not useful **in the presence of the other predictors.**"
 
 **SLR vs. MLR**
 
