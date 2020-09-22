@@ -41,6 +41,9 @@ MLR models allow us to examine the effect of multiple predictors on the response
 
 Q1: How similar is the MLR model to the SLR model? 
 
+**Assumptions Checked With Plots??**
+Residual plot (not scatterplot) - response on y axis, fitted values on x axis. (no predictor variables on residual plot)
+
 Q2: What are the differences between the MLR model and the SLR model?
 
 ## 4.2: Multiple Linear Regression
@@ -156,7 +159,7 @@ e = (n x 1) vector of random errors for each observation
     X'y are the sums of cross products of the columns of X and the observations yi (== each regressor * y observations)
 
 ```{r sampleRMatrix}
-A <- matrix(c(2, 4, 3, 1, 5, 7), nrow=2, ncol=3, byrow = TRUE)        # fill matrix by rows 
+A <- matrix(c(2, 4, 3, 1, 5, 7,4,5,6,8,5,3), nrow=2, ncol=3, byrow = TRUE)        # fill matrix by rows 
 A
 
 A.trans = t(A) # t() is matrix transpose
@@ -235,7 +238,205 @@ DF is n - p, instead of n - 2?
 
 ### QUESTIONS: I get totally lost on page 79.
  
+## 4.4: ANOVA F Test in Multiple Linear Regression
 
+**Read Section 3.3.1**
+
+Hypothesis Tests require that: random errors are independent and follow a normal distribution with mean E(e)= 0 and Var(ei) = signma^2
+
+**1. Consider the ANOVA F test in a multiple linear regression setting.**
+
+**1a: In your own words, describe what the ANOVA F test is used for.**
+
+F0 = MS-explained by model / MS-residual errors in model
+
+The fewer unexplained errors, the larger F0 is.
+
+F0 explains the adequacy of our model in comparison to a normal distribution of errors where B1 ... Bj all = 0.
+
+**1b: Write down the null and alternative hypotheses associated with an ANOVA F test.**
+
+H0: B1, B2, ..., Bk = 0
+
+Ha: Bj != 0 for at least one j.
+
+**1c: How do we calculate the ANOVA F statistic? What distribution is the calculated F statistic compared to?**
+
+F0 = MSR / MSE
+
+compare to
+F0 > F alpha, k, n-k-1
+
+
+where k = number of regressors, n = number of observations
+```{r}
+
+# run an example with a two-sided alpha 5% k = 5 and n = 8
+
+Fcompare = qf(.975, df1=5, df2=2) 
+Fcompare
+
+FcompareExample = pf(.975, df1 = 5, df2 = 2)
+FcompareExample
+
+?pf
+
+```
+
+**2. How is the ANOVA table different in MLR compared to SLR?**
+
+ANOVA table is different with degrees of freedom
+
+Regression df = k, where k is number of regressors
+
+Residual df = n - k - 1, where n is number of observations, k is number of regressors
+
+Total df = n - k - 1 + k = n - 1 degrees freedom
+
+
+**3. Compare and contrast the R2 and R2adj. What happens when a predictor variable is added? **
+
+R2  = SSR / SST
+
+
+
+R2-adj = (SSE / (n-p)) / (SST / n-1))
+
+when a predictor variable is added R2 will never decrease, so it is difficult to interpret R2 increase.
+
+Using R2-adj takes into account new regressors by including n-p, (p = regressor count + 1), and also takes into account the number of observations with including n.
+
+
+## 4.5: t Test in Multiple Linear Regression
+
+Read Section 3.3.2 (until Example 3.4) of your textbook
+
+
+**1. When we want to test if a predictor xj can be removed from the model,**
+
+adding a variable to a regression model ALWAYS increases SS-T to increase, and SS-E to decrease. So, the question is, is the increase in SS-R worth the increase in predictive power?
+
+**1a:** How do we write the null and alternative hypotheses? Express the hypotheses using statistical notation, as well as describing in words what those hypotheses mean. 
+
+
+**1b:** What is the formula for the t statistic?
+
+t0 = Bj-hat / se(Bj-hat)
+
+compare against, t alpha/2, n-k-1 = **qt(.975, n-k-1)**
+
+remember diagonal elements in the (X'X)^-1 is B-hat, so se(Bj-hat) == sqrt((sigma^2 * bjj))
+
+BUT remember this doesn't have us looking in isolation because all other x's have not been held constant.
+
+
+**1c: **What distribution do we compare the t statistic to? 
+
+compare against, > t alpha/2, n-k-1 = **qt(.975, n-k-1)**
+
+**2. Compare and contrast the t test in an MLR setting with an SLR setting.**
+
+How are the t tests in the two settings similar and different?
+
+the comparison t, i.e. critical value, in SLR is t0 > t alpha/2, n-2 (which is the same because in SLR k = 1)
+
+Major difference is t in MLR doesn't have us looking in isolation because all other x's/regressors have **not** been held constant.
+
+## 4.6: Confidence Intervals in Multiple Linear Regression
+
+Read Sections 3.4 and 3.5
+
+One at a time CIs for individual regression coefficients and mean response given specific levels of regressors.
+
+**1. Write down the formula for the confidence interval of the coefficient for xj.**
+
+assuming normality of errors, and mean 0 of errors
+
+assume yi is normally distributed with mean of B0 + sum(j = 1:k(Bj * xij)) - remember we are looking at yi, so it is y's at that x value.
+
+**Bj-hat +- t(alpha/2, n-p) * sqrt(sigma^2 * Cjj)**
+
+remember sqrt(sigma^2 * Cjj) = se(Bj-hat)
+
+```{r}
+qt(.975,22) #critical value of two tailed 95% CI for n-p == 22 (25 data points, 2 regressors)
+```
+Notice that the summary table gives the B-hat for each predictor/regressor variable, and gives MS-R so construction of CIs for residuals is really straightforward.
+
+
+**2. Write down the formula for the confidence interval of the mean response. **
+
+x0 is a transpose of a row from X - so it is a column vector representing the x values for the equation (with 1 for B0 position). So you are calculated the mean response for an observation with 1 for x11.
+
+CI for mean is:
+
+**Y0-hat +- (t(alpha/2,n-p) * sqrt(sigma^2 * (x0')(X'X)^-1(x0))
+
+
+**Interpretation**: 95% of such intervals will contain the true delivery time.
+
+**3. Write down the formula for the prediction interval of a new response. **
+
+y0-hat = (x0')(B-hat)
+
+A CI is
+
+**Y0-hat +- (t(alpha/2,n-p)(sqrt(sigma^2 * (1 + (x0')(X'X)^-1(x0))))**
+
+**4. Describe, in your own words, why the Bonferroni method is used, and how you would use it.**
+
+significance level alpha is possibility of wrongly rejecting the null hypothesis.
+
+In the context of a CI, alpha is the proportion of random samples that will result in a CI that does not contain the true value of the population parameter.
+
+_____
+
+Bonferroni method is used to select a delta to help obtain a joint/simultaneous confidence interval for Bj-hat
+
+Select a delta multiplier = t(alpha/2p,n-p)
+
+Bj-hat +- delta * se(Bj-hat)
+
+remember diagonal elements in the (X'X)^-1 is B-hat, so se(Bj-hat) == sqrt((sigma^2 * bjj))
+
+Bonderroni allows us a 95% CI for all B's instead of just one. If we have n intervals, we want 95% confidence in all n intervals.
+
+Bonferroni intervals are easier to construct that a confidence ellipse, but you can get a CI for joint intervals of B.
+
+when p gets large, then CIs get really large.
+
+Is it p or g for. p == number of parameters in the model.
+g == the number of intervals you are creating.
+
+g = is more flexible, because only represents the number of intervals you need to construct.
+
+
+# RECAP:
+he likes "when controlling for the effect of other predictors"
+
+**Interpretation of Bj**
+
+Page 68:
+"the parameter represents the expected change in the response y per unit change in xj when all the remaining regressor variables xi (i != j) are held constant.
+
+
+**Interpretation of ANOVA / hypothesis tests**
+ANOVA F test is not very useful in MLR expect in some settings. Will explore more in Module 5.
+
+
+
+**t test in MLR**
+tests is an individual coefficient is 0. Can we drop a particular xj from the model in the presence of the other predictors.
+
+If xj is highly correlated with at least one other predictor, or a linear combination of other predictors, xj will probably be insignificant as the addition of xj doesn't improve our model. xj MAY still be linearly related to the response variable, but not needed for the model.
+
+Only not useful **in the presence of the other predictors.**
+
+**SLR vs. MLR**
+
+SLR: 2 variables and 2 variables oNLY
+
+MLR: response and multiple predictors simultaneously. Can improve model, but if you are only exploring 2 variables you don't need multiple linear regression.
 
 
 
