@@ -181,7 +181,7 @@ p-value of F0 = 3.96e-12
 **Answer**
 The estimated coefficient of Stay, B1, is 0.237209
 
-An interpretation of this coefficient is: In the presence of all of the model's predictor variables, each unit increase in Stay produces a 0.237209 increase in the percentage of patients who get a HAI (healtcare acquired infection) in the hospital.
+An interpretation of this coefficient is: In the presence of all of the model's predictor variables, each unit increase in Stay produces a 0.237209 increase in the percentage of patients who get a HAI (healthcare acquired infection) in the hospital.
 
 My model predicts an increase of 0.237 percent infections for each unit increase in the average length of hospital stay when controlling for the effect of other predictors.
 
@@ -330,17 +330,15 @@ R2 for the model is:  0.9874. Interpreted as: 98.74% of the variability in perce
 
 **2g Work**
 
-R2-adj = (SSE / (n-p)) / (SST / n-1))
+R2-adj = 1- (SSE / (n-p)) / (SST / n-1))
 
 ```{r q2g-1}
-R2.adj <- 1.0816 / (9256.2464 / (113-1))
+R2.adj <- 1 - (1.0816 / (9256.2464 / (113-1)))
 print(paste("R2 Adjusted for the model is: ", R2.adj))
 ```
 **2f Answer**
 
-???? HELP, THIS SEEMS WRONG ????
-
-R2 Adjusted for the model is:  0.01308
+R2 Adjusted for the model is:  **0.9869**
 
 ## Question 3 (No R required) Data from 55 college students ...
 are used to estimate a multiple regression model with response variable LeftArm, with predictors LeftFoot and RtFoot. All variables were measured in centimeters. Some R output is given below.
@@ -354,7 +352,7 @@ are insignificant. Is your classmate's concern warranted? Briefly explain.
 
 **Answer Question 3**
 
-TO DO!!!
+This seems very strange, but it is possible that even though the two regressors are not significant when the other is held constant (as shown by the t statistics), the overall model, or joint significance of both variables as they both change values is significant (as shown by the F statistic).
 
 ## Question 4 (No R required) Recall in matrix notation, ...
 the least-squares estimators for the regression model can be written as:
@@ -373,8 +371,7 @@ Show that H is idempotent, i.e., HH = H.
 
 **Question 4 Work and Answer**
 
-TO DO!!!
-** think I want to show that HH' = H**
+### ADD PHOTE HERE
 
 
 ## Question 5 Please remember ...
