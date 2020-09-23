@@ -296,8 +296,6 @@ Total df = n - k - 1 + k = n - 1 degrees freedom
 
 R2  = SSR / SST
 
-
-
 R2-adj = (SSE / (n-p)) / (SST / n-1))
 
 when a predictor variable is added R2 will never decrease, so it is difficult to interpret R2 increase.

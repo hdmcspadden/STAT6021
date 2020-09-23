@@ -16,6 +16,10 @@ qf(0.95, 2, 22) # including this because in some later sections we do not get p 
 
 confint(result,level = 0.95) # 95% confidence interval of the regression coefficients
 
+confint(result,level = 0.95)
+
+?confint
+
 newdata<-data.frame(Number=20, Distance=200) # create the new data point to run CIs of mean and predicted value
 
 predict.lm(result, newdata, level=0.95, interval="confidence")
@@ -24,7 +28,6 @@ predict.lm(result, newdata, level=0.95, interval="prediction")
 # a residual plot?
 plot(result$fitted.values,result$residuals, main="MLR: Residuals vs. Fitted Values")
 abline(h=0,col="red")
-
 
 # ACF plot?
 acf(result$residuals, main="MLR: ACF of Residuals")

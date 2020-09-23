@@ -68,7 +68,7 @@ cor(nflData)
 
 nflData.cor = cor(nflData)
 
-threshold <- 0.6 # set a correlation threshold
+threshold <- 0.6 # set a correlation threshold, is there a standard? A: Not really.
 
 corWorking <- nflData.cor
 
@@ -78,7 +78,6 @@ nflData.cor.related <- apply(abs(corWorking) >= threshold, 1, any) # apply the f
 
 nflData.cor[nflData.cor.related, nflData.cor.related]
 ```
-
 
 
 **Answer 1a**
@@ -117,7 +116,7 @@ From there I need to decide whether to include x1, x5, and x7.
 I will not use x5. It was returned from my threshold filter because it is correlated to x7, and x7 is more highly correlated with y. 
 Between x1 and x7 - I will include x1. x1 is highly correlated with x7, and x1 is slightly better correlated with y.
 
-**My choices are x1 and x8.** This is a balance of selected predictors and not overcomplicating the model.
+**My choices are x1 and x8.** This is a balance of selected predictors and not over-complicating the model.
 
 ## Question 2: 
 
@@ -144,7 +143,7 @@ nflModel.x2x7x8
 
 **Answer 3**
 
-x7's regression coefficient, .194, represents the expected change in season whens per unit change in percent rushing yards, when all the passing yards, and opponents rushing yards are held constant.
+x7's regression coefficient, .194, represents the expected change in season wins per unit change in percent rushing yards, when all the passing yards, and opponents rushing yards are held constant.
 
 **My model estimates .194 additional season wins for each 1 percent increase in rushing yards, when controlling for the effect of the other predictors: passing yards, and opponents rushing yards.**
 
@@ -202,7 +201,9 @@ state the p-value: **p-value = 0.00000003273** = 3.273e-8
 
 state a relevant conclusion. **I reject H0 because p-value < .0.05** 
 
-**QUESTION** Is this the conclusion???? The model estimates the season wins better than B0 = -1.808 ???
+**QUESTION** Is this the conclusion???? The model estimates season wins better than B0 = -1.808 : there is no such thing as a negative win.
+
+**???What are we solving/concluding???** 
 
 What is the critical value associated with this hypothesis test? Perform the test at 0.05 significance level.
 
@@ -271,6 +272,8 @@ A classmate says:
 Since the result of the t test is insignificant, the team's rushing yards for the season is not linearly related to the number of wins." 
 
 Do you agree with your classmate's statement?
+
+**NO**
 
 **Question 8 Work**
 
