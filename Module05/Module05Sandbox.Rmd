@@ -1,0 +1,62 @@
+---
+title: "Module 5 Sandbox"
+author: "Diana McSpadden"
+date: "9/24/2020"
+output: html_document
+---
+
+# Module 5: Sums of Squares and Multicollinearity
+
+## ESSENTIAL QUESTIONS
+
+* What is a partial F test used for?
+
+* What effect does multicollinearity have on an MLR model?
+
+* How do we diagnose the presence of multicollinearity in our MLR model?
+
+## Learning Objectives
+
+1. Describe what questions a partial F test can answer.
+
+2. Given a data set and questions of interests, identify what inferential procedure to use in a multiple linear regression setting.
+
+3. Explain the issues related to multicollinearity, and how to detect and handle multicollinearity in your data set.
+
+## 5.2: Extra Sums of Squares and the Partial F Test
+
+Read Section 3.3.2 (after Example 3.4) 
+
+1. Describe, in your own words, what the extra sums of squares method does in a multiple linear regression model. 
+
+**Answer**
+
+The ESS method determines the contribution of one, or more regressors on the regression sum of squares. Remember, each regressor added to the model increases the regression sum of squares and decreases the residual sum of squares.
+
+It is the additional regression error attributed to the model by the addition of the regressor(s) being evaluated.
+
+2. Consider the partial F test associated with the extra sums of squares method: 
+
+F0 = (SSR(B2|B1) / r) / MSE
+
+where r = number of regressors we are evaluating
+
+* What are the null and alternative hypotheses? 
+
+H0: B2 = 0
+
+Ha: B2 != 0
+
+where B2 represents the slopes of the regressors we are evaluating.
+
+
+* How is SSR(β2|β1) written in terms of SSR(β1) and SSR(β2)? 
+
+SSR(B2|B1) = SSR(B) - SSR(B1)
+
+* Write down the formula for the partial F statistic. What distribution is the partial F statistic compared to? Describe, in your own words, what the partial F statistic is measuring. 
+
+
+F0 = (SSR(B2|B1) / r) / MSE
+
+* How is the partial F statistic different or similar to the t statistic and the ANOVA F statistic from previous modules?
