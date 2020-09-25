@@ -113,19 +113,21 @@ number of columns in first matrix must equal number of rows in second matrix
 **1. Write down the assumptions for a multiple linear regression model.** You may state the assumptions using equations, and then describe what these equations mean. How do these assumptions differ from simple linear regression? Explain how you would assess if the regression assumptions are met.
 
 **Assumptions**
+They don't really differ from the SLR.
+
 1. E(e) = 0
 
 2. Var(e) = sigma^2
 
 3. x1,x2,...,xk measured without error
 
-4. obeservations on each regressor are independent
+4. observations on each regressor are independent
 
 5. distribution of regressors does not depend on regression coefficients (B's) or sigma^2
 
-6. distribution of y given x1,x2,...,xk is normal wiht mean B0 + B1x1 + B2x2 + ... + Bkxk
+6. distribution of y given x1,x2,...,xk is normal with mean B0 + B1x1 + B2x2 + ... + Bkxk
 
-7. Variance of y os sigma^2
+7. Variance of y (it is a plane) is constant sigma^2
 
 
 
@@ -167,6 +169,9 @@ A.trans
 
 A.A.trans.inv = (A %*% A.trans)^-1 # %*% is matrix multiplication
 A.A.trans.inv
+
+A.A.trans = (A %*% A.trans)
+A.A.trans
 ```
 
 
@@ -178,7 +183,7 @@ Bottom of page 73
 
 **H = (X) (X'X))^-1 (X')** 
 
-???? ISN'T THIS (XX') / (X'X) === ???
+No, because of order of operations
 
 The difference between observed value and fitted value == residuals == ei = yi = yi-hat
 
@@ -231,8 +236,9 @@ MS-E = SS-E / (n-p) == sigma^2
 
 How does this differ from simple linear regression?
 
-**Differences
-DF is n - p, instead of n - 2?
+***Differences**
+
+DF is n - p, instead of n - 2, but p = 2 in SLR
 
 **In SLR:** sigma^2 = MS-residual == SS-residual / n-2
 
@@ -434,7 +440,40 @@ SLR: 2 variables and 2 variables oNLY
 
 MLR: response and multiple predictors simultaneously. Can improve model, but if you are only exploring 2 variables you don't need multiple linear regression.
 
+# Notes During Class
 
+talking about slides in recap 4.7
 
+Differences w/ MLR:
+* Interpreting coefficients - "even when other factors were taken into account"
 
+gpa  and sleep disturbance.
 
+some association with sleep disturbance and GPA
+
+x1: sleep disturbance
+x2: # hours worked in a week
+
+They could be related...less sleep if you work
+
+or y <-> x1
+X1 <-> x2
+y <- x2
+y <-> x1 and x2
+
+"confounding variables" this is how you control impact of confounding variables.
+
+__________________________________
+I need to re-write some stuff in homework
+
+Is ANOVA really not helpful? Nope, only gives value compared to all Bj's  = 0.
+
+F0 explains the adequacy of our model in comparison to a normal distribution of errors where B1 ... Bj all = 0.
+
+And how to translate Bj = 0
+
+**If Bj == 0 we can drop it from the model**
+
+Can really only think about dropping one at a time, because the Bj's are related.
+
+X matrix is called the "design" matrix (the 1 column vector + xi vectors)

@@ -20,6 +20,13 @@ Load the data. For more information about the data set, type ?swiss.
 The goal of the data set was to assess how fertility rates in the Swiss (French-speaking)
 provinces relate to a number of demographic variables.
 
+**Attended Study Group With: Caprill Wright, Chelsea Alvarado, Jen Leopold, Melanie Sattler, Loren Bushkar, JIng Hung**
+
+**References:**
+
+https://pdfs.semanticscholar.org/390d/8bd14f3ae307ebb600b8658c34b7ec7505ee.pdf
+
+
 ```{r q1-1}
 # load the data
 ?swiss
@@ -51,7 +58,9 @@ head(swiss)
 summary(swiss)
 ```
 ### (a) Create a scatterplot matrix
+
 and find the correlation between all pairs of variables for this data set. 
+
 ```{r q1a-1, fig.width=10, fig.height=10}
 pairs(swiss,lower.panel = NULL)
 ```
@@ -59,20 +68,38 @@ pairs(swiss,lower.panel = NULL)
 
 **i. Which predictors appear to be linearly related to the fertility measure?**
 
-Answer: Fertility appears to be linearly related to: Agriculture (+), Examination (-), Education (-), but with an outlier/influencer at the extreme+ end of Education.
+```{r q1a-2}
+swiss.cor <- cor(swiss)
 
-Catholic has two or three distinct clusters and a constant variance issue.
+threshold <- 0.6 # set a correlation threshold, is there a standard? A: Not really.
 
-Infant.Mortality appears linearly correlated but with a constant variance issue, the plot is cone shaped with decreasing variance.
+corWorking <- swiss.cor
+
+diag(corWorking) <- 0 # set diagonal to 0 so 1's of unrelated don't get caught in threshold
+
+swiss.cor.related <- apply(abs(corWorking) >= threshold, 1, any) # apply the filter to the absolute value of the correlations between variables.
+
+swiss.cor[swiss.cor.related, swiss.cor.related]
+```
+
+**Answer 1ai:** 
+
+Visually, Fertility appears correlated to Agriculture.
+
+From swiss.cor, Fertility appears to be linearly related to: Examination (-), Education (-).
+
+Visually, Catholic has two or three distinct clusters that appear linearly correlated with Fertility,but a constant variance issue.
+
+Visually, Infant.Mortality appears linearly correlated with Fertility, but also with a constant variance issue, the plot is cone shaped with decreasing variance.
 
 **ii. Do you notice if any of the predictors are highly correlated with one another?**
 If so, which ones?
 
-Answer: 
+**Answer aaii:** 
 
-* agriculture appears corrleated with examination(-) and education(-)
+* Agriculture appears corrleated with examination(-) and education(-)
 
-* examination appears correlated with education (+)
+* Examination appears correlated with education (+)
 
 
 ### (b) Fit a multiple linear regression
@@ -94,21 +121,26 @@ summary(swissModel)
 
 ```
 
-**i. What is being tested by the ANOVA F statistic? **
+**i. What is being tested by the ANOVA F statistic? What is the relevant conclusion in context?**
 
-Answer: ANOVA F statistic is calculated by (MS-explained by model) / (MS-residual errors in model).
+**Answer 1bi:**
+
+ANOVA F statistic is calculated by (MS-explained by model) / (MS-residual errors in model).
 Fewer unexplained errors, compared to fewer explained errors result in a larger F0.
 
 F0 explains the adequacy of our model in comparison to a normal distribution of errors when B1 ... Bj are all == 0.
 
-**What is the relevant conclusion in context?**
+F0 describes the of our model, incuding all predictor variables, in predicting fertility.
 
+The F0 statistic says that at least one of our predictor variables is statistically significant.
 
 
 **ii. Look at the numerical values of the estimated slopes as well as their p-values.**
 **Do they seem to agree with or contradict with what you had written in your answer to part 1a?**
- Briefly explain what do you think is going on here.
+Briefly explain what do you think is going on here.
  
+**Answer 1bii:**
+
 When Agriculture, Examination, Education, Catholic, and Infant.Mortality are all used as predictor variables for Swiss fertility in 1888, Education, Catholic, and Infant.Mortality are have the most predictive power based on their B p-values.
 
 Some aspects of this finding agree and some disagree: 
@@ -117,13 +149,15 @@ Some aspects of this finding agree and some disagree:
 
 Because Education was correlated with both Agriculture and Examination these B p-values indicate that when all three are included in the model, Education has the most predictive value.
 
-**Disagree** with my initial reading of the 4 plots:
+**Disagree** with my initial visual reading of the 4 plots:
 
 I had seen too much variance in the Infant.Mortality plot to consider it a good linear relationship.
 
 I had not considered Catholic a good linearly relationship because of the two clusters. It appeared more of a piece-wise linear relationship. 
 
-With MLR all the predictor variable not only influence the response variable, but influence the influence of each other. Catholic appears to have predictive value in the center of the residual plot, and Infant.Mortality appears to have predictive power at the + and - extremes of the residual plot. I believe that the combination of the two variables together creates the higher predictive power when they are used together in the model.
+**Conclusion**
+
+With MLR all the predictor variable not only influence the response variable, but influence the influence of each other. Catholic appears to have predictive value in the center of the residual plot, and Infant.Mortality appears to have predictive power at the + and - extremes of the residual plot. I believe that the combination of the two variables together creates the higher predictive power when they are used together in the model. The summary table does not contradict a visual reading after considering the interactivity if the predictors.
 
 ## 2. (No R required) Data from n = 113 hospitals are used ...
 to evaluate factors related to the risk that patients get an infection while in the hospital. 
@@ -139,7 +173,7 @@ The predictors are
 
 We consider the following multiple regression equation: 
 
-E(InfctRsk) = B0 +B1Stay+B2Age+B3Xrays+B4Services. 
+E(InfctRsk) = B0 + B1Stay + B2Age + B3Xrays + B4Services. 
 
 Some R output is shown below. You may assume the regression assumptions are met.
 
@@ -178,8 +212,9 @@ p-value of F0 = 3.96e-12
 ### (a) What is the value of the estimated coeffcient of the variable Stay?** 
 **Write a sentence that interprets this value.**
 
-**Answer**
-The estimated coefficient of Stay, B1, is 0.237209
+**Answer 2a:**
+ 
+The estimated coefficient of Stay, B1, is **0.237209**
 
 An interpretation of this coefficient is: In the presence of all of the model's predictor variables, each unit increase in Stay produces a 0.237209 increase in the percentage of patients who get a HAI (healthcare acquired infection) in the hospital.
 
@@ -191,48 +226,48 @@ t0 = Bj-hat / se(Bj-hat)
 
 ```{r q2b-1}
 # calculate the B2 test statistics
-B2.teststatistic = -0.014071 / 0.022708
+B2.teststatistic = -0.014071 / 0.022708 # se(Bj-hat) is given
 print(paste("The B2 test statistic is: ", B2.teststatistic))
 
 # calculate the B2 p-value of the test statistic
-B2.pvalue = 2*pt(-abs(B2.teststatistic), df=(113 - 4 - 1))  # calc p Value
+B2.pvalue = 2*pt(-abs(B2.teststatistic), df=(113 - 4 - 1))  # calc p Value - two-sided is the 2 *
 print(paste("The B2 p-value is: ", B2.pvalue))
 
 # calculate the B2 critical value to compare the test statistic to
 criticalValue = qt(0.975, (113 - 4 - 1))
 print(paste("The critical value is: ", criticalValue))
 ```
-**Answer**
-The B2 test statistic is: **-0.619649462744407**
+**Answer 2b:**
 
-The B2 p-value is:  **0.536793700887277**
+The B2 test statistic is: **-0.6196**
 
-The critical value is:  **1.98217348330773**
+The B2 p-value is:  **0.5368**
+
+The critical value is:  **1.9822**
 
 #### What null and alternative hypotheses are being evaluated with this test statistic? **
 
-???QUESTION????
-
 H0: B2 = 0
-Ha: B2 != 0 in the presence of other Bi where i != 2.
 
-????IS THIS RIGHT????
+Ha: B2 != 0 in the presence of other Bi's where i != 2.
 
 #### What conclusion should we make about the variable Age?**
 
-When my model includes Stay, Age, Xray, and Services, the predictor Age does not statistically affect the performance of the linear model.
+We can eliminate Age from the model predicting % of patients infected, when we are testing with a model with the other predictors.
 
 ### (c) A classmate states: "The variable Age is not linearly related to the predicted infection risk." 
 
 Do you agree with your classmate's statement? Briefly explain.
 
-**Answer**
+**Answer: 2c**
 
-No, I do not agree. The classmate's statement is not complete because it does not include the phrase "when controlling for the effect of other predictors."
+No, I do not agree. The classmate's statement is not complete because it does not include the phrase "when controlling for the effect of other predictors." If one wanted to test whether Age is related to infection risk one should run a simple linear regression.
 
 ### (d) Using the Bonferroni method, construct 95% joint confidence intervals for B1, B2,and B3.
 
 ** 2d Work**
+
+I am using B1 = Stay, B2 = Age, and B3 = Xray. I have not removed Age from the model, so Age remains B2.
 
 delta multiplier = t((alpha/2)/g,n-k-1)
 
@@ -260,6 +295,8 @@ se.B3 <- 0.005524
 
 delta <- qt((1 - (.05/6)), (113 - 4 - 1))
 
+print(paste("tvalue: ",delta))
+
 B1.CI.low <- B1 - (delta * se.B1)
 B1.CI.high <- B1 + (delta * se.B1)
 print(paste("The simultaneous 95% CI for B1 is: ", B1.CI.low, " - ", B1.CI.high))
@@ -273,42 +310,56 @@ B3.CI.high <- B3 + (delta * se.B3)
 print(paste("The simultaneous 95% CI for B3 is: ", B3.CI.low, " - ", B3.CI.high))
 
 ```
-**Answer**
-The simultaneous 95% CI for B1 is:  0.0889712597151198  -  0.38544674028488
+**Answer 2d:**
 
-The simultaneous 95% CI for B2 is:  -0.0692932485750457  -  0.0411512485750457
+The simultaneous 95% CI for B1 is:  0.08897  -  0.38545
 
-The simultaneous 95% CI for B3 is:  0.00694950955044247  -  0.0338164904495575
+The simultaneous 95% CI for B2 is:  -0.06929  -  0.04115
+
+The simultaneous 95% CI for B3 is:  0.00694  -  0.0338
 
 ### (e) Fill in the values for the ANOVA table for this regression model.
 
 **2e Work**
+```{r q2e1}
+n = 113 # number of observations
+k = 4 # number regressor variables
+p = k + 1
 
-n = 113
+MSE = 1.04^2
 
-k = 4
-
-p = 5
-
-MS-E == sigma^2 == 1.04^2 == 1.0816
+SSE = MSE * (n-p)
 
 F0 = 19.56
 
-MS-E == SS-E / n-4-1
+MSR = MSE * F0
 
-F0 = MSR / MSE
+SSR = MSR * k
 
-SS-R = MS-R * df
+SST = SSE + SSR
 
-R2  = SSR / SST
+R2 = SSR / SST
 
-**2e Answer**
+print(paste("Regression df: ",k))
+print(paste("Error df: ",n - p))
+print(paste("Total df: ",n - 1))
+print(paste("MSE: ", MSE))
+print(paste("SSE: ", SSE))
+print(paste("F0: ", F0))
+print(paste("MSR: ", MSR))
+print(paste("SSR: ", SSR))
+print(paste("SST: ", SST))
+print(paste("R2: ", R2))
+
+```
+
+**2e Answer:**
 
 |Source of Variation|DF|SS|MS|
 |:---:|:---:|:---:|:---:|
-|Regression            |4           |2284.8584 * 4=**9139.4336**    |19.56 * 116.8128=**2284.8584** | 
+|Regression            |4           |**84.624384**    |**21.156096** | 
 |Error                 |113-4-1 = **108**|1.0816 * 108=**116.8128**      |**1.0816**     |
-|Total                 |113-1 = **112**  |**9256.2464**                  |         ***   |
+|Total                 |113-1 = **112**  |**201.437184**                  |         ***   |
 
 
 ### (f) What is the R2 for this model? Write a sentence that interprets this value in context.
@@ -318,27 +369,26 @@ R2  = SSR / SST
 R2  = SSR / SST
 
 ```{r q2f-1}
-R2 <- 9139.4336 / 9256.2464
-
 print(paste("R2 for the model is: ", R2))
 ```
-**2f Answer**
+**2f Answer: **
 
-R2 for the model is:  0.9874. Interpreted as: 98.74% of the variability in percentage of patients infected is  predicted by the model; HOWEVER, because our model contains multiple regressor variables, this interpretation is suspect because, by definition, as each predictor variable is added R2 cannot decrease.
+R2 for the model is:  0.42. Interpreted as: 42% of the variability in percentage of patients infected is predicted by the model; HOWEVER, because our model contains four predictor variables, this interpretation is suspect because, by definition, as each predictor variable is added R2 cannot decrease.
 
 ### (g) What is the R2 adj for this model?
 
 **2g Work**
 
-R2-adj = 1- (SSE / (n-p)) / (SST / n-1))
+R2-adj = 1 - ((SSE / (n - p)) / (SST / (n-1)))
 
 ```{r q2g-1}
-R2.adj <- 1 - (1.0816 / (9256.2464 / (113-1)))
+R2.adj <- 1 - ((SSE / (n - p)) / (SST / (n-1)))
+
 print(paste("R2 Adjusted for the model is: ", R2.adj))
 ```
 **2f Answer**
 
-R2 Adjusted for the model is:  **0.9869**
+R2 Adjusted for the model is:  **0.3986**
 
 ## Question 3 (No R required) Data from 55 college students ...
 are used to estimate a multiple regression model with response variable LeftArm, with predictors LeftFoot and RtFoot. All variables were measured in centimeters. Some R output is given below.
@@ -352,7 +402,7 @@ are insignificant. Is your classmate's concern warranted? Briefly explain.
 
 **Answer Question 3**
 
-This seems very strange, but it is possible that even though the two regressors are not significant when the other is held constant (as shown by the t statistics), the overall model, or joint significance of both variables as they both change values is significant (as shown by the F statistic).
+This seems very strange, but it is possible that even though the two regressors are not significant when the other is held constant (as shown by the t statistics), but that colinearity is present, and that the "bad" t statistics with a "good" F statistic means that the regressors are correlated and we don't know which one we can remove. We do know that one of the predictors has a slope != 0.
 
 ## Question 4 (No R required) Recall in matrix notation, ...
 the least-squares estimators for the regression model can be written as:
@@ -377,6 +427,6 @@ Show that H is idempotent, i.e., HH = H.
 ## Question 5 Please remember ...
 to complete the Module 4 Guided Question Set Participation Self and Peer-Evaluation Questions via Test & Quizzes on Collab.
 
-**Will do**
+**Done**
 
 

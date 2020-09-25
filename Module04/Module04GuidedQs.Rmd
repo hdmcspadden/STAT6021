@@ -66,7 +66,7 @@ cor(nflData)
 ```
 ```{r q1a4}
 
-nflData.cor = cor(nflData)
+nflData.cor <- cor(nflData)
 
 threshold <- 0.6 # set a correlation threshold, is there a standard? A: Not really.
 
@@ -105,7 +105,7 @@ x7: x1+, x5+, x8-
 
 x8: x1-, x7-
 
-**1c What predictors would you first consider to use in a multiplie linear regression?** Briefly explain your choices.
+**1c What predictors would you first consider to use in a multiple linear regression?** Briefly explain your choices.
 
 **Answer 1c**
 
@@ -145,7 +145,7 @@ nflModel.x2x7x8
 
 x7's regression coefficient, .194, represents the expected change in season wins per unit change in percent rushing yards, when all the passing yards, and opponents rushing yards are held constant.
 
-**My model estimates .194 additional season wins for each 1 percent increase in rushing yards, when controlling for the effect of the other predictors: passing yards, and opponents rushing yards.**
+**My model estimates .194 additional season wins for each 1 percent increase in rushing plays, when controlling for the effect of the other predictors: passing yards, and opponents rushing yards.**
 
 ## Question 4: A team with x2 = 2000 yards, x7 = 48 percent, and x8 = 2350 yards
 
@@ -156,6 +156,9 @@ would like to estimate the number of games it would win. Also provide a relevant
 estimated.wins <- -1.808 + (.0036 * 2000) + (.194 * 48) - (.0048 * 2350)
 estimated.wins
 
+### need to add prediction
+newdata <-data.frame(x2=2000,x7=48,x8=2350)
+predict.lm(nflModel.x2x7x8,newdata,interval="prediction")
 ```
 **Answer 4**
 
@@ -173,7 +176,7 @@ conclusion. What is the critical value associated with this hypothesis test? Per
 
 **Hypothesis Statements**
 
-H0: B1, B2, B3 = 0
+H0: B1 and B2 and B3 = 0
 
 Ha: B1 != 0 or B2 != 0 or B3 != 0
 
@@ -199,7 +202,12 @@ state the value of the test statistic: **F0 = 29.44**
 
 state the p-value: **p-value = 0.00000003273** = 3.273e-8
 
+At least one of the coefficients is not 0.
+
 state a relevant conclusion. **I reject H0 because p-value < .0.05** 
+
+
+Good F, bad t's == colinearity is when the regressors are highly correlated to each other.
 
 **QUESTION** Is this the conclusion???? The model estimates season wins better than B0 = -1.808 : there is no such thing as a negative win.
 
@@ -221,6 +229,7 @@ The p-value for that t-statistic is 0.037815.
 
 This means that you would expect to see a t-value as large or larger than 2.198 less than 3.8% of the time if the true relationship x7 (percent rushing) and y (season wins) in the presence of x2 (Passing yards) and x8 (Opponents rushing yards) is 0.
 
+MEANS whether we should keep in the model.
 
 **6b: ** Also report the critical value for this hypothesis test. Perform the test at 0.05 significance level.
 
@@ -305,4 +314,4 @@ nflModel.x1x2
 
 summary(nflModel.x1x2)
 ```
-
+Bad ts, good F, means at least one is good, but we don't know which one. t's just tell you whether you should keep in model.
