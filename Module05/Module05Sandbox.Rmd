@@ -27,7 +27,7 @@ output: html_document
 
 Read Section 3.3.2 (after Example 3.4) 
 
-1. Describe, in your own words, what the extra sums of squares method does in a multiple linear regression model. 
+### 1. Describe, in your own words, what the extra sums of squares method does in a multiple linear regression model. 
 
 **Answer**
 
@@ -35,7 +35,9 @@ The ESS method determines the contribution of one, or more regressors on the reg
 
 It is the additional regression error attributed to the model by the addition of the regressor(s) being evaluated.
 
-2. Consider the partial F test associated with the extra sums of squares method: 
+Helpful to think about testing last regressor added.
+
+### 2. Consider the partial F test associated with the extra sums of squares method: 
 
 F0 = (SSR(B2|B1) / r) / MSE
 
@@ -49,14 +51,269 @@ Ha: B2 != 0
 
 where B2 represents the slopes of the regressors we are evaluating.
 
+**Answer from Slides**
 
-* How is SSR(β2|β1) written in terms of SSR(β1) and SSR(β2)? 
+H0 : β1 = β2 = · · · = βr = 0
+Ha : not all of βj in H0 equal zero
 
-SSR(B2|B1) = SSR(B) - SSR(B1)
 
-* Write down the formula for the partial F statistic. What distribution is the partial F statistic compared to? Describe, in your own words, what the partial F statistic is measuring. 
+#### How is SSR(β2|β1) written in terms of SSR(β1) and SSR(β2)? 
+
+SSR(B2|B1) = SSR(B1,B2) - SSR(B1)
+
+= SSE(B1) - SSE(B1,B2) since SST = SSR + SSE
+
+#### Write down the formula for the partial F statistic. What distribution is the partial F statistic compared to? Describe, in your own words, what the partial F statistic is measuring. 
 
 
 F0 = (SSR(B2|B1) / r) / MSE
 
-* How is the partial F statistic different or similar to the t statistic and the ANOVA F statistic from previous modules?
+#### How is the partial F statistic different or similar to the t statistic and the ANOVA F statistic from previous modules?
+
+Our previous definition:
+
+F0/t0^2 = MSR / MSE, where MSR = SSR / k 
+
+so the new F0 is basically the same where (SSR(Bj, |B0,B1,B2,...,Bk) / k) / MSE where 1 <= j <= k
+
+```{r}
+
+attach(swiss)
+
+swissModel <-lm(Fertility ~ Examination + Education + Catholic + Infant.Mortality + Agriculture)
+
+swissModelReduced.NoAgriculture <-lm(Fertility ~ Examination + Education + Catholic + Infant.Mortality)
+
+anova(swissModelReduced.NoAgriculture, swissModel)
+
+summary(swissModelReduced.NoAgriculture)
+
+```
+
+```{r PartialFCalculations}
+# Calculations
+
+#((SSE(B1) - SSE(B1,B2)) / 1) / MSE(B1,B2)
+
+F0 = ((2412.8 - 2105.0) / 1) / (2105.0 / 41)
+print(paste("F0: ",F0))
+
+F.criticalvalue = 1 - (pf(F0,1,29))
+print((paste("F Compare: ", F.criticalvalue)))
+
+```
+
+
+Our Hypothesis is that B of Agriculture (given other predictors) is 0
+
+partial F test gives us P = 0.0187, so we reject the null and leave Agriculture in the model.
+
+### Extra Sumns of Squares Video
+
+* Put the predictor variables last in model creation
+* Run ANOVA table and you can sum all Sum Sq column for total.
+
+((SSR(full model) - SSR(small model)) / (number of prodictors in small model)) / MSE(full model)
+
+MSE(full model) - given in ANOVA next to Residuals
+
+
+## 5.3: Standardized Regression Model
+
+Read Section 3.9 of your textbook
+
+Remember that Bj-hat reflects units of measure of the regressor variable, so hard to compare to each other. Not real E.g.: How does .5 x Stay relate to .1 x Age when Bj-hats are different?
+
+Standardized Regression Coefficients == Dimensionless Regression Coefficients. Helpful to understand coefficients' relations to each other??
+
+### 1. What is the main reason for using the standardized regression model? 
+
+Remember that Bj-hat reflects units of measure of the regressor variable, so hard to compare to each other. Not real E.g.: Regressors of % oxygen to number of leaves on a tree ==  measures are wildly different.
+
+Differing magnitudes can cause problems with round-off errors.
+
+Standardized Regression Coefficients == Dimensionless Regression Coefficients. 
+
+**When there are large unit differences between prediction variables.**
+
+You still cannot compare magnitude of one bj-hat to another bj-hat because the range of values for xj may be different.
+
+**Unit Normal Scaling** replaces the values by their Z scores.
+
+zij = (xij - x-barj) / sj (s is standard dev for xj)
+
+This redistributes the features with their **mean μ = 0 and standard deviation σ =1**
+
+Also need to standardize the fitted value:
+
+yi* = (yi - y-bar) / sy (where s is standard dev of y)
+
+
+New (*) MODEL becomes
+
+yi* = biZi1 + b2Zi2 + bkZik + e, i = 1,2,...,n
+
+Notice b0 is gone, b-hat = y*-bar = 0 (mean of y is 0 with z-score standardization)
+
+### 2. In unit length scaling, 
+the least-squares regression coefficients are b^=(W′W)−1W′y0. 
+
+**Write down, using matrix notation and words, what the matrices W′W and W′y0 represent.**
+
+W'W = is the **correlation matrix** between each xi and xj because each wij = (xij - x-barj) / sqrt(sjj) where sjj = sum of squares of x mean difference.
+
+
+W'y0 = is a correlation vector W (k x 1) of each regressor to y0 (y observations).
+
+#### Example from textbook 3.14 (page 116)
+```{r}
+A <- matrix(c(1, 0.82425, 0.824215, 1), nrow=2, ncol=2, byrow = TRUE)        # fill matrix by rows 
+A
+
+library(matlib)
+A.inv  <- inv(A)
+A.inv
+```
+
+## 5.4: 
+
+Read Sections 9.1 to 9.3 of your 
+
+It is convenient to assume regressor and response variables have been scaled to unit length.
+
+If multicollinearity exists, there is a vector tj such that sum(tjXj = 0) where not all tjs are 0.
+
+**rank of a matrix** == This corresponds to the maximal number of linearly independent columns of A.
+
+### 1. Describe, using your own words, what multicollinearity is.
+
+When regressors are linearly correlated/dependent to each other.
+
+
+### 2. How does multicollinearity affect the variance of regression coefficients? How does multicollinearity affect statistical inference? How does multicollinearity affect predictions?
+
+
+Variance of Regression Coefficients: results in large variances and covariances of coefficient values.
+
+
+Statistical Inference: R2 -> 1, so it inflates R2.
+
+
+Predictions: May still be good in the range where the collinearity occurs, but not be accurate in ranges outside.
+
+
+
+### 3. What happens to the matrix (X′X)−1 when a subset of the predictors are linearly dependent?
+
+Describe, using your own words, the four ways in which multicollinearity occurs.
+
+**Four ways of multicollinearity**
+1. The sample data collected does not include adequate number of observations for the complete range of all regressor variables. 
+
+2. Constraints on the model, or the population being sampled can cause multicollinearity. Examples are when there are native correlations between predictors that cannot be fixed with a different sample. Examples are chemicals where the chemical and the components of the chemical are both regressors. Or two things like: income, an home size.
+
+3. Choice of model: you may need to remove predictors from a model to remove collinearity. Or, the existence of polynomials can cause collinearity. You can select a model that does not include regressors that are collinear with other regressors.
+
+4. Overdefined model: More regressor variables than observations in model. Can't solve a polynomial this way, which to me means that we can't actually find a valid BLUE model when there are fewer observations than variables. Normally dealt with by removing regressor variables.
+
+
+## 5.5: Diagnosing Multicollinearity
+
+Read Sections 3.10, 3.11, 9.4 to 9.4.2, 9.4.4 of your textbook
+
+### 1. Describe how the correlation matrix can be used to detect multicollinearity. 
+
+W'W is the correlation matrix.
+
+The diagonals in the (W'W)^-1 matrix are often called the "variance inflation factors" == VIFs.
+
+They are an important collinearity diagnostic.
+
+In general, VIFj = 1 / (1 - R2j) where R2j is the coefficient of multiple determination when regressing xj on the other regressor variables.
+
+So, if xj is highly correlate then R2j will be close to 1, and 1/.0000001 gets very large == very large VIF.
+
+**VIF larger than 10 == serious problems with multicollinearity.**
+
+
+### 2. Write down the two ways to calculate the variance inflation factor (VIF). 
+
+VIFj = Var(bj-hat) / sigma^2
+
+
+VIFj = 1 / (1 - R2j) where R2j is the coefficient of multiple determination when regressing xj on the other regressor variables.
+
+### 3. How do we use VIFs to detect multicollinearity? 
+
+**VIF larger than  4 - 10 == serious problems with multicollinearity.** If high VIF, and you take steps to address multicollinearity, do the VIFs change???
+
+### 4. What are other features that indicate the presence of multicollinearity in an MLR model?
+
+1. Regression coefficients have the wrong sign. or changes when data points added
+
+2. Determinant of a square matrix: The determinant helps us find the inverse of a matrix, tells us things about the matrix that are useful in systems of linear equations, calculus and more.
+
+Since X'X is in correlation form |X'X| is between 0 and 1. If |X'X| == 1, then orthoganol (i.e. good), if |X'X| == 0 there is exact linear dependence is regressors.
+
+```{r exampleDeterminantCalc}
+D <- matrix(c(1,2,3,2,5,7,8,5,3), nrow=3, ncol=3, byrow = TRUE) 
+
+det.D <- det(D)
+det.D
+
+```
+Determinant method does not tell you the source of the problem.
+
+3. Inspection of off-diagonal elements rij in X'X. If xi and xj are nearly linearly independent then abs(rij) (i.e. the diagonals) will be near 1.
+
+4. F statistic, and individual t statistics: significant D, insignificant t.
+
+5. relatively large coefficients for higher order terms in a quadratic model.
+
+## 5.6 Recap of Module 5
+
+Remember that SST is always the same no matter which predictors included because, by definition, SST = sum(yi - y-bar), neither yi or ybar depend on model.
+
+SST = SSR + SSE
+
+So, is the increase in SSR significant (worth the extra variable in model), that is what partial F test tells us.
+
+
+Remember to write down the full and reduced model:
+
+**Full Model** 
+
+F == full model
+
+
+**Reduced Model** module after dropping some predictors
+
+R = Reduced Model
+
+
+**F-Test**
+
+H0: B's for some predictors are 0 - says we use the reduced model
+
+Ha: at least one of B's is non zero. - support the full model
+
+F0 = [SSR(F) - SSR(R)] / r) / SSE(F) / n - p
+
+that is equivalent to (because change in regression error is same as change in residual error because of SST = SSR + SSE where SST stays constant)
+
+F0 = [SSE(F) - SSE(R)] / r) / SSE(F) / n - p
+
+r == number of predictors to drop
+
+n - p; n number of observations, p == number of parameters
+
+F r,n-p is what we compare to.
+
+
+### Solutions
+
+1. Use subset of predictors
+
+2. Dimension rediction methods (principal component analysis)
+
+3. Shrinkage methods (ridge regression, lasso)

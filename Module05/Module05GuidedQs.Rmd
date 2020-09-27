@@ -4,27 +4,244 @@ author: "Diana McSpadden"
 date: "9/24/2020"
 output: html_document
 ---
+Car drivers like to adjust the seat position for their own comfort. Car designers find it
+helpful to know where different drivers will position the seat. Researchers at the HuMoSim
+laboratory at the University of Michigan collected data on 38 drivers. The **response variable is hipcenter**, the horizontal distance of the midpoint of the hips from a fixed location in the
+car in mm. They measured the following eight predictors:
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+• x1: Age. Age in years
+• x2: Weight. Weight in pounds
+• x3: HtShoes. Height with shoes in cm
+• x4: Ht. Height without shoes in cm
+• x5: Seated. Seated height in cm
+• x6: Arm. Arm length in cm
+• x7: Thigh. Thigh length in cm
+• x8: Leg. Lower leg length in cm
+
+
+The data are from the faraway package in R. After installing the faraway package, load
+the seatpos dataset from the faraway package.
+
+```{r}
+library(faraway)
+data(seatpos)
+attach(seatpos)
+seat.FullModel <- lm(hipcenter~., data=seatpos)
+seat.FullModel
+##This regresses hipcenter against all the other variabes in the dataframe seatpos
+```
+# Question 1 Fit the full model with all the predictors. 
+Using the summary() function, comment on the results of the t tests and ANOVA F test from the output. Also report the R2 of the model.
+```{r q1-1}
+summary(seat.FullModel)
 ```
 
-## R Markdown
+### T Tests and ANOVA F TEST
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+None of the t test p values are significant; however the F statistic is significant. This tells us that at least one of the predictor variables is significant, we just don't know which one.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+### R2
+R2 = 0.6866 but R2 is inflated by multicollinearity.
 
-```{r cars}
-summary(cars)
+# Question 2 Briefly explain why, ...
+based on your output from part 1, you suspect the model shows signs of multicollinearity.
+
+**Answers**
+
+1. First, the large p values for the regressors combined with the small p value for the F statistic
+
+2. Second, I would expect the sign of coefficients for HtShoes, Ht, Arm, Thigh and Leg to all be the same, however, some are positive and some are negative, which makes me think the variance of the coefficients is too large which is an effect of multicollinearity.
+
+# Question 3 Provide the output for all the pairwise correlations among the predictors. 
+Comment briefly on the pairwise correlations
+```{r q3-1, fig.width=10, fig.height=10}
+# all correlation matrix
+seatpos.cor <- cor(seatpos)
+seatpos.cor
 ```
 
-## Including Plots
+``` {r q3-2}
+threshold <- 0.8 # set a correlation threshold, is there a standard? A: Not really.
 
-You can also embed plots, for example:
+corWorking <- seatpos.cor
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+diag(corWorking) <- 0 # set diagonal to 0 so 1's of unrelated don't get caught in threshold
+
+seatpos.cor.related <- apply(abs(corWorking) >= threshold, 1, any) # apply the filter to the absolute value of the correlations between variables.
+
+seatpos.cor[seatpos.cor.related, seatpos.cor.related]
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Age is the only predictor variable that doesn't show some correlation with the other predictor variables (or with the response variable)
+
+Weigt, HtShoes, Ht, Seated, and Leg all are strongly correlated with each other - even more strongly than they are with hipcenter.
+
+
+# Question 4: Check the variance inflation factors (VIFs). 
+What do these values indicate about multicollinearity?
+```{r q4-1}
+vif(seat.FullModel)
+```
+
+If we use 4 as a VIF indicating multicollinearity, then HtShoes, Ht, Seated, Arm, Thigh, and Leg all have multicollinearity issues.
+
+If we use 8, then HtShoes, Ht, and Seated all have multicollinearity issues.
+
+Regardless of our threshold, there are multicollinearity issues with our model.
+
+# Question 5: Looking at the data, ...
+we may want to look at the correlations for the variables that describe length of body parts: HtShoes, Ht, Seated, Arm, Thigh, and Leg. Use the
+following code:
+```{r q5-1}
+library(janitor)
+cor.seated = round(cor(seatpos[,3:8]),3) 
+cor.seated
+
+#as.data.frame((cor.seated), row.names = 'HtShoes','Ht','Seated','Arm','Thigh','Leg', optional = FALSE) %>% adorn_totals("row")
+
+##notice in your dataframe that the
+##6 variables we want pairwise correlations are in the 3rd to 8th
+##columns of the dataset. seatpos[,3:8] says we want to use the
+##values from all rows and columns 3 to 8 of the dataframe.
+```
+Not surprisingly,
+
+HtShoes is highly correlated to Ht, Seated, and Leg
+
+Ht is highly correlated with Seated and Leg
+
+Seated is highly correlated with Leg
+
+Arm is less correlated than the others, but still has values higher than I would like.
+
+Thigh is less correlated than the others, but still has values higher than I would like.
+
+# QUestion 6: Since all the six predictors from the previous part are highly correlated, ...
+you may decide to just use one of the predictors and remove the other five from the model. Decide which predictor out of the six you want to keep, and briefly explain your choice.
+
+**Answer to Question 6** 
+
+I would like to keep Ht because the total of its row/column of correlations is the highest. It seems like my best predictor both logically, and mathematically.
+
+# Question 7: Based on your choice in part 6, Fit a multiple regression with your choice of predictor
+to keep, along with the predictors x1 = Age and x2 =Weight. Check the VIFs for this model. 
+Comment on whether we still have an issue with multicollinearity.
+
+```{r q7-1}
+seat.ReducedModel <- lm(hipcenter~Age+Weight+Ht, data=seatpos)
+
+vif(seat.ReducedModel)
+```
+The values are all under 4. Yay! I think we have dealt with the multicollinearity.
+
+# Question 8: Conduct a partial F test ...
+to investigate if the predictors you dropped from the full model were jointly insignificant. Be sure to state a relevant conclusion.
+```{r q8-1}
+anova(seat.ReducedModel,seat.FullModel)
+```
+The anova comparison, or partial F test would be stated:
+
+H0: B's for HtShoes, Seated, Arm, Thigh = 0 (i.e. we use the reduced model)
+
+Ha: at least one of B's for HtShoes, Seated, Arm, Thigh != 0 (i.e. support the full model)
+
+Our p value for the partial F test is 0.7279 which is much to large to reject H0. We fail to reject H0, and we use the **reduced** model.
+
+# Question 9: Produce a plot of residuals against fitted values for your model from part 7. 
+
+Based on the residual plot, comment on the assumptions for the multiple regression model. Also
+produce an ACF plot and QQ plot of the residuals, and comment on the plots.
+
+```{r q9-1, fig.width=10, fig.height=8}
+
+par(mfrow=c(2,2)) # 2 rows, 2 columns - there will be three panes to look through
+
+# Residual plot
+plot(seat.ReducedModel$fitted.values,seat.ReducedModel$residuals, main="MLR: Residuals vs. Fitted Values")
+abline(h=0,col="red")
+
+# ACF Plot
+acf(seat.ReducedModel$residuals, main="MLR: ACF of Residuals")
+
+# QQ Plot of Residuals
+qqnorm(seat.ReducedModel$residuals)
+qqline(seat.ReducedModel$residuals, col="red")
+
+```
+
+**Answer Q 9**
+
+The residuals plot shows a mean zero, but the variance of the fitted values is not standard.
+
+The ACF plot shows that residuals are uncorrelated.
+
+The QQ plot shows that the residuals follow a normal distribution.
+
+# Question 10: Based on your results, write your estimated regression equation from part 7. 
+Also report the R2 of this model, and compare with the R2 you reported in part 1, for the model with all predictors. Also comment on the adjusted R2 for both models.
+
+```{r q10-1}
+seat.ReducedModel
+```
+
+**E(Y|Age+Weight+Ht) = 528.3 + .52(Age) + .0043(Weight) - 4.21(Ht)**
+
+```{r q10-2}
+print(paste("R2 Reduced Model: ",summary(seat.ReducedModel)$r.squared ))
+
+print(paste("R2 Full Model: ",summary(seat.FullModel)$r.squared ))
+```
+
+As expected, the R2 from the full model was inflated a bit.
+
+R2 = SSR / SST, or, errors explained by the model / total errors.
+
+For the reduced model:
+Interpreted as: 66% of the variability in hip center is predicted by the model; HOWEVER, we should keep in mind that our model contains three predictor variables, this interpretation is suspect because, by definition, as each predictor variable is added R2 cannot decrease. For that very reason, the variability explained by the Full Model is higher, but even more suspect.
+
+# Question 11: Suppose there was measurement error in the response variable, hipcenter. 
+Add this measurement error with standard deviation 10mm to the response. Use the following code to add the measurement error to the response:
+
+```{r q11-1}
+hipcenter
+```
+
+``` {r q11-2}
+
+hip.error<-hipcenter+10*rnorm(38) ##adds an error term that is N(0,10^2) to the 38 observations
+
+hip.error
+```
+Then, fit the model with hip.error as the response with all the predictors. Compare the estimated coefficients of this model with the coefficients of the model from part 1, with no measurement error. 
+
+```{r q11-3}
+seat.Error.FullModel <- lm(hip.error~Age+Weight+HtShoes+Ht+Seated+Arm+Thigh+Leg , data=seatpos)
+
+print("Coefficients From Error Corrected Model:")
+
+seat.Error.FullModel
+
+print("Coefficients From Full Model:")
+
+seat.FullModel
+
+```
+
+Also compare the standard errors of the coefficients, and the R2.
+
+
+```{r q11-4}
+print("Summary of Error Corrected Model:")
+
+summary(seat.Error.FullModel)
+
+print("Summary of Full Model:")
+
+summary(seat.FullModel)
+
+
+```
+
+**Not sure what I am looking for here**
+
+Some have changed sign, which I think is an indicator of multicollinearity
