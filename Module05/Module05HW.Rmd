@@ -5,26 +5,116 @@ date: "9/24/2020"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+# Stat 6021: Homework Set 5
+
+## Name: H. Diana McSpadden
+### UID: hdm5s
+### 10.01.2020
+
+
+## Question 1: For this first question, ...
+you will continue to use the dataset swiss which you also used in the last homework. Load the data. For more information about the data set, type ?swiss. The goal of the data set was to assess how fertility rates in the Swiss (French-speaking) provinces relate to a number of demographic variables.
+
+### Q1(a) In the previous homework, you fit a model with the fertility measure ...
+as the response variable and used all the other variables as predictors. Now, consider a simpler model, using only the last three variables as predictors: Education, Catholic, and Infant.Mortality. Carry out an appropriate hypothesis test to assess which of these two models should be used. State the null and alternative hypotheses, find the relevant test statistic, p-value, and state a conclusion in context. (For practice, try to calculate the test statistic by hand.)
+
+```{r q1a-1}
+# load the data
+#?swiss
+
+attach(swiss)
 ```
 
-## R Markdown
+**About Swiss**
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Standardized fertility measure and socio-economic indicators for each of 47 French-speaking provinces of Switzerland at about 1888.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+A data frame with 47 observations on 6 variables, each of which is in percent, i.e., in [0, 100].
 
-```{r cars}
-summary(cars)
+[,1]	Fertility	Ig, ‘common standardized fertility measure’
+
+[,2]	Agriculture	% of males involved in agriculture as occupation
+
+[,3]	Examination	% draftees receiving highest mark on army examination
+
+[,4]	Education	% education beyond primary school for draftees.
+
+[,5]	Catholic	% ‘catholic’ (as opposed to ‘protestant’).
+
+[,6]	Infant.Mortality	live births who live less than 1 year.
+
+**Question 1a Work**
+
+```{r q1a-2}
+swissModel.Full <-lm(Fertility~Education + Catholic + Infant.Mortality + Agriculture + Examination) # I put agriculture and examination on the end
+swissModel.Full # view the full model coefficients
+
+swissModel.Reduced <-lm(Fertility ~ Education + Catholic + Infant.Mortality)
+swissModel.Reduced # view the reduced coefficients
+```
+ I will run the anova for the reduced model vs. the full model, and also for the full model.
+
+```{r q1a-3}
+
+# run the anova for the reduced model vs full model
+anova(swissModel.Reduced,swissModel.Full)
+
 ```
 
-## Including Plots
+**Question 1a Answer**
 
-You can also embed plots, for example:
+Hypothesis Test:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+H0: B's for Agriculture, Examination = 0 (i.e. we use the reduced model)
+
+Ha: at least one of B's for Agriculture, Examination != 0 (i.e. support the full model)
+
+The p value is much to high, 0.5628, so I fail to reject the null hypothesis, and determine that the reduced model is appropriate in comparison to the full model.
+
+**Calculate the Test Statistic By Hand**
+
+
+r == number of predictors to drop == 2
+
+n - p; n number of observations, p == number of parameters == 47 - 4 == 43
+
+F r,n-p is what we compare to.
+
+```{r q1a-4}
+print(paste("Test Statistic: ",qf(0.95,2,43)))
 ```
+### Q1(b) For the model you decide to use from part 1a, assess if the regression assumptions are met.
+```{r q1b-1, fig.width=10, fig.height=8}
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+par(mfrow=c(2,2)) # 2 rows, 2 columns - there will be three panes to look through
+
+# Residual plot
+plot(swissModel.Reduced$fitted.values,swissModel.Reduced$residuals, main="MLR: Residuals vs. Fitted Values")
+abline(h=0,col="red")
+
+# ACF Plot
+acf(swissModel.Reduced$residuals, main="MLR: ACF of Residuals")
+
+# QQ Plot of Residuals
+qqnorm(swissModel.Reduced$residuals)
+qqline(swissModel.Reduced$residuals, col="red")
+
+## BoxCox
+library(MASS)
+boxcox(swissModel.Reduced, lambda = seq(-0.5, 2, 0.01))
+```
+**Question Answer 1b**
+
+The BOXCOX contains lambda of 1, so the constant variance assumption appears to be met.
+
+The Residual plot shows an approximate 0 mean of residuals.
+
+The QQ plot shows two "lumps" that indicate some non-normality.
+
+Most importantly, the ACF plot shows that the residuals are correlated at a lag of 1, which does not meet the regression assumptions.
+
+
+## Question 2 (No R) The data for this question come from 113 hospitals...
+The key response variable is **InfctRsk**, the risk that patients get an infection while staying at the hospital.
+We will look at five predictors:
+
