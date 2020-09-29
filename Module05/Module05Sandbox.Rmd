@@ -266,7 +266,7 @@ Determinant method does not tell you the source of the problem.
 
 3. Inspection of off-diagonal elements rij in X'X. If xi and xj are nearly linearly independent then abs(rij) (i.e. the diagonals) will be near 1.
 
-4. F statistic, and individual t statistics: significant D, insignificant t.
+4. F statistic, and individual t statistics: significant F, insignificant t.
 
 5. relatively large coefficients for higher order terms in a quadratic model.
 
@@ -314,6 +314,6 @@ F r,n-p is what we compare to.
 
 1. Use subset of predictors
 
-2. Dimension rediction methods (principal component analysis)
+2. Dimension reduction methods (principal component analysis)
 
 3. Shrinkage methods (ridge regression, lasso)
