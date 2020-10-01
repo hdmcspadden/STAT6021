@@ -230,11 +230,11 @@ B2.teststatistic = -0.014071 / 0.022708 # se(Bj-hat) is given
 print(paste("The B2 test statistic is: ", B2.teststatistic))
 
 # calculate the B2 p-value of the test statistic
-B2.pvalue = 2*pt(-abs(B2.teststatistic), df=(113 - 4 - 1))  # calc p Value - two-sided is the 2 *
+B2.pvalue <- 2*pt(-abs(B2.teststatistic), df=(113 - 4 - 1))  # calc p Value - two-sided is the 2 *
 print(paste("The B2 p-value is: ", B2.pvalue))
 
 # calculate the B2 critical value to compare the test statistic to
-criticalValue = qt(0.975, (113 - 4 - 1))
+criticalValue <- qt(0.975, (113 - 4 - 1))
 print(paste("The critical value is: ", criticalValue))
 ```
 **Answer 2b:**

@@ -1,0 +1,109 @@
+---
+title: "Module06Sandbox"
+author: "Diana McSpadden"
+date: "10/1/2020"
+output: html_document
+---
+
+# Module 06: Categorical Variables
+
+Categorial, aka Qualitative Variables
+
+observations into groups
+
+What are the differences in the MLR model when predictors are categorical.
+
+## ESSENTIAL QUESTIONS
+1. How do we use indicator variables for categorical predictors in an MLR model?
+1. What does it mean when there is an interaction between the predictors?
+1. How do we interpret the MLR model when we have categorical predictors, with and without interaction?
+
+## 6.2 Indicator Variables
+
+Read Sections 8.1 to 8.2 of your textbook.
+
+1. Describe how you would use indicator variables for this regression. 
+
+**Answer**
+Indicator variables are quantitative variables whose quant value is assigned based on a qualitative value of the corresponding categorical variable(s).
+
+read pages 261 and 262 for desctriptions of indicator variables
+
+In general, a qualitative variable with a levels is represented by (a-1) regressor variables (binary switches with values 0 or 1)
+
+
+2. What is the interpretation of the regression coefficients β0, β1, β2 when there are no interactions? How does the interpretation change when there is interaction between the predictors? 
+
+**Answer No Interactions**
+
+When slopes are the same:
+
+B0: When category is category 0, and quantitative variable is 0.
+
+B1: In the book example, B1 is the change in response variable when the quantitative variable changes by 1 unit
+
+B2: In the book example, B2 is the change in response variable when indicator variable changes from category 0 to category 1. and 95% confidence interval of B2 is described as "95% confidence that changing from category 0 to category 1 increases mean tool life between B2 low to B2 high."
+
+
+When slopes are different:
+
+For category 0:
+B0: this is the intercept
+
+B1: slope of category 0 
+
+For categoyry 1:
+
+Intercept is B0 + B2
+
+Slope is B1 + B3
+
+Where B3 is coefficient of x1x2
+
+**Answer Interactions**
+
+
+Add multiplier terms
+
+E.g.
+where :
+
+x1 = square footage of home
+
+x2, x3, x4 == 0 == no airconditioning
+
+x2 = 1, x3,x4 = 0 == window units
+
+x3 = 1, x2,x4 = 0 == heat pump
+
+x4 = 1, x2,x3 = 0 == central air
+
+Equation looks like:
+
+**Y-hat = B0 + B1x1 + B2x2 + B3x3 + B4x4 + B5x1x2 + B6x1x3 + B7x1x4 + E**
+
+**Interpreations of Coefficients**
+B0:
+
+B1:
+
+B2:
+
+B3:
+
+B4:
+
+B5:
+
+B6:
+
+B7:
+
+
+
+3. Describe, in your own words, what interaction between the predictors means. 
+
+
+
+4. What assumption are we making regarding the model variance, σ2, when using indicator variables? 
+

@@ -9,7 +9,7 @@ output: html_document
 
 ## Name: H. Diana McSpadden
 ### UID: hdm5s
-### 10.01.2020
+### 10.02.2020
 
 
 ## Question 1: For this first question, ...
@@ -290,9 +290,9 @@ F-statistic: 15.19 on 2 and 52 DF, p-value: 6.382e-06
 ### Explain how this output indicates the presence of multicollinearity in this regression model.
 
 **Answer Question 3**
-The first indication of multicollinearity is that the p values for both predictors do not indicate that the predictor, when holding the other predictor constant, is a significant predictor in the model. The R output seems to say that there are no significant predictors when used simultaneously; **however** the F-statistic and corresponding p-value say that the total model is statistically significant. Together these two findings indicate that there is multicollinearity in the model.
+The indication of multicollinearity is that the p values for both predictors do not indicate that the predictor, when holding the other predictor constant, is a significant predictor in the model. The R output seems to say that there are no significant predictors when used simultaneously; **however** the F-statistic and corresponding p-value say that the total model is statistically significant. Together these two findings indicate that there is multicollinearity in the model.
 
-The second indication I see is that the sign for the coefficient of RtFoot does not seem intuitively correct. I would expect the coefficient for RtFoot to be negative for prediction of left handedness or strength of left arm, or the unknown meaning of the LeftArm response variable. I am not sure about this interpretation because we were not provided with the data dictionary for this dataset, but the sign of the coefficient for RtFoot seems counter to what I would expect.
+
 
 
 

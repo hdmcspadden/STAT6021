@@ -4,6 +4,10 @@ author: "Diana McSpadden"
 date: "9/24/2020"
 output: html_document
 ---
+
+## Group
+Diana McSpadden, Joe Amoroso, Jen Leopold, Sahil Yedulla
+
 Car drivers like to adjust the seat position for their own comfort. Car designers find it
 helpful to know where different drivers will position the seat. Researchers at the HuMoSim
 laboratory at the University of Michigan collected data on 38 drivers. The **response variable is hipcenter**, the horizontal distance of the midpoint of the hips from a fixed location in the
@@ -26,7 +30,8 @@ the seatpos dataset from the faraway package.
 library(faraway)
 data(seatpos)
 attach(seatpos)
-seat.FullModel <- lm(hipcenter~., data=seatpos)
+
+seat.FullModel <- lm(hipcenter~., data=seatpos) # Joe says stop the dot
 seat.FullModel
 ##This regresses hipcenter against all the other variabes in the dataframe seatpos
 ```
@@ -41,7 +46,9 @@ summary(seat.FullModel)
 None of the t test p values are significant; however the F statistic is significant. This tells us that at least one of the predictor variables is significant, we just don't know which one.
 
 ### R2
-R2 = 0.6866 but R2 is inflated by multicollinearity.
+R2 = 0.6866 but R2 is inflated by multicollinearity. If more than one predictor it is always inflated.
+
+68% of variance is reported by the model, but the multiple predictors the regression error generally inflated.
 
 # Question 2 Briefly explain why, ...
 based on your output from part 1, you suspect the model shows signs of multicollinearity.
@@ -51,6 +58,9 @@ based on your output from part 1, you suspect the model shows signs of multicoll
 1. First, the large p values for the regressors combined with the small p value for the F statistic
 
 2. Second, I would expect the sign of coefficients for HtShoes, Ht, Arm, Thigh and Leg to all be the same, however, some are positive and some are negative, which makes me think the variance of the coefficients is too large which is an effect of multicollinearity.
+```{r}
+vif(seat.FullModel)
+```
 
 # Question 3 Provide the output for all the pairwise correlations among the predictors. 
 Comment briefly on the pairwise correlations
@@ -134,6 +144,8 @@ vif(seat.ReducedModel)
 ```
 The values are all under 4. Yay! I think we have dealt with the multicollinearity.
 
+Interesting, Weight and Height may still have some correlation.
+
 # Question 8: Conduct a partial F test ...
 to investigate if the predictors you dropped from the full model were jointly insignificant. Be sure to state a relevant conclusion.
 ```{r q8-1}
@@ -141,9 +153,9 @@ anova(seat.ReducedModel,seat.FullModel)
 ```
 The anova comparison, or partial F test would be stated:
 
-H0: B's for HtShoes, Seated, Arm, Thigh = 0 (i.e. we use the reduced model)
+H0: B's for HtShoes, Seated, Arm, Thigh = 0 (i.e. we use the reduced model), another way would be B3, B4, B5, B6, B7, B8 == 0
 
-Ha: at least one of B's for HtShoes, Seated, Arm, Thigh != 0 (i.e. support the full model)
+Ha: Bj != 0 where 3 <= j <= 8 (i.e. use the full model), This test sees if one of the variables we **removed** affects the model. Think about the
 
 Our p value for the partial F test is 0.7279 which is much to large to reject H0. We fail to reject H0, and we use the **reduced** model.
 
@@ -173,7 +185,7 @@ qqline(seat.ReducedModel$residuals, col="red")
 
 The residuals plot shows a mean zero, but the variance of the fitted values is not standard.
 
-The ACF plot shows that residuals are uncorrelated.
+The ACF plot shows that residuals are uncorrelated **except for a lag of 11.**
 
 The QQ plot shows that the residuals follow a normal distribution.
 
@@ -244,4 +256,6 @@ summary(seat.FullModel)
 
 **Not sure what I am looking for here**
 
-Some have changed sign, which I think is an indicator of multicollinearity
+ESE seems larger. sigma is larger Adjusts R2 is smaller.
+
+**Feature of multicollinearity is that small adjustments in variables cause large changes in coefficients.**

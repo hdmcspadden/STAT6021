@@ -317,3 +317,42 @@ F r,n-p is what we compare to.
 2. Dimension reduction methods (principal component analysis)
 
 3. Shrinkage methods (ridge regression, lasso)
+
+# Notes from Live Session
+
+purposes of regression models
+* prediction
+* explore relationship between response and multiple predictors simultaneously
+
+higher order terms make the model more difficult to interpret, but residual errors go down.
+
+**overfitting** - actually leads to less predictive power
+
+Partial F test can help us understand if we can remove predictors simultaneously.
+
+Partial F only works when comparing 2 models. Full vs. Reduced.
+
+  terminology can be used of "nested model". In biostatistics "nested model" means something different
+  
+
+Adjusted R2 gets used when two models are compared BUT one is not a nested model.
+
+**Test Data:** new data
+
+**Training Data:** data used to make the model
+
+
+## VIF
+do our variables have dependence on each other
+
+higher the VIF, the more evidence of dependence.
+
+If 10 predictors, you will have 10 VIFs: VIF1, VIF2 .... VIF10
+
+
+VIF1 = 1 /(1-R1^2)  - as R1^2 gets large, then VIF gets large tells us that x1 can be expressed as an equation of other variables.
+
+Rather than a specific value, you want to see a reduction in VIF if a predictor is removed.
+
+
+
