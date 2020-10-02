@@ -22,7 +22,7 @@ What are the differences in the MLR model when predictors are categorical.
 
 Read Sections 8.1 to 8.2 of your textbook.
 
-1. Describe how you would use indicator variables for this regression. 
+### 1. Describe how you would use indicator variables for this regression. 
 
 **Answer**
 Indicator variables are quantitative variables whose quant value is assigned based on a qualitative value of the corresponding categorical variable(s).
@@ -32,7 +32,7 @@ read pages 261 and 262 for desctriptions of indicator variables
 In general, a qualitative variable with a levels is represented by (a-1) regressor variables (binary switches with values 0 or 1)
 
 
-2. What is the interpretation of the regression coefficients β0, β1, β2 when there are no interactions? How does the interpretation change when there is interaction between the predictors? 
+### 2. What is the interpretation of the regression coefficients β0, β1, β2 when there are no interactions? How does the interpretation change when there is interaction between the predictors? 
 
 **Answer No Interactions**
 
@@ -44,8 +44,13 @@ B1: In the book example, B1 is the change in response variable when the quantita
 
 B2: In the book example, B2 is the change in response variable when indicator variable changes from category 0 to category 1. and 95% confidence interval of B2 is described as "95% confidence that changing from category 0 to category 1 increases mean tool life between B2 low to B2 high."
 
+**I like this description**
+The coeffcient B2 for the indicator variable is the difference in the intercepts. Contextually, B2 is the difference in the average response between stock firms and mutual fund firms, when comparing firms of similar size.
 
-When slopes are different:
+In general, B2 shows how much higher (or lower) the mean response is for the class coded 1 than for the class coded 0, for any given level (or value) of x1.
+
+
+**When slopes are different:**
 
 For category 0:
 B0: this is the intercept
@@ -70,7 +75,7 @@ where :
 
 x1 = square footage of home
 
-x2, x3, x4 == 0 == no airconditioning
+x2, x3, x4 == 0 == no air conditioning
 
 x2 = 1, x3,x4 = 0 == window units
 
@@ -83,27 +88,39 @@ Equation looks like:
 **Y-hat = B0 + B1x1 + B2x2 + B3x3 + B4x4 + B5x1x2 + B6x1x3 + B7x1x4 + E**
 
 **Interpreations of Coefficients**
-B0:
+B0: intercept for no air conditioning
 
-B1:
+B1: slope of no air conditioning
 
-B2:
+B0 + B2 = intercept window units
 
-B3:
+B1 + B5 = slope window units
 
-B4:
+B0 + B3 = intercept heat pump
 
-B5:
+B1 + B6 = slope window units
 
-B6:
+B0 + B4 = intercept central air
 
-B7:
-
-
-
-3. Describe, in your own words, what interaction between the predictors means. 
+B1 + B7 = slope central air
 
 
+### 3. Describe, in your own words, what interaction between the predictors means. 
 
-4. What assumption are we making regarding the model variance, σ2, when using indicator variables? 
+**Answer**
+Interaction between predictors, with categorical variables, means that the slope for the regression line for different categories is different. We expect the prediction to change by different amount per that same unit change depending on the category.
+
+### 4. What assumption are we making regarding the model variance, σ2, when using indicator variables? 
+
+????That it will increase since we are adding regressors and possibly different sloped regression equations based on indicator values????
+
+## 6.3 Regression and ANOVA
+
+Read Section 8.3 of your textbook.
+
+### Explain, in your own words, why the ANOVA problem can be treated as a regression problem ...
+in which all of the regressors are indicator variables. How are the null and alternative hypotheses written when we are testing if the population mean response variable is the same across all groups?
+
+
+
 
