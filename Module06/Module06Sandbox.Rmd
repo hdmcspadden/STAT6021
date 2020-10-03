@@ -18,6 +18,13 @@ What are the differences in the MLR model when predictors are categorical.
 1. What does it mean when there is an interaction between the predictors?
 1. How do we interpret the MLR model when we have categorical predictors, with and without interaction?
 
+one class has 0 for all indicator variables == **reference class**
+
+**The coefficients for each indicator variable compare the mean response for that class with the reference class.**
+
+
+
+
 ## 6.2 Indicator Variables
 
 Read Sections 8.1 to 8.2 of your textbook.
@@ -112,14 +119,108 @@ Interaction between predictors, with categorical variables, means that the slope
 
 ### 4. What assumption are we making regarding the model variance, σ2, when using indicator variables? 
 
-????That it will increase since we are adding regressors and possibly different sloped regression equations based on indicator values????
+sigma^2 will be artifically less than the actual value because it is calculated as SSE / (n - p)
+
+and we are adding additional parameters the denominator will increase. Also, does the assumption that additional regressors always decreases SSE still apply to indicator variables?
+
+**From Dr. Woo**: When using indicator variables, we are assuming the the error variance σ2 is the same across all classes of the categorical variable.
 
 ## 6.3 Regression and ANOVA
 
 Read Section 8.3 of your textbook.
 
 ### Explain, in your own words, why the ANOVA problem can be treated as a regression problem ...
-in which all of the regressors are indicator variables. How are the null and alternative hypotheses written when we are testing if the population mean response variable is the same across all groups?
+in which all of the regressors are indicator variables. 
+
+each "treatment" in ANOVA can be thought of as a level of a categorical/qualitative factor.
+
+
+With k treatments
+
+B0 =  mew-k
+
+Bi = mew-i = mew-k where i = 1,2,...,k-1
+
+if H0 is true then B0 = mew and B1, B2 == 0.
+
+which is basically they same as in linear regression model where H0 is that B0 (the intercept) is at least as good a prediction as when the other B's are used, and equals y-bar.
+
+AND, we compare F0 against F alpha, k-1, k(n-1) which works out to F alpha, parameters - 1, kk - k which ends up equaling same as regression F critical value.
+
+
+###How are the null and alternative hypotheses written ...
+when we are testing if the population mean response variable is the same across all groups?
+
+H0: tau1 = tau2 = ... = tauk == 0 where tau is the effect of each treatment. That all populations are equal. There is no effect of treatment
+
+Ha: tau-i != 0 for at least 1 i.
+
+
+## 6.3: Recap of Module 6
+
+one class has 0 for all indicator variables == **reference class**
+
+**The coefficients for each indicator variable compare the mean response for that class with the reference class.**
+
+### Example WITHOUT INTERACTIONS
+
+response variable == income of Americans
+
+x1 = years in school
+
+three political affiliations: Democrat, Republican, Independent
+
+Let's make Independent the **reference class**
+
+I1 = 1 if Democrat, 0 otherwise
+
+I2 = 1 if Republican, 0 otherwise
+
+E(Y|x) = B0 + B1x1 + B2I1 + B3I2
+
+
+For Democrats E(Y|x) = B0 + B1x1 + B2 == B0 + B2 + B1x1 (1)
+
+For Republicans E(Y|x) = B0 + B3 + B1x1 (2)
+
+For Independents Y*Y|x) = B0 + B1x1 (3)
+
+
+The coefficient B2 shows difference between democrats and reference class (Independents) assuming x1 is constant. B2 is the difference in mean for democrats vs independents with the same years of education.
+
+How do we compare democrats with republications (1) - (2) == B2 - B3 gives difference between democrats and republicans when years of education is held constant.
+
+
+### EXAMPLE WITH INTERACTIONS
+
+Additive effects assume that each predictor's effect on the response **does not depend** on the value(s) of the other predictors.
+
+**Interaction effects** allow the effect of one predictor on the response to depend on the value of the other predictor(s).
+
+says we are no longer keeping them constant.
+
+y = sales prices of homes
+
+x1 = square footage
+
+x2 = whether the home has air conditioning I1 == 1 home has air conditioning, I1 == 0 home does not have air conditioning.
+
+E(Y|x) = B0 + B1x1 + B2I1 + B3x1I1
+
+For No air conditioning E(Y|x) = B0 + B1x1
+
+For air conditioning E(Y|x) = B0 + B1x1 + B2 + B3x1 == B0 + B2 + (B1 + B3)x1 i.e. the slope and intercept is different.
+
+**IF Interaction terms/coefficients** are significant (the x1I1 in example) you must always leave in the lower order terms, EVEN if the t-tests indicate they are not significant.
+
+
+** You MUST make sure R see categorical variables as categorical and NOT quantitative** Use factor() function.
+
+Use factor() function to check.
+
+If data set uses dummy codes you don't have to do anything. The lm() converts categorical variables into dummy codes "behind the scenes"
+
+**Check your reference class** use relevel() function if needed.
 
 
 
