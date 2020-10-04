@@ -4,27 +4,291 @@ author: "Diana McSpadden"
 date: "10/1/2020"
 output: html_document
 ---
+# Stat 6021: Homework Set 6
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+## Name: H. Diana McSpadden
+### UID: hdm5s
+### 10.08.2020
+
+# Question 1: You will use the birthwt data set from the MASS package for this question. 
+The data were collected at Baystate Medical Center, Springfield, Mass during 1986. The data contain information regarding weights of newborn babies as well as potential predictors.
+
+For this question, we will focus on using two predictors: age, the mother's age in years, and race, the mother's race which is coded as 1 for white, 2 for black, and 3 for other.
+
+y = weight of newborn baby in grams (bwt)
+
+x1 = mother's age in years (age)
+
+x2 = categorical variable (race)
+
+  1 = white
+
+  2 = black
+
+  3 = other
+  
+## (Question 1a) Produce a scatterplot of bwt against age. 
+Be sure to have separate plots and overlay the regression lines for each of the three racial categories. 
+
+Based on this plot, explain why there is an interaction effect between the age of the mother and the race of the mother.
+
+```{r q1a-1}
+# attach the data
+attach(birthwt)
+head(birthwt,5)
+?birthwt
+```
+```{r q1a-2}
+race<-factor(race) # this asks R to see race as categorical
+is.factor(race) 
+
+contrasts(race) 
+
+# need to label the classes for race
+levels(race) <- c("white", "black", "other")  # Dr. Woo HIGHLY recommends making names for classes in a category
+contrasts(race)
+
+```
+**white** is our reference class so our coefficients will be able to interpret the effect on birthweigh of of black and other in comparison to white.
+
+```{r q1a-2}
+# subset the data set by race
+# need to use the original data values, not labels
+dataW <- subset(birthwt,race=="1") 
+dataB <- subset(birthwt,race=="2") 
+dataO <- subset(birthwt,race=="3") 
+
+##fit 3 separate regressions, one for each region
+modW <- lm(bwt~age,data=dataW)
+modB <- lm(bwt~age,data=dataB)
+modO <- lm(bwt~age,data=dataO)
+
+##create a scatterplot with different colors and symbols for each race
+plot(age,bwt,main="Birth Weight vs Maternal Age, Grouped by Race")
+
+points(dataW$age,dataW$bwt, pch=1, col="green") 
+points(dataB$age,dataB$bwt, pch=2, col="brown") 
+points(dataO$age,dataO$bwt, pch=12, col="blue")
+
+abline(modW,lty=1, col="green")
+abline(modB,lty=2, col="brown") 
+abline(modO,lty=3, col="blue")
+
+legend("topleft", c("White","Black","Other"), lty=c(1,2,3), pch=c(1,2,12), col=c("green","brown","darkblue")) 
 ```
 
-## R Markdown
+**Interaction Effect**
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+There is an obvious interaction effect because as the age of the mother increases the birth weight of babies born to white mothers increases, and the birth weight of babies born to black mothers decreases, and the birth weight of babies born to mothers of other races stays about the same.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-summary(cars)
+## (Question 1b) Fit a regression equation with interaction between the two predictors. 
+How does this regression equation relate the age of the mother and the weight of the baby at birth for each of the three racial categories?
+
+```{r q1b-1}
+modelInteractions <- lm(bwt~age*race)
+summary(modelInteractions)
+
 ```
 
-## Including Plots
+E(Y|x) = 2583.54 + (21.37 * age) + (1022.79 IF race == black) + (326.05 IF race == other) - (62.54 * age IF race == black) - (26.03 * age IF race == other)
 
-You can also embed plots, for example:
+or if:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+x1 = age
+
+I1 == 1 IF race is black, otherwise 0
+
+I2 == 1 IF race is other, otherwise 0
+
+**E(Y|x) = 2583.54 + (21.37 * x1) + (1022.79 * I1) + (326.05 * I2) - (62.54 * x1 * I1) - (26.03 * x1 * I2)**
+
+
+```{r q1b-2}
+
+interceptBlack = 2583.54 + 1022.79
+interceptBlack
+
+interceptOther = 2583.54 + 326.05
+interceptOther
+
+slopeBlack = 21.37 - 62.54
+slopeBlack
+
+slopeOther = 21.37 - 26.03
+slopeOther
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+This equation states that:
+
+For white mothers the estimated birth weight is calculated by: 2583.54 + (21.37 * (age))
+
+For black mothers the estimated birth weight is calculated by 3606.33 - ((41.17) * (age))
+
+For black mothers the estimated birth weight is calculated by 2909.5 - ((4.66) * (age))
+
+These equations match the plot of positive slope for white mothers, negative slope for black mothers, and almost stable (but slightly negative) for mothers of other races.
+
+# Question 2 (No R required) This question is based on data about teacher salaries ...
+from the 50 states plus DC (so n = 51) in the mid 1980s. 
+
+The variables are:
+* PAY, y: average annual public school teacher salary, in dollars.
+* SPEND, x1: Spending on public schools per student, in dollars.
+* AREA: Region (North, South, West).
+
+Table 1 below provides some summary statistics of the data:
+
+Region        n         Mean PAY      Mean SPEND
+
+North         21        $24424        $3901
+
+South         17        $22894        $3274
+
+West          13        $26159        $3919
+
+
+Table 1: Summary Statistics of Teacher Pay
+
+## (Question 2a) Based only on Table 1, briefly comment on the relationship between geographic area and mean teacher pay.
+
+```{r q2a}
+
+averageAllRegions = (26159 + 22894 + 22894) / 3
+averageAllRegions
+
+```
+**Answer**
+
+Geographic area has impact on teacher pay with the Northern region slightly above average pay, the Western region much more above average page, and the Southern region below average pay.
+
+## (Question 2b) Based only on Table 1, briefy comment on the relationship ...
+between mean public school expenditure (per student) and mean teacher pay.
+
+```{r}
+averageSpend = (3901 + 3274 + 3919) / 3
+averageSpend
+```
+
+**Answer**
+
+There is also an impact on spending per student based on region, although both the Northern and Western regions spend approximately the same amount per student, and the Southern region spend significantly less than the average and significantly less than either the Northern or Western regions.
+
+
+## (Question 2c) Briefy explain why using a multiple linear regression model ...
+with teacher pay as the response variable with geographic area and public school expenditure (per student) can give further insight into the relationship(s) between these variables.
+
+**Answer**
+
+With the 51 observation data set using a MLR model with teacher pay estimated by geographic area and per student expenditure we would be able to see how teacher pay changed per region as student expenditure changes within the region. We could compare whether student expenditure changes affects teacher pay and whether the degree of change (i.e. slope) is more or less significant based on the geographic region, in other words, is there interaction between student expenditure and region when predicting teacher pay?
+
+# Question 3 (No R required) This question is a continuation of question 2...
+
+A regression with interaction was fitted, i.e.,
+
+E(y) = B0 + B1x1 + B2I2 + B3I3 + (B4x1 * I2) + (B5x1 * I3);
+
+
+where I2 and I3 are the dummy codes for AREA. 
+
+I2 = 1 if AREA = South, 0 otherwise,
+
+and 
+
+I3 = 1 if AREA = West, 0 otherwise.
+
+The following output from R for the extra sums of squares is shown ...
+
+** Work Calculating Missing MSR for SPEND:AREA
+```{r q3a-1}
+MSRSpendArea = 9720281 * 2
+MSRSpendArea
+```
+
+**Analysis of Variance Table**
+
+Response: PAY
+
+              Df    Sum Sq        Mean Sq         F value     Pr(>F)
+              
+SPEND         1     608555015     608555015       117.7856    3.764e-14 ***
+
+AREA          2     22606468      11303234        2.1877      0.1240
+
+SPEND:AREA    2     9720281       **19440562**    ___         __
+
+RESIDUALS     45    232498501     5166633
+
+## (Question 3a) Carry out a hypothesis test to see if the interaction terms are significant.
+
+H0: the coefficients B4 and B5 = 0
+
+Ha: at least one of the coefficients B4 or B5 != 0
+
+```{r q3a-2}
+# knowns
+dfReducedModel = 47
+dfFullModel = 45
+SSEReduced = 232498501 + 9720281
+SSEFull = 232498501
+
+# calculate that F statistic using SSR's and SSE
+# page 272 I think gives the F0 calculation
+F0 = ((SSEReduced - SSEFull) / (dfReducedModel - dfFullModel)) / (SSEFull / dfFullModel)
+print(paste("F0 is: ", F0))
+
+
+# create the critical value
+# page 272 I think gives the test statistic
+criticalFValue = qf(0.95,(dfReducedModel - dfFullModel),dfFullModel)
+print(paste("The critical value is: ", criticalFValue))
+
+pvalue = 1-pf(F0,(dfReducedModel - dfFullModel),dfFullModel)
+print(paste("The p value for the F statistic is: ", pvalue))
+```
+**Answer**
+
+Based on these finding I fail to reject the null hypothesis, and determine the interaction terms are not significant.
+
+## (Question 3b) Regardless of your answer from part 3a, ...
+suppose the interaction terms are dropped. The following is output from the model without interaction.
+
+...
+
+**What is the reference class for this model?**
+
+**Answer 3b**
+
+The reference class is **North**.
+
+## (Question 3c) What is the estimate of B2? Give an interpretation of this value.
+
+**Answer 3c**
+
+```{r}
+b2hat = sqrt(588126.71689)
+b2hat
+```
+**Answer**
+
+The estimate of B2 is **766.8942**.
+
+**Interpretation**
+
+The difference in mean teacher salary rating between the North and South regions is 766.89. In other words, the mean salary for Northern teachers is $766.89 more than Southern teachers.
+
+## (Question 3d) Using the Bonferroni procedure, compute the 95% family condence intervals for
+
+the difference in mean response for PAY between teachers in the:
+
+### i. North region and the South region;
+
+
+
+### ii. North region and the West region;
+
+
+### iii. South region and the West region.
+
+
+## (Question 3e) What do your intervals from part 3d indicate about the eect of geographic region on mean annual salary for teachers?

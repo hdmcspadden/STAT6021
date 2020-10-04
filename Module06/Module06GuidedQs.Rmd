@@ -5,26 +5,212 @@ date: "10/1/2020"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+# Stat 6021: Guided Question Set 6
+
+For this question we will use the data set “cereals.txt”. The data set contains nutritional
+information on 77 brands of cereal. For this question, we will focus on the variables y =
+calories (number of calories per serving), x1 = sugars (grams of sugars per serving), and
+mfr indicating the manufacturer of the cereal brand. The manufacturers are coded G =
+General Mills, K = Kellogg’s, and other = other manufacturers.
+
+y = calories
+x1 = sugars (grams/serving)
+mfr = manufacturer G = General Mills, K = Kelloggs, O = Other
+
+```{r loadDataAndGivens}
+dataCereal <- read.table("cereals.txt", header=TRUE ,sep="")
+attach(dataCereal)
+
+n = 77
+
+mfr<-factor(mfr) # this asks R to see mfr as a factor/categorical
+is.factor(mfr) 
+
+contrasts(mfr) 
 ```
 
-## R Markdown
+**G is our reference class**
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## Question 1
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+Create a scatterplot of the number of calories per serving against the grams of sugars
+per serving for the 77 brands. Overlay separate regression lines for each of the three
+manufacturers.
+```{r q1-1}
+##consider each region a subset
+dataG <- subset(dataCereal,mfr=="G") 
+dataK <- subset(dataCereal,mfr=="K") 
+dataOther <- subset(dataCereal,mfr=="other") 
 
-```{r cars}
-summary(cars)
+##fit 3 separate regressions, one for each region
+mod1 <- lm(calories~sugars,data=dataG)
+mod2 <- lm(calories~sugars,data=dataK)
+mod3 <- lm(calories~sugars,data=dataOther)
+
+##create a scatterplot with different colors and symbols for each region
+plot(sugars,calories, main="Calories vs Grams Sugar per Serving, by Manufacturer")
+
+points(dataG$sugars,dataG$calories, pch=1, col="darkgreen") 
+points(dataK$sugars,dataK$calories, pch=2, col="red") 
+points(dataOther$sugars,dataOther$calories, pch=12, col="blue")
+
+abline(mod1,lty=1, col="darkgreen")
+abline(mod2,lty=2, col="red") 
+abline(mod3,lty=3, col="blue")
+
+legend("topleft", c("General Mills","Kellogg","Other"), lty=c(1,2,3), pch=c(1,2,12), col=c("darkgreen","red","blue")) 
 ```
 
-## Including Plots
+Based only on the scatterplot and the regression lines, describe the relationship between the variables of interest.
 
-You can also embed plots, for example:
+**Answer**
+For General Mills, the slope is pretty flat. It doesn't appear that grams sugar per serving affects the calories per serving that much.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+For Kellogg and Other manufacturers, there is a positive relationship between grams sugar per serving and calories per serving, and the relationship between sugar and calories for Kellogg and Other appear identical.
+
+
+## Question 2 Create a regression model with interactions, i.e.,
+y = β0 + β1x1 + β2I1 + β3I2 + β4x1I1 + β5x1I2 + E,
+
+where I1 and I2 are indicator variables where 
+I1 = 1 for a General Mills cereal and 0 otherwise, and 
+I2 = 1 for a Kellogg’s cereal and 0 otherwise. 
+
+Write down the estimated regression equation for this model.
+
+**Question 2 Work**
+
+Looks like we want **Other to be our reference variable**.
+```{r q2-1}
+mfr<-relevel(mfr, ref = "other") # now other will be the 0-0 class
+contrasts(mfr)
+```
+Need to create an interactions model
+
+```{r q2-2}
+modelInteractions <- lm(calories~sugars*mfr)
+summary(modelInteractions)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+**E(Y|x) = B0 + B1x1 + B2I1 + B3I2 + B4x1I1 + B5x1I2**
+
+**E(Y|x) = 85.93 + (2.87)x1 + (17.07)I1 + (2.28)I2 + (-1.81)x1I1 + (-0.16)x1I2**
+
+## 3. Carry out the relevant hypothesis test ...
+to see if the interaction terms can be dropped. If they can be dropped, re-fit the regression model, and write down the estimated regression equation for the model without interactions.
+
+**Question 3 Work**
+
+Need to compare moduleInteractions to modelAdditiveOnly (which I need to create)
+
+```{r q3-1}
+modelAdditiveOnly <- lm(calories ~ sugars + mfr)
+anova(modelAdditiveOnly,modelInteractions) # compare additive vs. interaction
+```
+
+**Question 3 Answer**
+
+The p-value for the Hypothesis Test shows that we fail to reject the null hypothesis (that the B4 and B5 == 0), so we will use the additive only model and not the interaction model.
+
+## 4. Assess if the regression assumptions are met, for the model you will recommend to use. 
+
+Also, be sure to carry out Levene’s test of equality of variances since we have a categorical predictor.
+
+**Question 4 Work**
+
+Need to run the various plots for the additive only model
+
+```{r q4-1, fig.width=12, fig.height=10}
+
+par(mfrow=c(2,2)) # 2 rows, 2 columns
+
+##residual plot of additive only model
+plot(modelAdditiveOnly$fitted.values,modelAdditiveOnly$residuals,main="Residual plot")
+abline(h=0,col="red")
+
+##ACF plot of residuals of additive only model
+acf(modelAdditiveOnly$residuals, main="ACF plot")
+
+##QQ plot of residuals of additive only model
+qqnorm(modelAdditiveOnly$residuals)
+qqline(modelAdditiveOnly$residuals, col="red")
+
+##additional assumption to check with categorical predictor. 
+# Is the variance of the response variable constant between all classes of the categorical predictor?
+boxplot(calories~mfr, main="Boxplot of Calories by Manufacturer")
+```
+**Regression Assumptions**
+
+**Mean 0 of residuals**: This assumption appears to be met based on residual plot.
+
+**Standard variance of residuals of total model**: This assumption appears to be met based on the residual plot.
+
+**Uncorrelated residuals based on lags**: This assumption is **not** met, at 1 and 15 lags in values the residuals are correlated.
+
+**Normal Distribution of errors**: This assumption is met based on Normal QQ plot.
+
+**Constant Variance of the response variable for Manufacturers**: This assumption is **not** met based on the Boxplot. General Mills has almost no variance in the response variable. "Other" manufacturer has more variance than Kellogg.
+
+???? **QUESTION on VARIANCE** I am not sure if the difference between other and Kellogg is enough to be concerned about ????
+
+
+**Now Levene's** test
+
+H0: Variance is equal for all manufactures
+Ha: Variance is not equal for at least one manufacturer
+
+```{r q4-2}
+##perform levene's test. Null states the variances are equal for all classes. 
+library(lawstat)
+levene.test(calories,mfr)
+```
+This is really **unexpected** when compared to the boxplot. 
+
+If we use a 95% confidence, Levene's test says that we fail to reject H0 and our model **does** meet the assumption that there is constant variance of calories for each manufacturer and our differences in variance are based on our sample. 
+
+
+## 5. Conduct pairwise comparisons ..
+for the difference in mean calories among all pairs of manufacturers for given values of grams of sugars, i.e.,
+
+(a) General Mills and other manufacturers,
+(b) Kellogg’s and other manufacturers,
+(c) General Mills and Kellogg’s.
+
+Be sure to contextually interpret the results of these hypothesis tests to someone who doesn’t know statistics.
+
+```{r q5-1}
+library(multcomp)
+pairwise<-glht(modelAdditiveOnly, linfct = mcp(mfr= "Tukey")) # glht = general linear hypothesis test
+summary(pairwise)
+
+modelAdditiveOnly$coef
+```
+**Interpretations**
+
+The model is: y = 88.56 + (2.41 * sugars) + (3.62 IF General Mills) + (1.89 IF Kellogg)
+
+The regression functions are:
+
+**Other** manufacturer: g = 88.56 + (2.41 * sugars) + 0 + 0 = y == 88.56 + (2.41 * x1)
+
+**General Mills**: g = 88.56 + (2.41 * sugars) + (3.62) == (88.56 + 3.62) + (2.41 * x1)
+
+**Kellogg**: g = 88.56 + (2.41 * sugars) + (1.89) == (88.56 + 1.89) + (2.41 * x1)
+
+(a) General Mills and other manufacturers: General Mills contains 3.62 more mean calories per serving for the same grams of sugar per serving as "Other" manufacturers.
+
+(b) Kellogg’s and other manufacturers: Kellogg contains 1.89 more mean calories per serving when holding the grams of sugar per serving constant when compared to "Other" manufactures.
+
+``` {r q5-2}
+3.62 - 1.89
+```
+
+(c) General Mills and Kellogg’s: General Mills contains 1.73 more mean calories per serving when holding grams of sugar per serving constant when compared to Kelloggs.
+
+
+
+
+
+
+
+
