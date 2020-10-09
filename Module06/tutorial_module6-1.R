@@ -49,7 +49,7 @@ abline(reg3,lty=3, col="blue")
 legend("topleft", c("North","Central","Napa"), lty=c(1,2,3), pch=c(1,2,12), col=c("black","red","blue")) 
 
 ##fit regression with interaction between the 2 predictors
-result<-lm(Quality~Flavor*Region)
+result<-lm(Quality~Flavor*Region) this means
 summary(result)
 
 ##fit regression with no interaction
@@ -78,7 +78,7 @@ boxplot(Quality~Region, main="Boxplot of Quality Rating by Region")
 
 
 ##perform levene's test. Null states the variances are equal for all classes. 
-# p value of .90 so we fail to reject that the variances are basi
+# p value of .90 so we fail to reject that the variances are ~ 0
 library(lawstat)
 levene.test(Quality,Region)
 

@@ -66,15 +66,15 @@ modO <- lm(bwt~age,data=dataO)
 ##create a scatterplot with different colors and symbols for each race
 plot(age,bwt,main="Birth Weight vs Maternal Age, Grouped by Race")
 
-points(dataW$age,dataW$bwt, pch=1, col="green") 
-points(dataB$age,dataB$bwt, pch=2, col="brown") 
-points(dataO$age,dataO$bwt, pch=12, col="blue")
+points(dataW$age,dataW$bwt, pch=1, col="orange") 
+points(dataB$age,dataB$bwt, pch=2, col="black") 
+points(dataO$age,dataO$bwt, pch=12, col="purple")
 
-abline(modW,lty=1, col="green")
-abline(modB,lty=2, col="brown") 
-abline(modO,lty=3, col="blue")
+abline(modW,lty=1, col="orange")
+abline(modB,lty=2, col="black") 
+abline(modO,lty=3, col="purple")
 
-legend("topleft", c("White","Black","Other"), lty=c(1,2,3), pch=c(1,2,12), col=c("green","brown","darkblue")) 
+legend("topleft", c("White","Black","Other"), lty=c(1,2,3), pch=c(1,2,12), col=c("orange","black","purple")) 
 ```
 
 **Interaction Effect**
@@ -106,16 +106,16 @@ I2 == 1 IF race is other, otherwise 0
 
 ```{r q1b-2}
 
-interceptBlack = 2583.54 + 1022.79
+interceptBlack <- 2583.54 + 1022.79
 interceptBlack
 
-interceptOther = 2583.54 + 326.05
+interceptOther <- 2583.54 + 326.05
 interceptOther
 
-slopeBlack = 21.37 - 62.54
+slopeBlack <- 21.37 - 62.54
 slopeBlack
 
-slopeOther = 21.37 - 26.03
+slopeOther <- 21.37 - 26.03
 slopeOther
 ```
 
@@ -154,7 +154,7 @@ Table 1: Summary Statistics of Teacher Pay
 
 ```{r q2a}
 
-averageAllRegions = (26159 + 22894 + 22894) / 3
+averageAllRegions <- (26159 + 22894 + 22894) / 3
 averageAllRegions
 
 ```
@@ -166,7 +166,7 @@ Geographic area has impact on teacher pay with the Northern region slightly abov
 between mean public school expenditure (per student) and mean teacher pay.
 
 ```{r}
-averageSpend = (3901 + 3274 + 3919) / 3
+averageSpend <- (3901 + 3274 + 3919) / 3
 averageSpend
 ```
 
@@ -201,7 +201,7 @@ The following output from R for the extra sums of squares is shown ...
 
 ** Work Calculating Missing MSR for SPEND:AREA
 ```{r q3a-1}
-MSRSpendArea = 9720281 * 2
+MSRSpendArea <- 9720281 * 2
 MSRSpendArea
 ```
 
@@ -227,23 +227,23 @@ Ha: at least one of the coefficients B4 or B5 != 0
 
 ```{r q3a-2}
 # knowns
-dfReducedModel = 47
-dfFullModel = 45
-SSEReduced = 232498501 + 9720281
-SSEFull = 232498501
+dfReducedModel <- 47
+dfFullModel <- 45
+SSEReduced <- 232498501 + 9720281
+SSEFull <- 232498501
 
 # calculate that F statistic using SSR's and SSE
 # page 272 I think gives the F0 calculation
-F0 = ((SSEReduced - SSEFull) / (dfReducedModel - dfFullModel)) / (SSEFull / dfFullModel)
+F0 <- ((SSEReduced - SSEFull) / (dfReducedModel - dfFullModel)) / (SSEFull / dfFullModel)
 print(paste("F0 is: ", F0))
 
 
 # create the critical value
 # page 272 I think gives the test statistic
-criticalFValue = qf(0.95,(dfReducedModel - dfFullModel),dfFullModel)
+criticalFValue <- qf(0.95,(dfReducedModel - dfFullModel),dfFullModel)
 print(paste("The critical value is: ", criticalFValue))
 
-pvalue = 1-pf(F0,(dfReducedModel - dfFullModel),dfFullModel)
+pvalue <- 1-pf(F0,(dfReducedModel - dfFullModel),dfFullModel)
 print(paste("The p value for the F statistic is: ", pvalue))
 ```
 **Answer**
@@ -266,29 +266,84 @@ The reference class is **North**.
 **Answer 3c**
 
 ```{r}
-b2hat = sqrt(588126.71689)
-b2hat
+B2hat <- 529.40
 ```
 **Answer**
 
-The estimate of B2 is **766.8942**.
+The estimate of B2 is **529.40**.
 
 **Interpretation**
 
-The difference in mean teacher salary rating between the North and South regions is 766.89. In other words, the mean salary for Northern teachers is $766.89 more than Southern teachers.
+The difference in mean teacher salary rating between the North and South regions is 0.05294. In other words, the mean salary for Northern teachers is $529.40 more than Southern teachers.
 
-## (Question 3d) Using the Bonferroni procedure, compute the 95% family condence intervals for
-
+## (Question 3d) Using the Bonferroni procedure, compute the 95% family confidence intervals for
 the difference in mean response for PAY between teachers in the:
 
 ### i. North region and the South region;
+```{r q3d-1}
 
+# multiplier for confidence interval is t((1-.05)/(2*g),n-p)
+# g == 3 == number of pairwise comparisons we are making
+# n = 51
+# p = 4
+deltaMultiplier <- qt((1 - (.05/6)), (51 - 4))
+print(paste("The 95% multiplier is: ", deltaMultiplier))
+
+seB2hat <- sqrt(588126.71689)
+
+# confidence interval = Bi-hat +- deltaMultiplier * se(Bi-hat)
+B2CIlow <- B2hat - (deltaMultiplier * seB2hat)
+B2CIhigh <- B2hat + (deltaMultiplier * seB2hat)
+
+print(paste("The 95% CI for the mean difference in the mean teacher salary between the North region and the South region is: ", B2CIlow, " to ", B2CIhigh))
+```
 
 
 ### ii. North region and the West region;
+```{r q3d-2}
+B3hat <- 1674.00
+
+seB3hat <- sqrt(641873.8) 
+
+B3CIlow <- B3hat - (deltaMultiplier * seB3hat)
+B3CIhigh <- B3hat + (deltaMultiplier * seB3hat)
+
+print(paste("The 95% CI for the mean difference in the mean teacher salary between the North region and the West region is: ", B3CIlow, " to ", B3CIhigh))
+
+```
 
 
 ### iii. South region and the West region.
+```{r q3d-2}
+B2B3hat <- B2hat - B3hat
+print(paste("B2 B3 hat:", B2B3hat))
+print(paste("t value: ", deltaMultiplier))
+
+seB2B3hat <- sqrt(244238.0)
+
+B2B3CIlow <- B2B3hat - (deltaMultiplier * seB2B3hat)
+B2B3CIhigh <- B2B3hat + (deltaMultiplier * seB2B3hat)
+
+print(paste("The 95% CI for the mean difference in the mean teacher salary between the South region and the West region is: ", B2B3CIlow, " to ", B2B3CIhigh))
+
+# above calculation may be wrong, also trying:
+# Var(B2-hat) + Var(B3-hat) - 2Cov(B2,B3)
+seB2B3hatv2 <- 588126.72 + 641873.8 - (2 * 244238.0)
+
+B2B3CIlowv2 <- B2B3hat - (deltaMultiplier * seB2B3hatv2)
+B2B3CIhighv2 <- B2B3hat + (deltaMultiplier * seB2B3hatv2)
+
+print(paste("The 95% CI for the mean difference in the mean teacher salary between the South region and the West region is: ", B2B3CIlowv2, " to ", B2B3CIhighv2))
+
+```
+
+## (Question 3e) What do your intervals from part 3d indicate about the effect of geographic region on mean annual salary for teachers?
+
+**Need to rewrite**
+When spending per student is held constant, the difference in mean pay for teachers in the North vs. South or West, the CI's are a large range which include 0. 0 being within the range, and the high estimated variance for each coefficient lead me to conclude that when taking spending for student into account salaries for teachers vs. Nothern teachers is not predicted well by the model.
 
 
-## (Question 3e) What do your intervals from part 3d indicate about the eect of geographic region on mean annual salary for teachers?
+
+When spending per student is held constant, the difference in mean pay for teachers in the North vs. teachers in the West is standard at ~ -1674.00 dollars and the difference in mean pay for teachers in the South vs teachers in the West is standard at ~ -1144.60 dollars
+
+

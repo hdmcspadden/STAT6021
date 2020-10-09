@@ -222,6 +222,50 @@ If data set uses dummy codes you don't have to do anything. The lm() converts ca
 
 **Check your reference class** use relevel() function if needed.
 
+## FROM LECTURE
+
+terminology: "higher order terms" are the multipliers when interactions.
+
+Why is multicollinearity different from interactions?
+  * predictors are dependent on each other
+  * interactions - change in value is dependent on which of the categories/classes.
+
+
+### Categorical Predictors
+
+**Consider**
+1. many classes
+2. consider interaction terms
+3. variance not equal across classes.
+
+4. are you really interested in mean difference across all classes (imagine 50 states). know your research question!!!
+5. could you collapse some classes together.
+6. having more parameters than needed leads to overfitting which typically leads to poor performance on test data?
+
+**Typically people start with additive model**
+1. additive model first
+2. exploring interactions is part of research question
+3. do interactions make sense contextually or well established in the literature.
+4. **DO NOT tend to add interaction unless side by side box plots show there is an interaction.**
+5. If you keep interaction you **must** keep lower order terms in the model.
+
+
+1. create scatterplot of response against quantitative predictor, regression lines for each
+1. create side by side box plots to show interaction between two categorical predictors (Male female , democrat republican example)
+
+
+Multiple Quantitative Variables
+1. more complicated. Need to fix one of the terms if continuous. If descrete you can compare easily
+
+##Variance Not Equal between Classes
+1. If sample size is standard between classes, then the result are still reliable.
+1. BUT if sample size not balanced, then this is an issue. If ration not more than 1.5 then still reliable, BUT if more than then it is an issue
+  1. you can collapse classes.
+  1. Can fit separate regression for the classes with difference variance.
+  
+
+
+
 
 
 

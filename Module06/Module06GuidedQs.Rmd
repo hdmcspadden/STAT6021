@@ -5,6 +5,13 @@ date: "10/1/2020"
 output: html_document
 ---
 
+# QUESTIONS:
+??What about residual, acf, boxcox, QQ plots when working with categorical variables??
+
+?? transformations when there are categorical variables?? should you base doing a transformation on only the plots of the non categorical residual, boxcox, ACF plots? Then add the categorical variables to the transformed model??
+
+
+
 # Stat 6021: Guided Question Set 6
 
 For this question we will use the data set “cereals.txt”. The data set contains nutritional
@@ -112,6 +119,8 @@ anova(modelAdditiveOnly,modelInteractions) # compare additive vs. interaction
 
 The p-value for the Hypothesis Test shows that we fail to reject the null hypothesis (that the B4 and B5 == 0), so we will use the additive only model and not the interaction model.
 
+So impact of sugars does not depend on manufacturer.
+
 ## 4. Assess if the regression assumptions are met, for the model you will recommend to use. 
 
 Also, be sure to carry out Levene’s test of equality of variances since we have a categorical predictor.
@@ -186,6 +195,16 @@ summary(pairwise)
 modelAdditiveOnly$coef
 ```
 **Interpretations**
+
+
+The p values are if there is a difference.
+We reject that there is a difference between the two classes. All comparisons are insignificant.
+
+**Basic Idea of Tukey**
+In the population we think all the slopes are parrallel if fixed value of sugar is average difference from average of kelloggs. If manufactuer doesn't matter, then we could even drop manufacturer and explore sugars and calories.
+
+**Tukey should ONLY be done if you do not have interaction**
+
 
 The model is: y = 88.56 + (2.41 * sugars) + (3.62 IF General Mills) + (1.89 IF Kellogg)
 
