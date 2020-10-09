@@ -79,7 +79,7 @@ legend("topleft", c("White","Black","Other"), lty=c(1,2,3), pch=c(1,2,12), col=c
 
 **Interaction Effect**
 
-There is an obvious interaction effect because as the age of the mother increases the birth weight of babies born to white mothers increases, and the birth weight of babies born to black mothers decreases, and the birth weight of babies born to mothers of other races stays about the same.
+There is an obvious interaction effect because as the age of the mother increases the birth weight of babies born to white mothers increases, and the birth weight of babies born to black mothers decreases, and the birth weight of babies born to mothers of other races stays about the same. These differing relationship are shown by different slopes of bwt~age grouped by race.
 
 
 ## (Question 1b) Fit a regression equation with interaction between the two predictors. 
@@ -121,13 +121,14 @@ slopeOther
 
 This equation states that:
 
-For white mothers the estimated birth weight is calculated by: 2583.54 + (21.37 * (age))
+For white mothers the estimated birth weight is calculated by: 2583.54 + (21.37 * (age)), also stated as: for white mothers, each unit increase of 1 year in age predicts a 21.37g increase in their baby's birth weight.
 
-For black mothers the estimated birth weight is calculated by 3606.33 - ((41.17) * (age))
+For black mothers the estimated birth weight is calculated by 3606.33 - ((41.17) * (age)), also stated as: for black mothers, each unit increase of 1 year in age predicts a 41.17 decrease in their baby's birth weight.
 
-For black mothers the estimated birth weight is calculated by 2909.5 - ((4.66) * (age))
+For black mothers the estimated birth weight is calculated by 2909.5 - ((4.66) * (age)), also states as for mothers of other race, each unit increase of 1 year in age predicts a 4.66 decrease in their baby's birth weight.
 
-These equations match the plot of positive slope for white mothers, negative slope for black mothers, and almost stable (but slightly negative) for mothers of other races.
+These equations are consistent with the scatter plot: positive slope for white mothers, negative slope for black mothers, and almost stable (but slightly negative) for mothers of other races.
+
 
 # Question 2 (No R required) This question is based on data about teacher salaries ...
 from the 50 states plus DC (so n = 51) in the mid 1980s. 
@@ -160,7 +161,7 @@ averageAllRegions
 ```
 **Answer**
 
-Geographic area has impact on teacher pay with the Northern region slightly above average pay, the Western region much more above average page, and the Southern region below average pay.
+Geographic area has impact on teacher pay with the Northern region above average pay, the Western region much more above average page, and the Southern region below average pay.
 
 ## (Question 2b) Based only on Table 1, briefy comment on the relationship ...
 between mean public school expenditure (per student) and mean teacher pay.
@@ -172,7 +173,7 @@ averageSpend
 
 **Answer**
 
-There is also an impact on spending per student based on region, although both the Northern and Western regions spend approximately the same amount per student, and the Southern region spend significantly less than the average and significantly less than either the Northern or Western regions.
+There is also an impact on spending per student based on region, although both the Northern and Western regions spend approximately the same amount per student, and the Southern region spend significantly less than the average and significantly less than either the Northern or Western regions. The mean spend and mean pay do not appear to have a strong interaction; however, there does appear to be a relationship between region and spend.
 
 
 ## (Question 2c) Briefy explain why using a multiple linear regression model ...
@@ -180,7 +181,7 @@ with teacher pay as the response variable with geographic area and public school
 
 **Answer**
 
-With the 51 observation data set using a MLR model with teacher pay estimated by geographic area and per student expenditure we would be able to see how teacher pay changed per region as student expenditure changes within the region. We could compare whether student expenditure changes affects teacher pay and whether the degree of change (i.e. slope) is more or less significant based on the geographic region, in other words, is there interaction between student expenditure and region when predicting teacher pay?
+With the 51 observation data set using a MLR model with teacher pay estimated by geographic area and per student expenditure we would be able to see how teacher pay changed per region as student expenditure changes within the region. With SLR we can only investigate whether student expenditure affects teacher pay. With MLR we can explore whether there is interaction between region, student expenditure on teacher pay. We can investigate if the degree of change (i.e. slope) is changes by geographic region, in other words, is there better prediction of teacher pay by student expenditure when considering geographic regions?
 
 # Question 3 (No R required) This question is a continuation of question 2...
 
@@ -243,12 +244,12 @@ print(paste("F0 is: ", F0))
 criticalFValue <- qf(0.95,(dfReducedModel - dfFullModel),dfFullModel)
 print(paste("The critical value is: ", criticalFValue))
 
-pvalue <- 1-pf(F0,(dfReducedModel - dfFullModel),dfFullModel)
+pvalue <- 1-pf(F0,(dfReducedModel - dfFullModel),dfFullModel) # remember to use 1 - pf
 print(paste("The p value for the F statistic is: ", pvalue))
 ```
 **Answer**
 
-Based on these finding I fail to reject the null hypothesis, and determine the interaction terms are not significant.
+Based on these finding I fail to reject the null hypothesis, and determine the interaction terms are not significant because their coefficients equal 0.
 
 ## (Question 3b) Regardless of your answer from part 3a, ...
 suppose the interaction terms are dropped. The following is output from the model without interaction.
@@ -274,7 +275,7 @@ The estimate of B2 is **529.40**.
 
 **Interpretation**
 
-The difference in mean teacher salary rating between the North and South regions is 0.05294. In other words, the mean salary for Northern teachers is $529.40 more than Southern teachers.
+The difference in mean teacher salary between the South and North regions is $529.40.
 
 ## (Question 3d) Using the Bonferroni procedure, compute the 95% family confidence intervals for
 the difference in mean response for PAY between teachers in the:
@@ -285,7 +286,7 @@ the difference in mean response for PAY between teachers in the:
 # multiplier for confidence interval is t((1-.05)/(2*g),n-p)
 # g == 3 == number of pairwise comparisons we are making
 # n = 51
-# p = 4
+# p = 4 == parameters Intercept, Spend, AreaSouth, AreaWest
 deltaMultiplier <- qt((1 - (.05/6)), (51 - 4))
 print(paste("The 95% multiplier is: ", deltaMultiplier))
 
@@ -319,16 +320,10 @@ B2B3hat <- B2hat - B3hat
 print(paste("B2 B3 hat:", B2B3hat))
 print(paste("t value: ", deltaMultiplier))
 
-seB2B3hat <- sqrt(244238.0)
-
-B2B3CIlow <- B2B3hat - (deltaMultiplier * seB2B3hat)
-B2B3CIhigh <- B2B3hat + (deltaMultiplier * seB2B3hat)
-
-print(paste("The 95% CI for the mean difference in the mean teacher salary between the South region and the West region is: ", B2B3CIlow, " to ", B2B3CIhigh))
 
 # above calculation may be wrong, also trying:
 # Var(B2-hat) + Var(B3-hat) - 2Cov(B2,B3)
-seB2B3hatv2 <- 588126.72 + 641873.8 - (2 * 244238.0)
+seB2B3hatv2 <- sqrt(588126.72 + 641873.8 - (2 * 244238.0))
 
 B2B3CIlowv2 <- B2B3hat - (deltaMultiplier * seB2B3hatv2)
 B2B3CIhighv2 <- B2B3hat + (deltaMultiplier * seB2B3hatv2)
@@ -340,10 +335,8 @@ print(paste("The 95% CI for the mean difference in the mean teacher salary betwe
 ## (Question 3e) What do your intervals from part 3d indicate about the effect of geographic region on mean annual salary for teachers?
 
 **Need to rewrite**
-When spending per student is held constant, the difference in mean pay for teachers in the North vs. South or West, the CI's are a large range which include 0. 0 being within the range, and the high estimated variance for each coefficient lead me to conclude that when taking spending for student into account salaries for teachers vs. Nothern teachers is not predicted well by the model.
+When spending per student is held constant, the difference in mean pay for teachers in the North vs. South or West, the confidence intervals are large and include 0. 0 within the range indicates that region does not have an effect on the mean salary of teachers when the model includes student expenditure and region. I conclude that region does not need to be included in the model.
 
 
-
-When spending per student is held constant, the difference in mean pay for teachers in the North vs. teachers in the West is standard at ~ -1674.00 dollars and the difference in mean pay for teachers in the South vs teachers in the West is standard at ~ -1144.60 dollars
 
 
