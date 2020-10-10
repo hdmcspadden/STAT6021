@@ -2,13 +2,24 @@
 title: "Module06HW"
 author: "Diana McSpadden"
 date: "10/1/2020"
-output: html_document
+output:
+  word_document: default
+  html_document: default
 ---
 # Stat 6021: Homework Set 6
 
 ## Name: H. Diana McSpadden
 ### UID: hdm5s
-### 10.08.2020
+### 10.10.2020
+
+#### Attended Study Group With
+* Caprill Wright
+* Chelsea Alvarado
+* Jing Huang
+* Abby Bernhardt
+* Brian Nam
+* Loren Bushkar
+* Katie Barbre
 
 # Question 1: You will use the birthwt data set from the MASS package for this question. 
 The data were collected at Baystate Medical Center, Springfield, Mass during 1986. The data contain information regarding weights of newborn babies as well as potential predictors.
@@ -34,9 +45,11 @@ Based on this plot, explain why there is an interaction effect between the age o
 
 ```{r q1a-1}
 # attach the data
+library(MASS)
+
 attach(birthwt)
 head(birthwt,5)
-?birthwt
+
 ```
 ```{r q1a-2}
 race<-factor(race) # this asks R to see race as categorical
@@ -51,7 +64,7 @@ contrasts(race)
 ```
 **white** is our reference class so our coefficients will be able to interpret the effect on birthweigh of of black and other in comparison to white.
 
-```{r q1a-2}
+```{r q1a-3}
 # subset the data set by race
 # need to use the original data values, not labels
 dataW <- subset(birthwt,race=="1") 
@@ -121,11 +134,11 @@ slopeOther
 
 This equation states that:
 
-For white mothers the estimated birth weight is calculated by: 2583.54 + (21.37 * (age)), also stated as: for white mothers, each unit increase of 1 year in age predicts a 21.37g increase in their baby's birth weight.
+For white mothers the estimated birth weight is calculated by: 2583.54 + (21.37 * (age)), also stated as: for white mothers, each unit increase of 1 year in maternal age predicts a 21.37g increase in their baby's birth weight.
 
-For black mothers the estimated birth weight is calculated by 3606.33 - ((41.17) * (age)), also stated as: for black mothers, each unit increase of 1 year in age predicts a 41.17 decrease in their baby's birth weight.
+For black mothers the estimated birth weight is calculated by 3606.33 - ((41.17) * (age)), also stated as: for black mothers, each unit increase of 1 year in maternal age predicts a 41.17 decrease in their baby's birth weight.
 
-For black mothers the estimated birth weight is calculated by 2909.5 - ((4.66) * (age)), also states as for mothers of other race, each unit increase of 1 year in age predicts a 4.66 decrease in their baby's birth weight.
+For black mothers the estimated birth weight is calculated by 2909.5 - ((4.66) * (age)), also states as for mothers of other race, each unit increase of 1 year in maternal age predicts a 4.66 decrease in their baby's birth weight.
 
 These equations are consistent with the scatter plot: positive slope for white mothers, negative slope for black mothers, and almost stable (but slightly negative) for mothers of other races.
 
@@ -161,7 +174,7 @@ averageAllRegions
 ```
 **Answer**
 
-Geographic area has impact on teacher pay with the Northern region above average pay, the Western region much more above average page, and the Southern region below average pay.
+There may be a relationship between geographic region and teacher pay. In the Northern region mean pay is above average, mean teacher pay in the Western region much more above average, and mean Southern region pay is below average.
 
 ## (Question 2b) Based only on Table 1, briefy comment on the relationship ...
 between mean public school expenditure (per student) and mean teacher pay.
@@ -173,7 +186,7 @@ averageSpend
 
 **Answer**
 
-There is also an impact on spending per student based on region, although both the Northern and Western regions spend approximately the same amount per student, and the Southern region spend significantly less than the average and significantly less than either the Northern or Western regions. The mean spend and mean pay do not appear to have a strong interaction; however, there does appear to be a relationship between region and spend.
+The impact of student expenditure is unclear. Student expenditures in the Northern and Western regions are similar, but mean teacher pay in those regions is different. However, both mean student expenditure and mean teacher pay are less than other regions in the Southern region. 
 
 
 ## (Question 2c) Briefy explain why using a multiple linear regression model ...
@@ -200,10 +213,10 @@ I3 = 1 if AREA = West, 0 otherwise.
 
 The following output from R for the extra sums of squares is shown ...
 
-** Work Calculating Missing MSR for SPEND:AREA
+**Work Calculating Missing MSR for SPEND:AREA**
 ```{r q3a-1}
 MSRSpendArea <- 9720281 * 2
-MSRSpendArea
+print(paste("Mean Squared Regression Spend_Area: ", MSRSpendArea))
 ```
 
 **Analysis of Variance Table**
@@ -229,7 +242,7 @@ Ha: at least one of the coefficients B4 or B5 != 0
 ```{r q3a-2}
 # knowns
 dfReducedModel <- 47
-dfFullModel <- 45
+dfFullModel <- 45 #in the anova table, AND also 51 - the six coefficients in the E(y)
 SSEReduced <- 232498501 + 9720281
 SSEFull <- 232498501
 
@@ -238,9 +251,8 @@ SSEFull <- 232498501
 F0 <- ((SSEReduced - SSEFull) / (dfReducedModel - dfFullModel)) / (SSEFull / dfFullModel)
 print(paste("F0 is: ", F0))
 
-
 # create the critical value
-# page 272 I think gives the test statistic
+# page 272 gives the test statistic
 criticalFValue <- qf(0.95,(dfReducedModel - dfFullModel),dfFullModel)
 print(paste("The critical value is: ", criticalFValue))
 
@@ -249,7 +261,7 @@ print(paste("The p value for the F statistic is: ", pvalue))
 ```
 **Answer**
 
-Based on these finding I fail to reject the null hypothesis, and determine the interaction terms are not significant because their coefficients equal 0.
+Based on these finding I fail to reject the null hypothesis. I determine the interaction terms are not significant because their coefficients equal 0.
 
 ## (Question 3b) Regardless of your answer from part 3a, ...
 suppose the interaction terms are dropped. The following is output from the model without interaction.
@@ -267,7 +279,7 @@ The reference class is **North**.
 **Answer 3c**
 
 ```{r}
-B2hat <- 529.40
+B2hat <- 529.40 
 ```
 **Answer**
 
@@ -290,7 +302,7 @@ the difference in mean response for PAY between teachers in the:
 deltaMultiplier <- qt((1 - (.05/6)), (51 - 4))
 print(paste("The 95% multiplier is: ", deltaMultiplier))
 
-seB2hat <- sqrt(588126.71689)
+seB2hat <- sqrt(588126.71689) # sqrt(# from the vcov matrix), BUT also the same value in the Est. Std Error table for the coef.
 
 # confidence interval = Bi-hat +- deltaMultiplier * se(Bi-hat)
 B2CIlow <- B2hat - (deltaMultiplier * seB2hat)
@@ -304,7 +316,7 @@ print(paste("The 95% CI for the mean difference in the mean teacher salary betwe
 ```{r q3d-2}
 B3hat <- 1674.00
 
-seB3hat <- sqrt(641873.8) 
+seB3hat <- sqrt(641873.8) # sqrt(# from the vcov matrix), BUT also the same value in the Est. Std Error table for the coef.
 
 B3CIlow <- B3hat - (deltaMultiplier * seB3hat)
 B3CIhigh <- B3hat + (deltaMultiplier * seB3hat)
@@ -315,15 +327,15 @@ print(paste("The 95% CI for the mean difference in the mean teacher salary betwe
 
 
 ### iii. South region and the West region.
-```{r q3d-2}
+```{r q3d-3}
 B2B3hat <- B2hat - B3hat
-print(paste("B2 B3 hat:", B2B3hat))
-print(paste("t value: ", deltaMultiplier))
+#print(paste("B2 B3 hat:", B2B3hat))
+#print(paste("t value: ", deltaMultiplier))
 
 
 # above calculation may be wrong, also trying:
 # Var(B2-hat) + Var(B3-hat) - 2Cov(B2,B3)
-seB2B3hatv2 <- sqrt(588126.72 + 641873.8 - (2 * 244238.0))
+seB2B3hatv2 <- sqrt(588126.72 + 641873.8 - (2 * 244238.0)) # use the vcov table
 
 B2B3CIlowv2 <- B2B3hat - (deltaMultiplier * seB2B3hatv2)
 B2B3CIhighv2 <- B2B3hat + (deltaMultiplier * seB2B3hatv2)
@@ -334,9 +346,5 @@ print(paste("The 95% CI for the mean difference in the mean teacher salary betwe
 
 ## (Question 3e) What do your intervals from part 3d indicate about the effect of geographic region on mean annual salary for teachers?
 
-**Need to rewrite**
-When spending per student is held constant, the difference in mean pay for teachers in the North vs. South or West, the confidence intervals are large and include 0. 0 within the range indicates that region does not have an effect on the mean salary of teachers when the model includes student expenditure and region. I conclude that region does not need to be included in the model.
-
-
-
+When spending per student is held constant, the difference in mean pay for teachers in the North vs. South or West, the confidence intervals are large and include 0. 0 within the CI range indicates that region does not have an effect on the mean salary of teachers when the model includes student expenditure and region. I conclude that region does not need to be included in the model.
 
