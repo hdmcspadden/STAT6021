@@ -49,11 +49,12 @@ abline(reg3,lty=3, col="blue")
 legend("topleft", c("North","Central","Napa"), lty=c(1,2,3), pch=c(1,2,12), col=c("black","red","blue")) 
 
 ##fit regression with interaction between the 2 predictors
-result<-lm(Quality~Flavor*Region) this means
+result<-lm(Quality~Flavor*Region)
 summary(result)
 
 ##fit regression with no interaction
 reduced<-lm(Quality~Flavor+Region)
+
 anova(reduced,result) # compare additive vs. interaction
 # the anova shows that the sample could come from a population where the slopes are all the same.
 # difference in slope could reasonably be because of the sample.
@@ -85,6 +86,8 @@ levene.test(Quality,Region)
 # look at the coefficients for model
 summary(reduced) # interpret as comparisons to Napa (reference class)
 
+
+# compare all possible pairs of classes
 ##perform Tukey's multiple comparisons
 library(multcomp)
 pairwise<-glht(reduced, linfct = mcp(Region= "Tukey")) # glht = general linear hypothesis test

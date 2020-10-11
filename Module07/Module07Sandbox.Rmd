@@ -1,0 +1,243 @@
+---
+title: "Module 07 Sandbox"
+author: "Diana McSpadden"
+date: "10/10/2020"
+output: html_document
+---
+
+# Module 7: Model Selection
+
+## Essential Questions
+1. How do we use the various criteria to compare various potential regression models?
+2. How should we use the various automated search procedures in choosing a potential regression model and what do we need to be careful about in using these automated procedures?
+3. How do we use data splitting and the PRESS statistic to validate a regression model?
+
+**Use the various numerical measures and automated techniques to decide which multiple regression model to use in a data analysis.**
+
+## 7.1: Introduction to the Lesson
+How to balance including more predictors to improve predictive ability and not include predictors that are unnecessary == complicated, and more uncertainty in predictions.
+
+
+## 7.2 Model Selection Criteria
+
+Read Section 10.1
+
+Terms:
+* candidate regressors
+* variable selection problem
+
+page 337: "In general, we would like to describe the system with as few regressors as possible while simultaneously explaining the substantial portion of the variability in y.
+
+### What are the two conflicting objectives in building regression models? 
+1. We want the model to include as many predictors as possible, because they probably do help predict the response variable and we want to include their influence. Basically, more predictors will decrease residual error.
+2. We want to include as few predictors as possible, because each added variable increases the variance of the response variable. And more regressors increases data collection complexity, maintenance, and difficulty explaining the model.
+
+By removing variables we improve precision of the parameter estimates of the retained variables, even if deleted variables are not negligible.
+
+### Summarize, in your own words, some of the consequences of model misspecification. 
+Deleting the wrong variables can introduce bias onto the estimates of the retained variable coefficients.
+
+However, if the deleted variables have small effects on the model, the mean squared error of the biased estimates (retained variables) will be less than the variannce of the unbiased estimates. In other words ...
+
+**the amount of bias introduced is less than the reduction in variance.**
+
+But, if the wrong model is selected, the above statement is not true, so you are introducing more bias than you are reducing variance.
+
+In general **we want a model that minimizes the mean square error**.
+
+### Consider the following criteria for evaluating regression models:
+For each of the criteria, write out their formulas, and describe how you would use each of them to evaluate regression models.
+
+**Coefficient of multiple determination, R2p.**
+
+R2 is a measure of the adequacy of a regression model.
+
+**R2p** is the coefficient of multiple determination for a subset regression model with p terms (p-1 regressors + intercept)
+
+R2p = SSR-p / SST
+
+R2p = 1 - (SSE-p) / SST
+
+R2p increases as p increases (remember we always increase SSR with more predictors)
+
+When an additional variable increases R2p only a little bit, that variable may not be needed.
+
+**Adjusted R-squared, R2adj,p.**
+
+R2Adj(p) = 1 - (((n-1) / (n-p)) * (1 - R2p))
+
+This does not necessarily increase as additional regressors are added (takes into account n and p).
+
+additional regressors will increase R2Adjp IFF the partial D statistic for testing the significant of the additional regressors exceeds 1.
+
+
+**Residual mean square, MSres(p)**
+
+MSE(p) = SSE(p) / (n-p)
+
+Residual mean square for a subset of the regression model.
+
+In general, MSE(p) decreases, stabilizes, then increases as regressors are added.
+
+Increase occurs when the reduction in SSE(p) from adding the regressor does not compensate for the loss of one degree of freedom to the denominator of MSE(p).
+
+1. Can choose parameters (p) are the minimum MSE(p)
+2. Can choose p such that MSE(p) is ~= MSE of full model
+3. Value of p where the smallest MSE(p) turns upward.
+
+See page 334 to see equation that shows minimizing MSE(p) gives you the maximum R2Adj(p)
+
+
+**Mallow's Cp Statistic**
+
+Mallows Cp statistics produces an estimate of the standardized total mean square error
+
+Cp = (SSE(p) / sigma-hat^2) - n + 2p
+
+IFF the p term model has negligible bias then Cp == p.
+
+**However, using Mallows Cp requires a estimate of sigmas^2 on pairs of points that are near neighbors in x space, not using MSE of the fill model because that assumes the full model has negligible bias.
+
+
+**AIC.**
+
+Akaike INformation Criterion
+
+based in naximizing expected entropy (expected information) of the model.
+
+AIC = (n * ln(SSE/n)) + 2p
+
+same principle as Mallows Cp and R2Adj: as you add terms SSE cnanot increase,BUT does the decrease justify the inclusion of the extra terms?
+
+**BIC.**
+
+Bayesian Analogues
+
+Schwartz BIC == (n * ln(SSE/n)) + (p * ln(n)) - as the sample size increases there is a greater penalty for adding regressors
+
+
+**PRESS statistic.**
+
+PRESS(p) = sum 1:n (e-i / 1 - hii)^2    *page 337, Equation 10.16
+
+You want small values of PRESS(p)
+
+Not useful to compare **all** models, is useful to compare alternative models.
+
+If multicollinearity exists (i.e. extra regressors) the errors will be larger.
+
+## 10.2 Automatic Search Procedures
+
+Read section 10.2
+
+If we assume B0 included in regressors and we are evaluating all possible regressors, then we have 2^k total equations to investigate.
+
+R function leaps()
+
+
+### In your own words, describe the process for each of the following automatic search procedures:
+
+Choosing F or t.
+
+Popular method is using 4 == Fin/out == tin/out, this corresponds to the upper 5% point of the F distribution.
+
+**Another recommendation is using alpha of .25 for calculating Fin/tin, **
+
+**Use alpha = .01 for calculation Fout/tout.**
+
+**Forward selection**
+1. Start with no regressors other than intercept
+2. start by adding one regressor at a time
+3. Choose x1 as one that will produce the largest F statistic (testing significance of x1)
+4. choose x2 as the variable with the next highest correlation to y after adjusting for x1's effect on y.
+5. If the new F value exceeds the initial F value, then x2 is added to the model.
+6. Repeat steos 4 and 5 until either the partial F statistics at a step does not exceed first F value, or when all the regressors have been added.
+
+**NOTE: you can use t values for entering or removing variables**
+
+**Backward elimination**
+Works in opposite direction
+
+1. Start with sll K candidate regressors
+2. Then partial F / t statistic is computed for each variable as if it were the last variable added to the model.
+3. The variable with the smaller F/t statistics is comparied with a pre-selected value of F-out or t-out and if smallest is equal to the pre-selected value, that regressor is removed.
+4. Fit the new model and calculate all regressors as the last variable added and repeat steps 3 until a variable does not meet the out criteria.
+
+**A nice method so that nothing "obvious" will be missed** page 347
+
+
+**Selecting OUT criteria:** book describes using alpha = .01 so t(.1/2, n - p) == t(.05,n - p)
+remember that p is changing with each iteration.
+
+**Stepwise regression**
+
+Similar to forward selection, BUT after each variable is added, all previous variables are reassessed in the new model based on F/t statistics. Basically runs the backward, after each forward.
+
+Requires two cutoff values:
+1. an add value
+2. a out value
+
+frequently f IN > f OUT making it harder to add a variable than remove one.
+
+
+### In your own words, describe some of the drawbacks with automatic search procedures.
+The book states that even if a model is identified using stepwise-type procedures it may not be the **optimal** model. There may be several equally good ones, and knowing and understanding the data: maintainability of data, explainability of the model based on the data, etc may mean you want a different, but equally good, model than the one identified.
+
+Also, intercorrelation between regressoirs can affect the order of entry or removal in either Forward/Backward/Stepwise
+
+Forward has issues because it cannot later remove a regressor after it has been added.
+
+Book's preference (p. 350) says their preference is stepwise, then backward
+
+
+## 7,4 Module Validation
+
+Read Chapter 11
+
+### In your own words, compare and contrast model adequacy checking and model validation.
+
+**Model Adequacy** is checking that the model meets linear regression assumptions, or violate other standards for adequacy of fit. This is using available data, i.e. training data.
+
+**Model validation** determines if the model will work in the real working environment == model testing data.
+
+**Validation Includes**:
+1. checking predictive performance with new data
+2. study of coefficients: do the signs and magnitudes make sense.
+3. study **stability** of coefficients with new samples.
+4. Consider interpolation and extrapolation of the model.
+
+
+**Validation Techniques Include** (p. 373)
+1. analyze model coefficients and predicted values with prior experience, physical theory, and other analytical models or simulation results.
+2. Collect new/fresh data to investigate prediction performance.
+  1. "confirmation runs"
+  1. 15 - 20 new observations.
+3. Data splitting - set aside some of the original data to investigate model performance.
+
+Extrapolation: trying to use model on ranges of regressors that were not used to create the model.
+
+### In your own words, explain how you can use the coefficients of a regression model and its predicted values in model validation. 
+
+
+### In your own words, describe how data splitting methods work in model validation. 
+
+**stability** of coefficients.
+
+Do the *signs** make sense.
+
+**Variance Inflation Factors** of the regressors. Greater than 5 or 10 indicates a particular regressor is unstable.
+
+If data is collected across time, investigate the **stability** of the coefficient across time. Use shorter time spans.
+
+
+### How is the PRESS statistic used in model validation? 
+
+PRESS measure approximate sense of how much of the variability in new observations the model may explain. (p. 377)
+
+R2-prediction == 1 - (PRESS / SST)
+
+Can compare R2prediction to the original data R2.
+
+
+
+
