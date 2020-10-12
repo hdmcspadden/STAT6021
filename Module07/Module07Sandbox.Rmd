@@ -107,7 +107,7 @@ based in naximizing expected entropy (expected information) of the model.
 
 AIC = (n * ln(SSE/n)) + 2p
 
-same principle as Mallows Cp and R2Adj: as you add terms SSE cnanot increase,BUT does the decrease justify the inclusion of the extra terms?
+same principle as Mallows Cp and R2Adj: as you add terms SSE cannot increase, BUT does the decrease justify the inclusion of the extra terms?
 
 **BIC.**
 
@@ -237,6 +237,43 @@ PRESS measure approximate sense of how much of the variability in new observatio
 R2-prediction == 1 - (PRESS / SST)
 
 Can compare R2prediction to the original data R2.
+
+## 7.5 Recap of Module 7
+
+2 main uses:
+* prediction
+* explore relationships between predictors and response
+
+In prediction we just want yi-hat close to yi. Don't care what the function is.
+
+If you want to explore relationships - then the form of the function is important. We want the form to be simple.
+
+More regressors make it more difficult to interpret.
+
+Making a model more complicated than it should be, then the predictive power decreases with new data.
+
+### Model Selection
+ R2 can ONLY be applied on models with same size.
+ 
+ R2Adj, Mallows, Cp, AIC, BIC all all methods of **penalized fit criteria** == a penalty is added when an extra term is added to the model to improve the fit of the model.
+Eg is AIC:
+
+AIC = (n * ln(SSE / n)) + 2p
+
+First part goes down, but 2p goes up.
+
+**partial F test can only be used for a subset of the data**
+
+### R Functions
+* regsubsets and step functions in R only consider 1st order models (do not check interactions or higher order terms)
+* regsubsets and step funcitons do not check is the regression assumptions are met. You need to check the residual plot.
+* regsubsets and step functions do not guarantee the best model will be identified
+* step function can lead to different models if you have a different starting point
+* For the step function, R uses AIC to decide when to stop the search. The textbook uses the F statistic.
+
+
+
+
 
 
 
