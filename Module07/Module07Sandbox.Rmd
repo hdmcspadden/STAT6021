@@ -68,7 +68,7 @@ R2Adj(p) = 1 - (((n-1) / (n-p)) * (1 - R2p))
 
 This does not necessarily increase as additional regressors are added (takes into account n and p).
 
-additional regressors will increase R2Adjp IFF the partial D statistic for testing the significant of the additional regressors exceeds 1.
+additional regressors will increase R2Adjp IFF the partial D statistic for testing the significance of the additional regressors exceeds 1.
 
 
 **Residual mean square, MSres(p)**
@@ -255,7 +255,7 @@ Making a model more complicated than it should be, then the predictive power dec
 ### Model Selection
  R2 can ONLY be applied on models with same size.
  
- R2Adj, Mallows, Cp, AIC, BIC all all methods of **penalized fit criteria** == a penalty is added when an extra term is added to the model to improve the fit of the model.
+ R2Adj, Mallows, Cp, AIC, BIC are all methods of **penalized fit criteria** == a penalty is added when an extra term is added to the model to improve the fit of the model.
 Eg is AIC:
 
 AIC = (n * ln(SSE / n)) + 2p

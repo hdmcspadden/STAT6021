@@ -5,26 +5,206 @@ date: "10/10/2020"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+# Stat 6021: Guided Question Set 7
+
+## Name: H. Diana McSpadden
+### UID: hdm5s
+### 10.10.2020
+
+
+## Question 1) From the tutorial, the model with the "best" BIC has x2; x7; x8 as predictors. 
+We will continue to work with this regression model for the rest of this question.
+
+## Question 2) The PRESS statistic can be used in model validation as well as a criteria for model selection. 
+Unfortunately, the regsubsets() function from the leaps package does not compute the PRESS statistic. 
+
+The PRESS statistic can be written as:
+
+PRESS = SUM [y-i - yi-hat]^2 = SUM [e-i / 1 - hii]^2
+
+where, hii denotes the ith diagonal from the hat matrix
+
+hat matrix == X * ((X'X)^-1) * X'
+
+
+Write a function that computes the PRESS statistic for a regression model. 
+Hint: the diagonal elements from the hat matrix can be found using the lm.influence() function.
+
+```{r q2-1}
+
+data<-read.table("nfl.txt", header=TRUE, sep="")
+attach(data)
+
+bestBICModel <- lm(y~x2+x7+x8)
+
+summary(bestBICModel)
+
+```
+```{r q2-2}
+# https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/lm
+
+hatDiagonals <- lm.influence(bestBICModel)$hat
+
+calculatePRESS <- function(theModel) {
+  
+  sumPRESS = 0
+  
+  for (i in 1:length(hatDiagonals)){
+    sumPRESS <- sumPRESS + ((theModel$residuals[i]) / (1 - hatDiagonals[i]))^2
+  }
+  
+  return(sumPRESS)
+}
+
+valuePRESS <- calculatePRESS(bestBICModel)
+
+print(paste("PRESS is: ", valuePRESS))
+
 ```
 
-## R Markdown
+## Question 3) Using the function you wrote in part 2, 
+calculate the PRESS statistic for your regression model from part 1. 
+```{r q3-1}
+valuePRESS <- calculatePRESS(bestBICModel)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+print(paste("PRESS is: ", valuePRESS))
 ```
 
-## Including Plots
+Calculate the R2-Prediction for this model, and compare this value with its R2. 
+```{r q3-2}
+# https://www.rdocumentation.org/packages/car/versions/3.0-10/topics/Anova
 
-You can also embed plots, for example:
+anova(bestBICModel)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+str(anova(bestBICModel))
+
+sum(anova(bestBICModel)[2])
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r q3-3}
+
+r2ForBestBICModel <- summary(bestBICModel)$r.squared
+print(paste("R Squared is: ",r2ForBestBICModel))
+
+#alternative calculation: R2p = 1 - (SSE-p) / SST
+p <- length(bestBICModel$coefficients)
+
+SSE <- sum(bestBICModel$residuals**2)
+SST <- sum(anova(bestBICModel)[2]) # I think this sums the sum squared column from the anova table.
+
+r2p <- 1 - ((SSE) / SST)
+print(paste("R Squared p Calculated: ", r2p))
+
+
+r2AdjForBestBICModel <- summary(bestBICModel)$adj.r.squared
+print(paste("R Squared Adjusted is: ",r2AdjForBestBICModel))
+
+#alternative calculation:  1 - (((n-1) / (n-p)) * (1 - R2p))
+n = nrow(data)
+
+r2pAdj <- 1 - (((n-1) / (n-p)) * (1 - r2p))
+print(paste("R Squared p Adj Calculated: ", r2pAdj))
+
+```
+
+
+What comments can you make about the likely predictive performance of this model?
+
+About 75%-78% of the variance in y is predicted by the model containing x2, x7, x8: passing yards, percent rushing, and opponents' rushing yards.
+
+## Question 4) Delete half the observations (chosen at random), and refit the regression model. 
+
+```{r q4-1}
+# https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/sample
+#
+
+sampleHalfData <- data[sample(nrow(data), (nrow(data) / 2), replace = FALSE, prob = NULL),]
+#sampleHalfData
+
+detach(data) # detach the full data
+attach(sampleHalfData) # attach the half data
+
+refitBestBICModel = lm(y~x2+x7+x8)
+summary(refitBestBICModel)
+
+```
+
+**Calculate the R2-Prediction for this model.**
+```{r q4-2}
+
+r2ForRefitBestBICModel <- summary(refitBestBICModel)$r.squared
+print(paste("Refit R Squared is: ",r2ForRefitBestBICModel))
+
+#alternative calculation: R2p = 1 - (SSE-p) / SST
+p <- length(refitBestBICModel$coefficients)
+
+refitSSE <- sum(refitBestBICModel$residuals**2)
+refitSST <- sum(anova(refitBestBICModel)[2]) # I think this sums the sum squared column from the anova table.
+
+refitR2p <- 1 - ((refitSSE) / refitSST)
+print(paste("Refit R Squared p Calculated: ", refitR2p))
+
+refitR2AdjForBestBICModel <- summary(refitBestBICModel)$adj.r.squared
+print(paste("Refit R Squared Adjusted is: ",refitR2AdjForBestBICModel))
+
+#alternative calculation:  1 - (((n-1) / (n-p)) * (1 - R2p))
+n = nrow(sampleHalfData)
+
+refitR2pAdj <- 1 - (((n-1) / (n-p)) * (1 - refitR2p))
+print(paste("Refit R Squared p Adj Calculated: ", refitR2pAdj))
+```
+
+**How well does this model predict the number of games won?**
+
+Only ~54 - 64% of the variance in games won is explained by the model containing x2, x7, x8: passing yards, percent rushing, and opponents' rushing yards. The significance of the model using half the dataset is considerably lower than when using the full data set.
+
+
+## Question 5) 5. Based on the models you fitted from the previous 2 parts, ...
+compare the standard errors of the regression coefficients for both models.
+
+```{r q5-1}
+
+print("Coefficients for model with all data points:")
+bestBICModel$coefficients
+
+print(" ")
+print("Coefficients for model half the data points:")
+
+refitBestBICModel$coefficients
+
+```
+
+```{r q5-2}
+
+summary(bestBICModel)
+
+print(" ")
+
+summary(refitBestBICModel)
+
+
+```
+
+**Answer: ** The half data model has about twice the standard error for each parameter as the full data model.
+
+## Question 6) Using both models, calculate the predicted number of wins for all the NFL teams.
+
+Compare these models in terms of how well they predict the number of wins for all the NFL teams by computing the SSres for both models.
+
+```{r q6-1}
+
+SSEFull <- sum(bestBICModel$residuals**2)
+SSTFull <- var(data$y) * (nrow(data)-1)
+
+print(paste("Sum Squared Residuals For Full Data Model: ", SSEFull))
+print(paste("Sum Squared Total For Full Data Model: ", SSTFull))
+
+SSEHalf <- sum(refitBestBICModel$residuals**2)
+SSTHalf <- var(sampleHalfData$y) * (nrow(sampleHalfData)-1)
+
+print(paste("Sum Squared Residuals For Half Data Model: ", SSEHalf))
+print(paste("Sum Squared Total For Half Data Model: ", SSTHalf))
+
+```
+
+
