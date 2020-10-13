@@ -19,9 +19,6 @@ best$mse <- (summary(allreg)$rss)/(dim(data)[1]-best$p)
 best$cp <- summary(allreg)$cp
 best$bic <- summary(allreg)$bic
 
-#best
-best$bic
-
 ##sort by various criteria
 best[order(best$r2),] # largest
 best[order(best$adjr2),] # largest
