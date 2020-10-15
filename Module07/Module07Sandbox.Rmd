@@ -85,6 +85,13 @@ Increase occurs when the reduction in SSE(p) from adding the regressor does not 
 2. Can choose p such that MSE(p) is ~= MSE of full model
 3. Value of p where the smallest MSE(p) turns upward.
 
+## Lecture Notes
+General Steps in Model Building Word Docx
+
+
+
+
+
 See page 334 to see equation that shows minimizing MSE(p) gives you the maximum R2Adj(p)
 
 
@@ -272,9 +279,18 @@ First part goes down, but 2p goes up.
 * For the step function, R uses AIC to decide when to stop the search. The textbook uses the F statistic.
 
 
+## LECTURE
+
+Most general point: balance adding paratmers - does the improvement balance against concerns of unneeded complexity and risk of over-fitting.
 
 
+Using search procedures on cateogorical predictors: make sure that k - 1 parameters are being associated. Factors are tricky.
+
+nbest description. if 10 predictors, it will have best model with 1 predictor, if nbest = 5 then it will choose 5 best of each of the n choose x for each x.
 
 
+**R-squared: is based on the data in your model** - how well it fits training data
 
+**Re-squared predicted is based on thinking about new data** - how well fits new data
 
+If R^2 and R^2p is to predicted data (test data) are different than we may have an overfitting problem.

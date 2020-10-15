@@ -43,11 +43,10 @@ summary(bestBICModel)
 ```{r q2-2}
 # https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/lm
 
-hatDiagonals <- lm.influence(bestBICModel)$hat
-
 calculatePRESS <- function(theModel) {
   
   sumPRESS = 0
+  hatDiagonals <- lm.influence(theModel)$hat
   
   for (i in 1:length(hatDiagonals)){
     sumPRESS <- sumPRESS + ((theModel$residuals[i]) / (1 - hatDiagonals[i]))^2
@@ -56,16 +55,27 @@ calculatePRESS <- function(theModel) {
   return(sumPRESS)
 }
 
+
 valuePRESS <- calculatePRESS(bestBICModel)
 
 print(paste("PRESS is: ", valuePRESS))
+
+
+### or
+
+press <- function(theModel) {
+  
+  pr <- resid(theModel) / (1-lm.influence(theModel)$hat)
+  
+  return (sum(pr^2))
+}
 
 ```
 
 ## Question 3) Using the function you wrote in part 2, 
 calculate the PRESS statistic for your regression model from part 1. 
 ```{r q3-1}
-valuePRESS <- calculatePRESS(bestBICModel)
+valuePRESS <- calculatePRESS(bestBICModel, hatDiagonals)
 
 print(paste("PRESS is: ", valuePRESS))
 ```
@@ -110,7 +120,9 @@ print(paste("R Squared p Adj Calculated: ", r2pAdj))
 
 What comments can you make about the likely predictive performance of this model?
 
-About 75%-78% of the variance in y is predicted by the model containing x2, x7, x8: passing yards, percent rushing, and opponents' rushing yards.
+About 75%of the variance in y is predicted by the model containing x2, x7, x8: passing yards, percent rushing, and opponents' rushing yards.
+
+Adjusted takes into account the number of predictors, regular R does not.
 
 ## Question 4) Delete half the observations (chosen at random), and refit the regression model. 
 
@@ -156,7 +168,7 @@ print(paste("Refit R Squared p Adj Calculated: ", refitR2pAdj))
 
 **How well does this model predict the number of games won?**
 
-Only ~54 - 64% of the variance in games won is explained by the model containing x2, x7, x8: passing yards, percent rushing, and opponents' rushing yards. The significance of the model using half the dataset is considerably lower than when using the full data set.
+Only ~64% of the variance in games won is explained by the model containing x2, x7, x8: passing yards, percent rushing, and opponents' rushing yards. The significance of the model using half the dataset is considerably lower than when using the full data set.
 
 
 ## Question 5) 5. Based on the models you fitted from the previous 2 parts, ...
@@ -182,14 +194,20 @@ print(" ")
 
 summary(refitBestBICModel)
 
+hatDiagonalsRefit <- lm.influence(refitBestBICModel)$hat
+
+calculatePRESS(refitBestBICModel)
 
 ```
 
-**Answer: ** The half data model has about twice the standard error for each parameter as the full data model.
+**Answer: ** The half data model has about twice the standard error for each parameter as the full data model. It could mean we are over-fitted. It definately doesn't work well with half the data.
 
 ## Question 6) Using both models, calculate the predicted number of wins for all the NFL teams.
 
 Compare these models in terms of how well they predict the number of wins for all the NFL teams by computing the SSres for both models.
+
+
+# NEED TO REDO - he wants us to use the model created by the half data, on the full data!!!!!
 
 ```{r q6-1}
 
@@ -205,6 +223,18 @@ SSTHalf <- var(sampleHalfData$y) * (nrow(sampleHalfData)-1)
 print(paste("Sum Squared Residuals For Half Data Model: ", SSEHalf))
 print(paste("Sum Squared Total For Half Data Model: ", SSTHalf))
 
+predictFull <- predict(bestBICModel, data)
+
+residualsFull <- y - predictFull
+
+predictHalf <- predict(refitBestBICModel, data)
+
+residualsHalf <- y - predictHalf
+
+
+sum(residualsFull)^2
+
+sum(residualsHalf)^2
 ```
 
 

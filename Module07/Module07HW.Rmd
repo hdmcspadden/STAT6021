@@ -237,6 +237,7 @@ Benefit of **R2-Adjusted**: R2Adjusted takes into consideration the effect of ad
 calculatePRESS <- function(theModel) {
   
   sumPRESS = 0
+  hatDiagonals <- lm.influence(theModel)$hat
   
   for (i in 1:length(hatDiagonals)){
     sumPRESS <- sumPRESS + ((theModel$residuals[i]) / (1 - hatDiagonals[i]))^2
