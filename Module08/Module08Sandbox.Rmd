@@ -1,0 +1,352 @@
+---
+title: "Module08Sandbox"
+author: "Diana McSpadden"
+date: "10/13/2020"
+output: html_document
+---
+
+# Module 08: Model Diagnostics and Remedial Measures in MLR
+
+## ESSENTIAL QUESTIONS
+1. What are some of the drawbacks in using residuals to detect outliers?
+2. What are the various scaled residuals that could be used to detect outliers and how are they improvements over residuals?
+3. How do we detect data points that unduly influence the regression model?
+
+
+Assuming we will be reading Chapter 6: "Diagnostics for Leverage And Influence"
+
+Definitions:
+
+* leverage/**influence point**: moderately unusual x coordinate and the value of y is unusual too. These points will pull the model in their direction
+  * sometimes they are important
+  * sometimes invalid
+  * sometimes an odd sign on a coefficient will be a result of a leverage point.
+  
+
+Remember the **hat matrix**: the diagonal is the standardized measure of the distance of the i-th x observation from the center of the x space. Large hat diagonals reveal observations that are potentially influential.
+
+average size of hat diagonal is p/n
+
+if a diagonal is greater than 2p/n then we consider it remote enough to be a **leverage point**.
+
+possibly investigate R-student in conjunction with hii (H diagonals).
+
+## 8.1 Introduction to the Lesson
+
+## 8.2 Residual Analysis
+
+Read 4.1 - 4.2.4 and 4.3 of textbook
+
+### Consider residuals, ei=yi−y^i. What are the properties (mean, variance, etc.) associated with residuals? 
+* error term has a 0 mean
+* error term has constant variance: sigma^2
+* errors are uncorrelated *
+* errors are normally distributed *
+
+** There two together mean errors are independent random variables.
+
+residual average variance is measured by MSE.
+
+### Why do data points that are outlying in terms of the predictors have small residuals?
+
+Because the outlying terms pull the model in their direction with more influence that non-outlying terms, the model is unbalanced in their direction which results in small residuals.
+
+
+### Write down the formula for standardized residuals, di. 
+
+d-i = e-i / sqrt(MSE)
+
+A LARGE di indicates a potential outlier.
+
+
+### What are the properties associated with standardized residuals and how are these properties similar or different with residuals?
+
+mean zero, and ~unit variance. 
+
+A LARGE di indicates a potential outlier. (e.g. di > 3)
+
+### Write down the formula for studentized residuals, ri. 
+
+studentized is an improvement on using MSE (as MSE is only an approximation). If we divide by the exact standard deviation we improve residual scaling.
+
+r-i = e-i / (sqrt(MSE * (1 - hii)))
+
+### What are the properties associated with studentized residuals and how are these properties similar or different with residuals?
+
+There is constant variance of these residuals. Var(r-i) == 1
+
+
+### Write down the two formulas for PRESS residuals, e(i). 
+
+This computes residual for yi-hat when all points except xi points are used to create the model.
+
+PRESS residuals or **deleted residuals**.
+
+e(i) = e-i / (1 - hii)
+
+This is an ordinary residual weighted by the diagonal elements of the hat matrix.
+
+large PRESS residual == influential point.
+
+and e(i) = e-i / sqrt((sigma^2 * (1-hii)))
+
+
+### Why are PRESS residuals useful in detecting outliers in the predictors? 
+
+a large hii means that the model error at that point are highly correlated with the ith observation in comparison to other observations. which will result in a parge e(i) (i.e. PRESS residual).
+
+PRESS RESIDUALS: **Model is good at predicting the i-th point, but does not provide good predictions of new data.**
+
+### Write down the formula for externally studentized residuals, ti. 
+
+Use sigma^2 with the i-th observation removed:
+
+S(i)^2 = (((n-p) * MSE) - (e-i^2/ (1 - hii))) / (n - p - 1)
+
+with that, calculate ti
+
+ti = e-i / sqrt((S(i)^2 * (1-hii)))
+
+
+###  What distribution does ti follow? 
+
+A t distribution with n - p - 1 degrees freedom. 
+
+Use t (alpha/2n), n - p - 1 as a comparison.
+
+
+
+
+### How do we use ti to detect outliers?
+
+If the ith observation is influential then ti will be more sensitive to that influence than ri (which uses MSE)
+
+One doesn't need a strict hypothesis test of t statistic comparisons, but a **diagnostic view** is appropriate.
+
+### How do we use a partial regression plot to investigate the marginal role of a predictor given the other predictors in a regression model?
+
+A partial regression plot allows for comparison of residuals vs. a single regressor **given that the model also contains additional regressors**.
+
+It shows the **marginal effect** of adding a predictor when the other predictors are already in the model.
+
+Can help determine if the relationship between response and regressor variable has been specified correctly.
+
+Documented on pages 143 and 144.
+
+The slope of the partial regression plot **should be** the slope of the B for the regressor in the MLR model being analyzed.
+
+If the regressor being analyzed is a candidate regressor and produces a horizontal band on the partial regression plot, then the regressor is not useful to the model.
+
+#### From Video:
+Can show if there is a linear pattern, no pattern, or may show a **quadratic pattern**
+
+
+### Write down the two formulas for the PRESS statistic. 
+
+e(i) = yi - y-hat(i), where y-hat(i) is the predicted value of the ith observation mased on a model fit to values EXCEPT xi's.
+
+PRESS(p) = sum 1:n (e-i / 1 - hii)^2    *page 337, Equation 10.16
+
+or
+
+PRESS = sum 1:n (yi - y-hat(i))^2
+
+
+### What is the PRESS statistic used for?
+
+Generally used as a measure of how well a regression model will perform predicting new data.
+
+You want small values of PRESS(p)
+
+### R2(predicted)
+
+R2(prediected) can be calculated with PRESS statistic:
+
+R2(predicted) = 1 - (PRESS / SST)
+
+Also a measure of the predictive value of the model. Want a large R2(predictive).
+
+## 8.3: Leverage and Measures of Influence
+
+Read sections 6.1 - 6.4
+
+R Code for generating influence diagnostics is:
+
+model <- lm(y~x1+x2, data=theData)
+summary(model)
+print(influence.measures(model))
+
+
+### Write down the formula for hii, the ith diagonal element of the hat matrix. 
+
+theModel$residuals[i]
+
+
+hii = x'i((X'X)^-1)xi
+
+
+
+### How do we find leverage points that are potentially influential? 
+
+Remember the **hat matrix**: the diagonal is the standardized measure of the distance of the i-th x observation from the center of the x space. Large hat diagonals reveal observations that are potentially influential.
+
+average size of hat diagonal is p/n
+
+if a diagonal is greater than 2p/n then we consider it remote enough to be a **leverage point**.
+
+possibly investigate R-student in conjunction with hii (H diagonals).
+
+
+###Consider Cook’s D, Di. :
+
+**Write down the formulas for Di.**
+
+Cook's is a way to consider both the location of the point in x space, and the response variable in measuring influence.
+
+Di = (ri^2 / p) * *(hii / 1 - hii)
+
+where ri = e-i / (sqrt(MSE * (1 - hii)))
+
+or
+
+Di = ((y-hat(i) - y-hat)' * (y-hat(i) - y-hat)) / (p * MSE)
+
+**Explain, using your own words, what Di is measuring.**
+
+Di is measuring both how close the model's estimate of y is for the point in question, and also whether the point is "close" or "far" from the other observations. If both are large, then Di is large and the observation is worth investigating.
+
+**How do we use Di to detect influential data points?**
+
+parameters with large Di have considerable influence on the lease-squares estimates.
+
+Compare to F distribution: F alpha, p, n-p
+
+Usually consider points where Di > 1
+
+
+### Consider DFBETASj,i. 
+
+**Write down the formulas for DFBETASj,i.** 
+
+DFBETASj,i = (B-hat-j - B-hat-j(i)) / (S^2(i) * Cjj)
+
+where Cjj is the jth diagonal of the (X'X)^-1 matric and B-hat-j(i) is the jth regression coefficient computed without the ith observation.
+
+
+**Explain, using your own words, what DFBETASj,i is measuring.**
+
+How much a regression coefficient (B-hat-j) changes is an observation (Xi) is deleted.
+
+**How do we use DFBETASj,i to detect influential data points?**
+
+If DFBETASj,i > 2 / sqrt(n)  then the ith observation warrants examination.
+
+
+### Consider DFFITSi.
+
+**Write down the formulas for DFFITSi.**
+
+DFFITSi = (y-hati - y-hat(i)) / sqrt(S^2(i) * hii)
+
+
+DFFITSi = (sqrt(hii / 1 - hii) * ti)
+
+**Explain, using your own words, what DFFITSi is measuring.**
+
+DFFITS is the number of standard deviations that the fitted value of y-hati changes if the observation is removed.
+
+It combines both leverage (hii / (1 - hii)) and the prediction error (ti == studentized residuals)
+
+**How do we use DFFITSi to detect influential data points?**
+
+If DFFITSi > 2 / sqrt(p/n) the observation warrants attention.
+
+## 8.4 Module Recap
+
+### Outliers in Predictors
+* when there are multiple predictors, outliers are more difficult to detect visually == plotting in k+1 dimensions
+* if it is far away from the center of values in k dimensions.
+* larger **leverage** - detector of outliers
+
+
+### Hat Matrix
+
+H = X (X'X)^-1 X'
+
+X == design matrix (first column is all 1 because of B0)
+
+Fitted values == Y-hat = HY
+
+leverage is a weight associated with the variable y to get y-hat.
+
+### Detecting Outliers in Predictors
+
+**Properties of leverages:**
+* hii = Xi' (X'X)^-1 Xi
+* 0 <= hii <= 1
+* sum of hii's == p where p is the number of parameters
+
+The leverage of the observation i, hii, is a measure of the distance between the predictors of the ith observation and the mean of predictor values for all n.
+
+hii > 2p / n indicates outlying cases with respect to predictors.
+
+### Residuals
+
+e = (I - H)Y because e = y - y-hat, and y-hat = HY, so y - Hy = (I - H)y
+
+e is estimate of TRUE errors
+
+variance-covariance matrix of ordinary residuals is sigma^2 * (I - H)
+
+variance of ei is: sigma^2 {ei} = sigma^2 * (1 - hii) - variance is not constant
+
+covariance is sigma{ei,ej} = -hij * sigma^2 for i != j - this is saying the residuals are correlated
+
+
+### Properties of Residuals
+
+* variance of residuals are not exactly constant
+* also implies that observations with high leverage will have smaller residuals, on average (because of sigma^2 * (1 - hii))
+* implies the residuals have some correlation.
+
+IFF n>>>p then entries in hat matrix tend to 0 and sigma^2 of residuals tends to sigma^2 of errors. Then residuals tend to be constant and uncorrelated.
+
+### Outliers in Response
+
+So, we want to measure ith residual when fitted regression is based on all except ith observation.
+
+ti = ei / (sqrt(MSE(i) * (1 - hii)))
+
+Should follow a t-distribution of t (1-(alpha/2n)), n-1-p
+
+if ti > t (1-(alpha/2n)), n-1-p 
+
+### Measure of Influence
+
+Are these data points **influential**
+
+
+**IMPORTANT** As hii  goes towards 1, Di, DFBETASj,i and DFFITSi get larger
+
+Di, DFBETAS measures impact of removing point on all observations.
+
+DFFITSi measures the fitted value for the specific observation.
+
+
+## What to do?
+
+You must investigate. They are interesting.
+
+Fit with and without the imfluential observation.
+
+If similar, then keep the point. 
+
+If different - could be error in data entry.
+
+If different - need to investigate why. Do not just delete.
+
+
+
+
+
+

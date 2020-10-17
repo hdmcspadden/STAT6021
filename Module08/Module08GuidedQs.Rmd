@@ -1,0 +1,200 @@
+---
+title: "Module08GuidedQs"
+author: "Diana McSpadden"
+date: "10/13/2020"
+output: html_document
+---
+
+# Module 08: Model Diagnostics and Remedial Measures in MLR
+# Guided Questions
+
+We will continue to use the "nfl.txt" data set from the tutorial for module 7.
+
+We will continue to regress the number of games won against three predictors: passing
+yards, x2, percent rushing, x7, and opponents' rushing yards in the season, x8.
+
+
+## 1. For this first question, you will generate partial regression plots for each of the predictors. 
+As a reminder, a partial regression plot for predictor xk is obtained by:
+
+* Regressing y against the other predictors, x1; ... ; x-1 ,that are already in the model and obtaining the residuals, e(yjx1; ... ; xk-1).
+* Regressing the predictor in question, xk, against the predictors that are already in the model and obtaining the residuals, e(xkjx1; ... ; xk-1).
+* Plotting the residuals against each other, e(yjx1; ... ; xk-1) against e(xkjx1;... ; xk-1).
+
+```{r q1-theModel}
+library(ggplot2)
+
+data<-read.table("nfl.txt", header=TRUE, sep="")
+attach(data)
+
+bestBICModel <- lm(y~x2+x7+x8)
+
+summary(bestBICModel)
+```
+
+```{r q1-2}
+
+modelNotx8 <- lm(y~x2+x7)
+residualsNotx8 <- modelNotx8$residuals
+modelx8VOthers <- lm(x8~x2+x7)
+residualsx8VOthers <- modelx8VOthers$residuals
+
+modelNotx7 <- lm(y~x2+x8)
+residualsNotx7 <- modelNotx7$residuals
+modelx7VOthers <- lm(x7~x2+x8)
+residualsx7VOthers <- modelx7VOthers$residuals
+
+modelNotx2 <- lm(y~x7+x8)
+residualsNotx2 <- modelNotx2$residuals
+modelx2VOthers <- lm(x2~x7+x8)
+residualsx2VOthers <- modelx2VOthers$residuals
+
+
+ggplot(data,aes(x = residualsx8VOthers, y = residualsNotx8)) +
+  geom_point(color = "grey2") +
+  geom_smooth(method = "lm") +
+  labs(title = 'Partial Regression Plot on x8', x = 'Residuals x8~x2+x7 v. x8',y = 'Residuals y~x2+x7')
+
+
+ggplot(data,aes(x = residualsx7VOthers, y = residualsNotx7)) +
+  geom_point(color = "grey2") +
+  geom_smooth(method = "lm") +
+  labs(title = 'Partial Regression Plot on x7', x = 'Residuals x7~x2+x8 v. x8',y = 'Residuals y~x2+x8')
+
+
+ggplot(data,aes(x = residualsx2VOthers, y = residualsNotx2)) +
+  geom_point(color = "grey2") +
+  geom_smooth(method = "lm") +
+  labs(title = 'Partial Regression Plot on x2', x = 'Residuals x2~x7+x8 v. x8',y = 'Residuals y~x7+x8')
+
+
+```
+
+### (a) Produce the partial regression plot for x2. Interpret what this partial regression is telling us.
+
+The partial regression plot for x2 shows that there is a linear relationship between residuals when x2 is in the model, and x2 values fitted by x7 and x8 values. Essentially, this shows the coefficient for x2 in the x2+x7+x8 model is not 0.
+
+### (b) Fit a linear regression for the partial residual plot for x2. Report the estimated coeffcients.
+```{r q1b-1}
+
+modelPartialx2 <- lm(residualsNotx2~residualsx2VOthers)
+
+summary(modelPartialx2)
+
+```
+
+Estimated Coefficients:
+* Intercept: -6.714e-16
+* B1: **.003598**
+
+### (c) Fit a linear regression for the response against the three predictors. 
+Report the estimated coefficient for x2 and compare the value with the estimated slope from
+the previous part. What do you notice?
+
+**Answer 1c**
+See first R code block.
+
+Coefficients are identical
+
+### (d) Before producing the partial regression plots for x7 and x8, 
+what do you think will be the values of the estimated coefficients for the linear regression for each of
+these plots?
+
+**Answer 1d*
+
+x7 partial regression estimated coefficient will be: 0.193960 
+
+x8 will be -0.004816
+
+### (e) Produce the partial regression plots for x7 and x8. Interpret what both of these plots are telling us.
+
+**Answer 1e**
+The plots tell us that the three predictors are significant to the model and none of them should be removed.
+
+## 2. Produce plots of the residuals, studentized residuals, and externally studentized residuals 
+(each against the fitted values for the multiple linear regression). Based on these, do we have any outliers?
+
+```{r q2-1}
+
+##residuals
+res<-bestBICModel$residuals # regular residuals
+
+##studentized residuals
+student.res<-rstandard(bestBICModel) # rstandard give studentized residuals == ri
+
+##externally studentized residuals
+ext.student.res<-rstudent(bestBICModel) # externally studentized 
+
+n<-nrow(data)
+p<-4
+##critical value using Bonferroni procedure
+criticalValue <- qt(1-(0.05/(2*n)), n-p-1)
+criticalValue
+
+#par(mfrow=c(1,3))
+plot(bestBICModel$fitted.values,res,main="Residuals")
+plot(bestBICModel$fitted.values,student.res,main="Studentized Residuals")
+plot(bestBICModel$fitted.values,ext.student.res,main="Externally  Studentized Residuals")
+
+sort(ext.student.res)
+plot.new()
+plot(ext.student.res,main="Externally Studentized Residuals", ylim=c(-4,4))
+abline(h=criticalValue, col="red")
+abline(h=-criticalValue, col="red")
+
+ext.student.res[abs(ext.student.res)>criticalValue]
+
+```
+**Answer 2**
+No, we don't have any outliers
+
+## 3. Do we have any high leverage data points for this multiple linear regression? 
+What terms are these?
+
+```{r q3-1}
+lev<-lm.influence(bestBICModel)$hat
+
+sort(lev)
+2*p/n
+
+# notice we have 2 points with leverages over 2*p/n
+
+plot(lev, main="Leverages", ylim=c(0,0.4))
+abline(h=2*p/n, col="red")
+
+##identify data points on plot
+identify(lev)
+
+lev[lev>2*p/n]
+```
+**Answer 3**
+
+Points 18 and 27 are high leverage points.
+
+## Use DFFITSi, DFBETASj;i, and Cook's distance to check for influential observations. What teams are influential?
+
+
+```{r q4-1}
+
+DFFITS<-dffits(bestBICModel)
+DFFITS[abs(DFFITS)>2*sqrt(p/n)] # how drastically fitted value changes with and without the presence of the observation
+
+
+#DFBETAS - tells me estimated B0 changes by magnituide of 0.41, B1 changes by magnitude 0.42
+DFBETAS<-dfbetas(bestBICModel) # measures how estimated coefficients change without presence of the observation
+DFBETAS[abs(DFBETAS)>2/sqrt(n)]
+# how to find the data point
+DFBETAS # can find that value with eyeballing
+
+# COOKS considered how fitted values changes for all values (not just the observation) when data point is removed.
+COOKS<-cooks.distance(bestBICModel)
+COOKS[COOKS>qf(0.5,p,n-p)] # f distribution
+# shows no data points are an outlier. Data point 8 affects itself, but not the other data points
+
+```
+#QUESTION
+DFBETAS says I have a point that affects the coefficients, but I don't see which one it is.
+
+Neither DFFITS or Cook's show influential observations.
+
+
