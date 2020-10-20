@@ -106,5 +106,53 @@ plot(lev, main="Leverages", ylim=c(0,0.5))
 abline(h=2*p/n, col="red")
 ```
 
+## (c) Are there any influential observations based on DFFITs and Cook's Distance?
+
+**Work on q1c**
+
+First, calculate DFFITS to see how drastically the fitted value changes with and without the presence of a particular observation.
+
+Compare DFFITS to 2 * sqrt(p/n).
+
+```{r q1c-1}
+
+DFFITS<-dffits(swissModel)
+DFFITS[abs(DFFITS)>2*sqrt(p/n)] # how drastically fitted value changes with and without the presence of the observation
+```
+Three points significantly change the fitted values of the model if they are not (or are) included in the creation of the model: points 6, 37, and 47.
+
+
+Second, calculate DFBETAS to see how the significantly the coefficients will change with and without observations.
+
+DFBETAS is compared to 2 / sqrt(n)
+
+``` {r}
+#DFBETAS - 
+DFBETAS<-dfbetas(swissModel) # measures how estimated coefficients change without presence of the observation
+DFBETAS[abs(DFBETAS)>2/sqrt(n)]
+# how to find the data point
+DFBETAS # can find that value with eyeballing
+```
+
+**Observations With HIgh DFBETAS: 6, 19, 37, 42**
+
+Third, calculate COOKS to determine how fitted values change for all values, not just the removed observation, when an observation is removed.
+
+COOKS is compared to an F distribution with p, and n-p degress of freedom.
+
+``` {r}
+# COOKS considered how fitted values changes for all values (not just the observation) when data point is removed.
+COOKS<-cooks.distance(swissModel)
+COOKS[COOKS>qf(0.5,p,n-p)] # f distribution
+
+```
+**There are no observations that need to be considered based on COOK'S Distance.**
+
+## (d) Briefly describe the difference in what DFFITS and Cook's distance are measuring.
+
+DFFITs checks if the fitted value for the removed observation predictor value(s) significantly changes if the observation is removed.
+
+Cook's distance checks the amount of change for all fitted values if an observation is removed from the data used to create the model.
+
 
 
