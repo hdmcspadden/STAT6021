@@ -65,10 +65,14 @@ print(paste("PRESS is: ", valuePRESS))
 
 press <- function(theModel) {
   
-  pr <- resid(theModel) / (1-lm.influence(theModel)$hat)
+  pr <- theModel$residuals / (1-lm.influence(theModel)$hat)
   
   return (sum(pr^2))
 }
+
+valuePRESS2 <- press(bestBICModel)
+
+print(paste("PRESS 2 is: ", valuePRESS2))
 
 ```
 

@@ -61,6 +61,7 @@ contrasts(race)
 levels(race) <- c("white", "black", "other")  # Dr. Woo HIGHLY recommends making names for classes in a category
 contrasts(race)
 
+head(birthwt)
 ```
 **white** is our reference class so our coefficients will be able to interpret the effect on birthweigh of of black and other in comparison to white.
 
@@ -141,6 +142,13 @@ For black mothers the estimated birth weight is calculated by 3606.33 - ((41.17)
 For black mothers the estimated birth weight is calculated by 2909.5 - ((4.66) * (age)), also states as for mothers of other race, each unit increase of 1 year in maternal age predicts a 4.66 decrease in their baby's birth weight.
 
 These equations are consistent with the scatter plot: positive slope for white mothers, negative slope for black mothers, and almost stable (but slightly negative) for mothers of other races.
+
+```{r additiveVersion}
+modelAdd <- lm(bwt~age+race)
+summary(modelAdd)
+
+```
+
 
 
 # Question 2 (No R required) This question is based on data about teacher salaries ...

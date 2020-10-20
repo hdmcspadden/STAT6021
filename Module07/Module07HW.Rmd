@@ -2,13 +2,21 @@
 title: "Module 07 Homework"
 author: "Diana McSpadden"
 date: "10/10/2020"
-output: html_document
+output:
+  word_document: default
+  html_document: default
 ---
 # Stat 6021: Homework Set 7
+
 
 ## Name: H. Diana McSpadden
 ### UID: hdm5s
 ### 10.15.2020
+
+**Attended Study Group With**:
+
+Caprill Wright, Abby Bernhardt, Jing Huang, Katie Barbre, Michael Kastanowski, Brian, Nam, Srinivasa Chivaluri
+
 
 #### Attended Study Group With
 
@@ -24,8 +32,6 @@ library(MASS)
 
 attach(birthwt)
 head(birthwt,5)
-
-?birthwt
 
 ```
 
@@ -56,21 +62,18 @@ Ensure that R is viewing the categorical variables correctly (i.e. use the is.nu
 
 ```{r q1a-1}
 
-low<-factor(low)
-race<-factor(race)
-smoke<-factor(smoke)
-ht<-factor(ht)
-ui<-factor(ui)
+low<-factor(low) #ensure low is a factor
 
-is.factor(low) 
+race<-factor(race)#ensure race is a factor
+levels(race) <- c("white", "black", "other")
+contrasts(race)
 
-is.factor(race)
+smoke<-factor(smoke) #ensure smoke is a factor
+ht<-factor(ht) #ensure ht is a factor
+ui<-factor(ui) #ensure ui is a factor
 
-is.factor(smoke)
+head(birthwt)
 
-is.factor(ht)
-
-is.factor(ui)
 
 ```
 
@@ -83,15 +86,13 @@ The following predictor variables are categorical:
 * ht: history of hypertension.
 * ui: presence of uterine irritability.
 
-
 ## Question 1b) A classmate of yours makes the following suggestion: 
 We should remove the variable low as a predictor for the birth weight of babies." 
 
 Do you agree with your classmate? Briefly explain. Hint: you do not need to do any statistical analysis to answer this question.
 
 **Answer 1b**
-Yes, I agree with the classmate. Low is a yes/no (1/0) indicator of whether the baby is low birthweight. It will be perfectly correlated with bwt.
-
+Yes, I agree with the classmate. Low is a yes/no (1/0) indicator of whether the baby is low birthweight. It will be perfectly correlated with bwt, and is a categorical response variable: a factor variable of the bwt response variable.
 
 ## Question 1c) Based on your answer to part 1b, perform all possible regressions ...
 using the regsubsets() function from the leaps package. 
@@ -103,26 +104,16 @@ Write down the predictors that lead to a first-order model having the best:
 3. Mallow's Cp,
 4. BIC.
 
-**Working on Question 1c**
+**Work on Question 1c**
 
-**First**, drop the low regressor
-
+**First**, use the regsubsets() function
 ```{r q1c-1}
-# Drop the low column by using subset
-birthwtData <- subset(birthwt, select = -c(low)) # remove the low column
-
-head(birthwtData)
-```
-
-**Second**, use the regsubsets() function
-```{r q1c-2}
 # add the leaps library
 library(leaps)
 
 # create all the regsubsets
-# set nbest to 8 because there are 8 predictor variables
-allreg <- regsubsets(bwt ~., data=birthwtData, nbest=8)
-
+# set nbest to 5
+allreg <- regsubsets(bwt~age+lwt+race+smoke+ptl+ht+ui+ftv, data=birthwt, nbest=5) # use all variables except low
 ```
 
 For R2Adj, MSE, Mallows and BIC get the "best" models.
@@ -133,10 +124,8 @@ best <- as.data.frame(summary(allreg)$outmat)
 
 best$adjr2 <- summary(allreg)$adjr2
 best$p <- as.numeric(substr(rownames(best),1,1))+1
-best$mse <- (summary(allreg)$rss)/(dim(data)[1]-best$p)
-
+best$mse <- (summary(allreg)$rss)/(dim(birthwt)[1]-best$p)
 best$cp <- summary(allreg)$cp
-
 best$bic <- summary(allreg)$bic
 
 ##sort by various criteria
@@ -149,7 +138,7 @@ best[order(best$bic),] # want smallest
 
 **Best R2Adj** model uses the following predictors: lwt, race, smoke, ht, ui.
 
-**Best MSE** model uses the following predictors: race, smoke, ui.
+**Best MSE** model uses the following predictors: lwt, race, smoke, ht, ui.
 
 **Best Cp** model uses the following predictors: lwt, race, smoke, ht, ui.
 
@@ -161,18 +150,31 @@ Start with the first-order model with all the predictors. What is the regression
 
 ```{r q1d-1}
 # only the intercept
-regnull <- lm(bwt~1, data=birthwtData) # intercept only/empty model == ENDING POINT for backward
+regnull <- lm(bwt~1, data=birthwt) # intercept only/empty model == ENDING POINT for backward
+
+#modelAdd <- lm(bwt~age+race)
+#summary(modelAdd)
 
 # model with all predictors (except low)
-regfull <- lm(bwt~., data=birthwtData) # full model == END POINT
+regfull <- lm(bwt~age+race+lwt+smoke+ptl+ht+ui+ftv, data=birthwt) # full model == END POINT
 
 step(regfull, scope=list(lower=regnull, upper=regfull), direction="backward")
 
 ```
 
+```{r q1d-2}
+modelSelected <- lm(bwt~race+lwt+smoke+ht+ui)
+summary(modelSelected)
+
+```
+
 **Answer 1d**
 
-**formula** = bwt ~ lwt + race + smoke + ht + ui
+bwt ~ race + lwt + smoke + ht + ui
+
+All numbers are in grams
+
+E(bwt) = 2837.264 - (475.058 IF race is black) - (348.150 IF race is other) + (4.242 * lwt) - (356.321 IF smoke == 1) - (585.193 IF ht == 1) - (525.524 IF UI == 1)
 
 ## Question 2) (No R required) The data for this question are 36 monthly observations ...
 on variables affecting sales of a product. 
@@ -181,7 +183,7 @@ The objective is to determine an efficient model for predicting and explaining m
 
 The predictors are average monthly price in dollars, price, amount of advertising exposure based on gross Nielson rating, nielsen, whether a discount price was in effect, discount (1 if discount, 0 otherwise), whether a package promotion was in effect, promo (1 if promotion, 0 otherwise), and time in months, time.
 
-**Working on Question 1**
+**Work on Question 2**
 
 Knowns:
 1. y/response variable = Share
@@ -205,11 +207,19 @@ what each step in the output shown above means. Explain the forward selection pr
 
 **Answer 2b**
 
-We start with a prediction based on about the average Share value, or what we call the intercept-only model. Essentially, we start without using price, nielsen, discount, promo, or time to help predict Share - so the average Share is the best we could do in that case.
+We start with a prediction based on approximately the average Share value, or what we call the intercept-only model. Essentially, we start without using price, nielsen, discount, promo, or time to help predict Share - so the average Share is the best we could do in that case.
 
-Then, we examine the predictive power of using only one of the prediction variables. Since we are using the statistical code R to decide our model using a forward selection process, we are calculating whether adding an additional predictor variable to our prediction model decreases the AIC, which is a measure of the model's ability to decrease unexplained error. The AIC value takes into account that adding additional predictors to the model the model can actually get worse at the prediction of new data because the model becomes to rigid based on the data we used to train it with. We want to find a balance that provides good performance. Using AIC aids us in that selection. Again, we try the model with only one predictor variable, and we try all the variables, and select the first predictor variable that produces the lowest AIC value. We also verify that the addition of the new predictor does not increase AIC from the previous model we used. After we select a model with the "best" of the single predictor variables, we examine all the models with that variable, and one of the other predictors. Again we choose the second predictor to add to the model that produces the lowest AIC, and also confirm it doesn't increase AIC compared to the previous model. We continue to try adding predictor variables to the model with the lowest AIC, or until we run out of predictors, or find that adding a new predictor causes the AIC to increase.
+Then we determine the best **single** predictor variable to add to our model by comparing the predictive power of each single predictor model. To compare the predictive power of each of the resulting models we use the statistical criteria: AIC. AIC is a measure of the candidate model's ability to decrease unexplained error. Since we want our model to explain as much of the difference in Share as possible based on the models predictors, we want the smallest AIC value.
 
-If you are interested the formula for AIC is: (n * ln(SSE / n)) + 2p, where n is the number of observations in the mode, SSE is the sum squared residual error of the model, and p is the number of parameters the model includes. As predictor variables are added we expect SSE to decrease, but p increases. Our model selection method attempts the find the model that balances those two effects.
+The comparison of all your single predictor models resulted in a model with Share based on discount: (Share)~discount, because when comparing AIC's for all the single predictor models, the discount model had the lowest AIC value (-128.137 vs approximately -94 for each of the other candidate models). At this point we made note of the lowest AIC for the selected single predictor models (AIC = -128.137).
+
+We repeated this process for each of the **two** predictor models that use discount as the first predictor, and the model using discount and promo resulted in the lowest AIC. At this point we made note of the lowest AIC for the selected two predictor models (AIC = -129.69) and confirmed that this model has a lower AIC than the single predictor model.
+
+We repeated this process for each of the **three** predictor models that use discount and promo as the first two predictors, and the lowest AIC model used discount, promo and price. At this point we made note of the lowest AIC for the selected three predictor models (AIC = -132.94) and confirmed that this model has a lower AIC than the two predictor model.
+
+When we repeated the examination of all **four** predictor models that use discount, promo, and price as the first three predictors we did not identify a model with a lower AIC than the selected three predictor model. This allowed us to **stop examining** additional predictor variables.
+
+If you are interested the formula for AIC is: (n * ln(SSE / n)) + 2p, where n is the number of observations in the dataset, SSE is the sum squared residual error of the model, and p is the number of parameters the model includes. As predictor variables are added we expect SSE to decrease, but p increases. Our model selection method based on AIC attempts the find the model that balances these two effects.
 
 ## Question 2c) Your client asks if he should go ahead and use the models selected in part 2a.
 What advice do you have for your client?
@@ -223,17 +233,17 @@ specifically: name one advantage of R2 over the adjusted R2, and name one advant
 
 **Answer 3**
 
-Benefit of **R2**: Looking at a plot of R2p vs. number of parameters an analyst can use judgment to determine the number of regressors for the final model by examining where the curve of the plot becomes apparent.
+Benefit of **R2**: Comparing R2 is useful when comparing models with identical numbers of variables, and can also be useful when examining a plot of R2p vs. number of parameters an analyst can use judgment to determine the number of regressors for the final model by examining where the curve of the plot becomes apparent.
 
 
-
-Benefit of **R2-Adjusted**: R2Adjusted takes into consideration the effect of adding additional parameters to the model and the loss of degrees of freedom (n - p). R2Adjusted can be used to compare R2Adjusted values of models with different numbers of parameters and if the model with an additional parameter's R2Adjusted value exceeds the R2Adjusted value of the models with fewer predictors, then we know that the additional parameter is significant.
+Benefit of **R2-Adjusted**: R2Adjusted takes into consideration the effect of differing numbers of parameters and the change in degrees of freedom (n - p). R2Adjusted can be used to compare R2Adjusted values of models with different numbers of parameters and if the model with an additional parameter's R2Adjusted value exceeds the R2Adjusted value of the models with fewer predictors, then we know that the additional parameter is significant.
 
 
 ## Question 4) Include the function your group wrote to compute the PRESS statistic 
 (Question 2 in Guided Question Set).
 
 ```{r q4}
+#This is a very literal version of the formula
 calculatePRESS <- function(theModel) {
   
   sumPRESS = 0
@@ -244,6 +254,14 @@ calculatePRESS <- function(theModel) {
   }
   
   return(sumPRESS)
+}
+
+# This used the built-in array functions in R
+press <- function(theModel) {
+  
+  pr <- theModel$residuals / (1-lm.influence(theModel)$hat)
+  
+  return (sum(pr^2))
 }
 ```
 

@@ -6,3 +6,105 @@ output: html_document
 ---
 
 # Stat 6021: Homework Set 8
+
+## H. Diana McSpadden
+## UID: hdm52
+## Date: 10/22/2020
+
+In this question, you will revisit the swiss data set that you worked on in Homeworks 4 and 5. 
+The data set contains information regarding a standardized fertility measure and socio-economic indictors for each of the 47 French-speaking provinces of Switzerland around the year 1888. 
+
+In Homework 5, you found that the model with just three predictors: Education, Catholic, and Infant Mortality was preferred to a model with all the predictors. Fit the model with the three predictors, and answer the following questions.
+```{r prepareModel}
+library(ggplot2)
+
+attach(swiss)
+#?swiss
+
+swissModel <-lm(Fertility ~ Education + Catholic + Infant.Mortality)
+
+
+```
+# Question 1
+## (a) Are there any observations that are outlying in the response variable? 
+Be sure to show your work and explain how you arrived at your answer.
+
+** Work on q1a**
+
+First, I will use R to get the externally studentized residuals:
+```{r q1a-1}
+
+##residuals
+#regResiduals <- swissModel$residuals # regular residuals
+
+##studentized residuals
+#studentResiduals <- rstandard(swissModel) # rstandard give studentized residuals == ri
+
+##externally studentized residuals
+extStudentResiduals <- rstudent(swissModel) # externally studentized 
+```
+
+
+Next, I will calculate the critical value to use for comparison. Externally studentized residuals follow a t distribution with n - p - 1 degrees freedom, so that is the critical value I will use.
+
+``` {r q1a-2}
+n<-nrow(swiss)
+p<-4
+##critical value using Bonferroni procedure
+criticalValue <- qt(1-(0.05/(2*n)), n-p-1)
+criticalValue
+
+```
+
+Next, I will sort the externally studentized residuals and plot with the +/- critical value also plotted. This will show if any of the absolute values of externally studentized residuals are greater than the critical value.
+
+``` {r}
+sort(extStudentResiduals)
+plot.new()
+plot(extStudentResiduals,main="Externally Studentized Residuals", ylim=c(-4,4))
+abline(h=criticalValue, col="red")
+abline(h=-criticalValue, col="red")
+
+extStudentResiduals[abs(extStudentResiduals)>criticalValue]
+
+```
+**Answer Question 1a**: No, it does not appear that there are any outlying responses.
+
+
+## (b) Are there any observations that have high leverage? 
+Be sure to show your work and explain how you arrived at your answer.
+
+**Work on q1b**
+
+First, I will get the leverage values from that hat matrix. The diagonal of the **hat matrix** are the standardized measures of the distance of the i-th observation from the center of the x space. 
+
+**Large hat diagonals reveal observations that are potentially influential.**
+
+```{r q1b-1}
+lev<-lm.influence(swissModel)$hat
+```
+
+It is obvious that the average size of hat diagonal is p/n.
+
+Thus, if a diagonal is **greater than 2p/n** then we consider it remote enough to be a **leverage point**.
+
+``` {r q1b-2}
+
+comparisonValue <- 2*p/n
+comparisonValue
+
+sort(lev)
+```
+
+I notice there are two high leverage points: **19 and 45**
+
+For fun, I will plot the leverages with a plotted line to identify the high leverage "level" and the points that exceed that level.
+
+``` {r q1b-3}
+
+plot(lev, main="Leverages", ylim=c(0,0.5))
+abline(h=2*p/n, col="red")
+```
+
+
+
