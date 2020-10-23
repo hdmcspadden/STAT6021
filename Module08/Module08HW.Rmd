@@ -2,7 +2,9 @@
 title: "MOdeul08HW"
 author: "Diana McSpadden"
 date: "10/13/2020"
-output: html_document
+output:
+  word_document: default
+  html_document: default
 ---
 
 # Stat 6021: Homework Set 8
@@ -10,6 +12,9 @@ output: html_document
 ## H. Diana McSpadden
 ## UID: hdm52
 ## Date: 10/22/2020
+
+**Attended group with**: Wright, McSpadden, Nam, Alvarado, Chivaluri, Barbre, Bernhardt, Bushkar
+
 
 In this question, you will revisit the swiss data set that you worked on in Homeworks 4 and 5. 
 The data set contains information regarding a standardized fertility measure and socio-economic indictors for each of the 47 French-speaking provinces of Switzerland around the year 1888. 
@@ -21,7 +26,7 @@ library(ggplot2)
 attach(swiss)
 #?swiss
 
-swissModel <-lm(Fertility ~ Education + Catholic + Infant.Mortality)
+swissModel <- lm(Fertility ~ Education + Catholic + Infant.Mortality)
 
 
 ```
@@ -48,8 +53,8 @@ extStudentResiduals <- rstudent(swissModel) # externally studentized
 Next, I will calculate the critical value to use for comparison. Externally studentized residuals follow a t distribution with n - p - 1 degrees freedom, so that is the critical value I will use.
 
 ``` {r q1a-2}
-n<-nrow(swiss)
-p<-4
+n <- nrow(swiss)
+p <- 4
 ##critical value using Bonferroni procedure
 criticalValue <- qt(1-(0.05/(2*n)), n-p-1)
 criticalValue
@@ -68,7 +73,7 @@ abline(h=-criticalValue, col="red")
 extStudentResiduals[abs(extStudentResiduals)>criticalValue]
 
 ```
-**Answer Question 1a**: No, it does not appear that there are any outlying responses.
+**Answer Question 1a**: No, it does not appear that there are any outlying responses by comparing the critical value: 3.52 to each ....
 
 
 ## (b) Are there any observations that have high leverage? 
@@ -81,7 +86,7 @@ First, I will get the leverage values from that hat matrix. The diagonal of the 
 **Large hat diagonals reveal observations that are potentially influential.**
 
 ```{r q1b-1}
-lev<-lm.influence(swissModel)$hat
+lev <- lm.influence(swissModel)$hat
 ```
 
 It is obvious that the average size of hat diagonal is p/n.
@@ -116,7 +121,7 @@ Compare DFFITS to 2 * sqrt(p/n).
 
 ```{r q1c-1}
 
-DFFITS<-dffits(swissModel)
+DFFITS <- dffits(swissModel)
 DFFITS[abs(DFFITS)>2*sqrt(p/n)] # how drastically fitted value changes with and without the presence of the observation
 ```
 Three points significantly change the fitted values of the model if they are not (or are) included in the creation of the model: points 6, 37, and 47.
@@ -128,13 +133,13 @@ DFBETAS is compared to 2 / sqrt(n)
 
 ``` {r}
 #DFBETAS - 
-DFBETAS<-dfbetas(swissModel) # measures how estimated coefficients change without presence of the observation
+DFBETAS <- dfbetas(swissModel) # measures how estimated coefficients change without presence of the observation
 DFBETAS[abs(DFBETAS)>2/sqrt(n)]
 # how to find the data point
 DFBETAS # can find that value with eyeballing
 ```
 
-**Observations With HIgh DFBETAS: 6, 19, 37, 42**
+**Observations With High DFBETAS: 6, 19, 37, 42**
 
 Third, calculate COOKS to determine how fitted values change for all values, not just the removed observation, when an observation is removed.
 
@@ -152,7 +157,158 @@ COOKS[COOKS>qf(0.5,p,n-p)] # f distribution
 
 DFFITs checks if the fitted value for the removed observation predictor value(s) significantly changes if the observation is removed.
 
-Cook's distance checks the amount of change for all fitted values if an observation is removed from the data used to create the model.
+Cook's distance checks the amount of change for all fitted values if an observation is removed from all the data used to create the model.
+
+
+# Question 2 (No R Required) 
+Data from n = 19 bears of varying ages are used to develop an equation for estimating Weight from Neck circumference. From a visual inspection of the scatterplot, it appears observation 6 may be an outlier.
+
+The output below comes from fitting the linear regression model on the data.
+
+**with all 19 bears**
+
+Coefficients:
+                        Estimate Std. Error     t value     Pr(>|t|)
+
+(Intercept) -158.78     40.46                   -3.924      0.00109 **
+
+Neck        16.95       2.10                    8.071       3.24e-07 ***
+
+Residual standard error: 40.13 on 17 degrees of freedom
+
+Multiple R-squared: 0.793, Adjusted R-squared: 0.7809
+
+F-statistic: 65.14 on 1 and 17 DF, p-value: 3.235e-07
+
+
+The output below comes from fitting the linear regression model on the data, with the
+outlier removed.
+
+**with outlier removed, so 18 bears**
+
+Coefficients:
+
+                        Estimate Std. Error     t value     Pr(>|t|)
+
+(Intercept) -234.60     25.93                   -9.049      1.08e-07 ***
+
+Neck        20.54       1.32                    15.562      4.39e-11 ***
+
+Residual standard error: 22.6 on 16 degrees of freedom
+
+Multiple R-squared: 0.938, Adjusted R-squared: 0.9342
+
+F-statistic: 242.2 on 1 and 16 DF, p-value: 4.394e-11
+
+The output below displays the values of the predictor and response for the 6th observation.
+
+> data[6,]
+
+  Neck    Weight
+
+6 10.5    140
+
+... Also included were residuals and diagonals from hat matrix ...
+
+## (a) Calculate the externally studentized residual, ti, 
+for observation 6. Will this be considered outlying in the response?
+
+**Work on q2a**
+
+Needed Formulas:
+
+S(i)^2 = (((n-p) * MSE) - (e-i^2/ (1 - hii))) / (n - p - 1)
+
+with that, calculate ti
+
+ti = e-i / sqrt((S(i)^2 * (1-hii)))
+
+```{r q2a-1}
+
+# Knowns
+n <- 19
+p <- 2
+MSE <- 40.13^2
+ei <- 120.829070
+hii <- 0.23960510
+
+Si2 <- (((n-p) * MSE) - (ei^2/ (1 - hii))) / (n - p - 1)
+print(paste("Sihat^2: ", Si2))
+
+ti <- ei / sqrt((Si2 * (1-hii)))
+print(paste("ti: ", ti))
+
+```
+Externally standardized residuals follow a t distribution with n - p - 1 degrees freedom. 
+
+Use t (alpha/2n), n - p - 1 as a comparison.
+
+```{r q2a-2}
+criticalValue <- qt(1-(0.05/(2*n)), n-p-1)
+print(paste("critical value for comparison: ", criticalValue))
+```
+
+**Question 2a Answer: ** 6.13 > 3.56, so yes, this observation has an outlying response value.
+
+## (b) What is the leverage for observation 6? 
+Based on the criterion that leverages greater than 2p / n are considered outlying in the predictor(s), is this observation high leverage?
+
+**Question 2b Answer**
+
+```{r q2b-1}
+
+leverageComparison <- (2 * p) / n
+leverageComparison
+
+```
+
+
+The leverage, from the hat matrix diagonals, is 0.23960510. The leverage value for comparison, (2 * p) / n is 0.21. Since **0.24 > 0.21** this observation does have high leverage on our model.
+
+## (c) Calculate the DFFITS for observation 6. 
+Briefly describe the role of leverages in DFFITS.
+
+**Work on Question 2c**
+
+Formula for DFFITSi: DFFITSi = (sqrt(hii / 1 - hii) * ti)
+
+```{r q2c-1}
+#hii
+#ti
+DFFITSi6 <- (sqrt(hii / (1 - hii)) * ti)
+
+print(paste("DFFITSi for observation 6: ", DFFITSi6))
+```
+
+DFFITs uses the leverage for the observation with the (hii / (1 - hii)) multiplier of the formula. hii approaching 1 (with high leverage) causes hii / (1 - hii) to increase. This (hii / (1 - hii)) moderates the effect of the externally studentized residuals which calculate whether the observation is an outlier response. A point can be an outlier response, but not have high leverage, thus not skew the model towards the point. DFFITs uses both a leverage measure and the measure of outlying to identify high leverage points.
+
+## (d) Calculate Cook's distance for observation 6.
+
+**Work on Question 2d**
+
+Formulas Needed:
+
+Di = (ri^2 / p) * *(hii / (1 - hii))
+
+where ri = e-i / (sqrt(MSE * (1 - hii)))
+
+We compare Cook's distance to an F distribution: F alpha, p, n-p
+
+```{r q2d-1}
+#ei
+#MSE
+ri = ei / (sqrt(MSE * (1 - hii)))
+#ri
+
+Di = (ri^2 / p) * (hii / (1 - hii))
+
+criticalValueCooks = qf(0.5,p,n-p)
+
+print(paste("Cook's Distance for Observation 6: ", Di))
+print(paste("Cook's Distance F Comparison: ", criticalValueCooks))
+
+```
+# Question 3 (No R Required) 
 
 
 

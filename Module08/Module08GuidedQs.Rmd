@@ -34,35 +34,37 @@ summary(bestBICModel)
 
 ```{r q1-2}
 
-modelNotx8 <- lm(y~x2+x7)
-residualsNotx8 <- modelNotx8$residuals
+# Did incorrectly, need to run full model, not the model minus regressor in question
+
+moduleNox8 <- lm(y~x2+x7)
+residualsNox8 <- moduleNox8$residuals
 modelx8VOthers <- lm(x8~x2+x7)
 residualsx8VOthers <- modelx8VOthers$residuals
 
 modelNotx7 <- lm(y~x2+x8)
-residualsNotx7 <- modelNotx7$residuals
+residualsNox7 <- modelNotx7$residuals
 modelx7VOthers <- lm(x7~x2+x8)
 residualsx7VOthers <- modelx7VOthers$residuals
 
 modelNotx2 <- lm(y~x7+x8)
-residualsNotx2 <- modelNotx2$residuals
+residualsNox2 <- modelNotx2$residuals
 modelx2VOthers <- lm(x2~x7+x8)
 residualsx2VOthers <- modelx2VOthers$residuals
 
 
-ggplot(data,aes(x = residualsx8VOthers, y = residualsNotx8)) +
+ggplot(data,aes(x = residualsx8VOthers, y = residualsNox8)) +
   geom_point(color = "grey2") +
   geom_smooth(method = "lm") +
   labs(title = 'Partial Regression Plot on x8', x = 'Residuals x8~x2+x7 v. x8',y = 'Residuals y~x2+x7')
 
 
-ggplot(data,aes(x = residualsx7VOthers, y = residualsNotx7)) +
+ggplot(data,aes(x = residualsx7VOthers, y = residualsNox7)) +
   geom_point(color = "grey2") +
   geom_smooth(method = "lm") +
   labs(title = 'Partial Regression Plot on x7', x = 'Residuals x7~x2+x8 v. x8',y = 'Residuals y~x2+x8')
 
 
-ggplot(data,aes(x = residualsx2VOthers, y = residualsNotx2)) +
+ggplot(data,aes(x = residualsx2VOthers, y = residualsNox2)) +
   geom_point(color = "grey2") +
   geom_smooth(method = "lm") +
   labs(title = 'Partial Regression Plot on x2', x = 'Residuals x2~x7+x8 v. x8',y = 'Residuals y~x7+x8')
@@ -71,6 +73,7 @@ ggplot(data,aes(x = residualsx2VOthers, y = residualsNotx2)) +
 ```
 
 ### (a) Produce the partial regression plot for x2. Interpret what this partial regression is telling us.
+
 
 The partial regression plot for x2 shows that there is a linear relationship between residuals when x2 is in the model, and x2 values fitted by x7 and x8 values. Essentially, this shows the coefficient for x2 in the x2+x7+x8 model is not 0.
 
@@ -93,6 +96,9 @@ the previous part. What do you notice?
 
 **Answer 1c**
 See first R code block.
+```{r}
+summary(bestBICModel)
+```
 
 Coefficients are identical
 
@@ -148,6 +154,8 @@ ext.student.res[abs(ext.student.res)>criticalValue]
 **Answer 2**
 No, we don't have any outliers
 
+And they look similar on all plots, which probably mean there won't be any outliers or possibly no influential data points
+
 ## 3. Do we have any high leverage data points for this multiple linear regression? 
 What terms are these?
 
@@ -191,10 +199,18 @@ COOKS<-cooks.distance(bestBICModel)
 COOKS[COOKS>qf(0.5,p,n-p)] # f distribution
 # shows no data points are an outlier. Data point 8 affects itself, but not the other data points
 
+
 ```
+Each row shows the coefficients if the observation is removed.
+
 #QUESTION
 DFBETAS says I have a point that affects the coefficients, but I don't see which one it is.
 
-Neither DFFITS or Cook's show influential observations.
+Neither DFFITS or Cook's Distance show influential observations.
 
+## POint we are making
+outliers not that important
 
+leverages are important
+
+DFBETAS has two data points, BUT they didn't impact the fitted values.

@@ -346,7 +346,23 @@ If different - could be error in data entry.
 If different - need to investigate why. Do not just delete.
 
 
+# Module 8 Lecture
+
+Looking at chapter 6.4
+
+Subscription (i) means whatever you are looking at WITHOUT that point included in the model/calculation.
+
+**influential data point** is one that significantly alters the model. The result and/or the coefficients.
+
+S^2(i) == MSRESidual without the i data point.
 
 
+unusual combinations of both x and y are usually high leverage points.
 
 
+## What to do with outliers?
+1. First, check whether the data was mis-entered
+2. If not mis-entered - it will be an interesting data point. It is worth determining why it is an outlier.
+  1. If you are not studying the difference, then you can remove the data point, BUT you MUST explain why you removed the data point.
+  2. Always talk about removing data points. Never remove just to get better data.
+  
