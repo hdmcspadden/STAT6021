@@ -44,4 +44,6 @@ boxplot(dbp~chd69)
 
 boxplot(ncigs~chd69)
 ```
+From the box plots age and ncigs seem to matter.
+
 

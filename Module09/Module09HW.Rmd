@@ -45,6 +45,7 @@ insectsData <- insectsData %>% rename(logdose = V1, size = V2, died = V3)
 ```{r q1-setup3}
 
 head(insectsData)
+attach(insectsData)
 
 #knowns
 n <- 1500
@@ -55,10 +56,23 @@ groups  <- 6
 
 ## Q1 (a) Plot the sample log odds against the log dose, x. 
 Does this plot suggest fitting a logistic regression model to be appropriate?
+```{r q1a-1}
+prop<-died/size
 
+plot(logdose, log(prop/(1-prop)), xlab= "Log Dose", ylab="sample log odds")
 
+```
+
+**Answer Q1a**: Yes, this plot looks perfet for a logistic regression model because the relationship is almost perfectly linear.
 
 ## Q1 (b) Use R to fit the logistic regression model, and write the estimated logistic regression equation.
+
+```{r q1b-1}
+modelInsects <- glm(prop~logdose, family="binomial", weights=size) # fit model. The weight is the sample/group size
+summary(modelInsects)
+
+```
+
 
 
 
