@@ -109,14 +109,42 @@ Reject H0, at least one coef is not 0.
 
 ## 6. Based on the Wald test, is diastolic blood pressure a significant predictor of heart disease, when the other three predictors are already in the model?
 
+**Wald Test:** to remove a single predictor. Based on Z distribution. Analogous to t test in MLR
+
+Bj-hat - 0 / se(Bj-hat)
+
+H0: B for dbp is 0
+Ha: B for dbp is not 0
+
+dbp          0.007867   0.010057   z =0.782  0.43406
+
+```{r q6-1}
+zscore <- 0.007867  / 0.010057
+zscore
+
+pnorm(zscore,1)
+```
+
+## 7. Suppose a co-worker of yours suggests fitting a logistic regression model without the ...
+two blood pressure variables. Carry out the relevant hypothesis test to check if this model without the blood pressure variables should be chosen over the previous model with all four predictors.
+
+H0: coefs for sbp and dbp are 0
+Ha: at least one of the sbp or dbp coefs are not 0.
+
+```{r q7-1}
+
+reduced <- glm(chd69 ~ age + ncigs, family = "binomial")
+
+1-pchisq(reduced$deviance - result$deviance,2)
+
+```
+We reject the null, we need at least one of the bp predictors.
 
 
+## 8. Based on all the analysis performed, which of these four predictors would you use in your logistic regression model?
 
 
-
-
-
-
+age, ncigs, and sbp
 
 
 
