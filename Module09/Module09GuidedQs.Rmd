@@ -61,6 +61,88 @@ p <- 5
 
 E(y) = exp(-9.12 + (0.0666 * age) + (0.0242 * ncigs) + (0.019 * sbp) + (0.008 * dbp)) / ( 1 + exp(-9.12 + (0.0666 * age) + (0.0242 * ncigs) + (0.019 * sbp) + (0.008 * dbp)))
 
+```{r q2-2}
+exp(0.0242)
+```
+
+
+
+## 3. Interpret the estimated coefficient for ncigs in context.
+
+Controlling for age, sbp, and dbp The predicted odds ratio of a middle aged male in CA being Dxed with CHD for a one unit increase in number of cigarettes is 1.0245.
+
+## 4. What are the estimated odds of developing heart disease for an adult male who is ..
+45 years old, has a systolic blood pressure of 110 mm Hg, diastolic blood pressure of 70 mm Hg, and does not smoke? What is this person's corresponding probability of developing heart disease?
+
+```{r q4-1}
+x_age <- 45
+x_ncigs <- 0
+x_sbp <- 110
+x_dbp <- 70
+
+linearPart <- -9.12 + (0.0666 * x_age) + (0.0242 * x_ncigs) + (0.019 * x_sbp) + (0.008 * x_dbp)
+
+estProb <- exp(linearPart) / ( 1 + exp(linearPart))
+estProb # i think this is probability
+
+estProb / (1 - estProb) # i think this is odds
+
+```
+
+## 5. Carry out the relevant hypothesis test to check if this logistic regression model with ...
+the four predictors is useful in estimating the odds of heart disease. Clearly state the null and alternative hypotheses, test statistic, and conclusion in context.
+
+H0: All coefs are 0
+Ha: at least one coef is not equal to 0.
+
+**Deviance Delta, aka delta G^2 == null deviance - residual deviance**
+
+```{r q5-1}
+result$null.deviance - result$deviance
+
+1-pchisq(result$null.deviance - result$deviance,4)
+```
+**What is the test statistic? 111.2295????**
+
+Reject H0, at least one coef is not 0.
+
+
+## 6. Based on the Wald test, is diastolic blood pressure a significant predictor of heart disease, when the other three predictors are already in the model?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
