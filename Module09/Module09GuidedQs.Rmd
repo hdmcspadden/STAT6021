@@ -1,0 +1,169 @@
+---
+title: "Module09GuidedQs"
+author: "Diana McSpadden"
+date: "10/27/2020"
+output: html_document
+---
+# Stat 6021: Guided Question Set 9
+
+
+The Western Collaborative Group Study (WCGS) is one of the earliest studies regarding
+heart disease. Data were collected from 3154 middle-aged males in California. Download
+the file "wcsg.csv" and load it into R. We will focus on predicting the likelihood of getting
+a heart attack based on the following predictors:
+
+* age. Age in years
+* sbp. Systolic blood pressure in mm Hg
+* dbp. Diastolic blood pressure in mm Hg
+* ncigs. Number of cigarettes smoked per day, on average.
+
+The response variable is **chd69**, with a `1' indicating the person developed coronary heart
+disease, and a `0' indicating the person did not develop coronary heart disease.
+```{r}
+# load the data
+library(ggplot2)
+library(readr)
+wcgs <- read_csv("wcgs.csv")
+attach(wcgs)
+```
+
+## Question 1
+Before fitting a model, create some graphical summaries to see if there is a difference in
+the distributions of the predictors among people who did and did not develop coronoray
+heart disease. To create a boxplot, type boxplot(age~chd69) to see the distribution
+of the variable age differs between people who did and did not develop coronary heart
+disease. Create similar boxplots for the other variables. Which variables seem to
+differentiate those who developed and did not develop coronary heart disease?
+
+```{r}
+
+
+wcgs$chd69 <- as.factor(wcgs$chd69)
+
+# Create a Boxplot
+ggplot(wcgs, aes(x = chd69, y = age)) + 
+  geom_boxplot()
+
+ggplot(wcgs, aes(x = chd69, y = sbp)) + 
+  geom_boxplot()
+
+ggplot(wcgs, aes(x = chd69, y = dbp)) + 
+  geom_boxplot()
+
+ggplot(wcgs, aes(x = chd69, y = ncigs)) + 
+  geom_boxplot()
+
+```
+
+## 2. Use R to fit the logistic regression model using all the predictors listed above,
+and write the estimated logistic regression equation.
+
+```{r fitmodel}
+
+model <- glm(chd69 ~ age + sbp + dbp + ncigs, family = "binomial")
+summary(model)
+```
+
+**Equation**
+
+y = 1 / (1 + exp(-9.11 + 0.0666(age) + 0.0195(sbp) + 0.0079(dbp) + 0.024(ncigs)))
+
+
+## 3. Interpret the estimated coefficient for ncigs in context.
+```{r}
+exp(0.024)
+```
+
+When age, sbp and dbp are held constant the predicted odds ratio of a middle aged male developing CHF for a one unit increase in number of cigarettes is 1.0242: an increase of 2.4%
+
+## 4. What are the estimated odds of developing heart disease for an adult male who is ...
+45 years old, has a systolic blood pressure of 110 mm Hg, diastolic blood pressure of
+70 mm Hg, and does not smoke? What is this person's corresponding probability of
+developing heart disease?
+
+
+```{r}
+x_age <- 45
+x_sbp <- 110
+x_dbp <- 70
+x_ncigs <- 0
+
+linearPortion <- -9.11 + (0.0666 * x_age) + (0.0195 * x_sbp) + (0.0079 * x_dbp) + (0.024 * x_ncigs)
+
+
+Eyi = exp(linearPortion) / (1 + exp(linearPortion))
+Eyi
+```
+
+
+```{r}
+odds = (Eyi / (1 - Eyi))
+odds
+
+```
+
+## 5. Carry out the relevant hypothesis test to check if this logistic regression model with ...
+the four predictors is useful in estimating the odds of heart disease. Clearly state the
+null and alternative hypotheses, test statistic, and conclusion in context.
+
+H0: all coefs = 0
+Ha: at least one coef is non zero.
+
+```{r}
+n <- 3154
+p <- 5
+df <- n - p
+
+model$deviance
+
+1-pchisq(model$deviance,df) # test ????????
+
+1-pchisq(model$null.deviance-model$deviance,4)
+```
+This is close to unity, it is a good fit.
+
+
+## 6. Based on the Wald test, is diastolic blood pressure a significant predictor of heart ...
+disease, when the other three predictors are already in the model?
+
+```{r q6-1}
+testDBPModel <- glm(chd69 ~ age + sbp + ncigs + dbp, family = "binomial")
+summary(testDBPModel)
+```
+
+
+**Wald Test:** to remove a single predictor. Based on Z distribution. Analogous to t test in MLR
+
+Bj-hat - 0 / se(Bj-hat)
+
+```{r q6-2}
+
+BjHat <- 0.007867
+seBjHat <- 0.010057
+
+waldTestValue <- BjHat / seBjHat
+waldTestValue
+
+#compare to z dist 
+
+```
+In a model with age, sbp, and number of cigarettes, dbp is not significant.
+
+## 7. Suppose a co-worker of yours suggests  fitting a logistic regression model without the ...
+two blood pressure variables. Carry out the relevant hypothesis test to check if this
+model without the blood pressure variables should be chosen over the previous model
+with all four predictors.
+
+H0: B's for sbp and dbp are 0
+Ha: B's for at least one of sbp or dbp are not 0.
+
+```{r q7-1}
+reducedModel <- glm(chd69 ~ age + ncigs, family = "binomial")
+1-pchisq(reducedModel$deviance-model$deviance,2) 
+
+```
+REject the null. we need the full model.
+
+## Question 8
+
+I would use age, ncigs and systolic blood pressure.

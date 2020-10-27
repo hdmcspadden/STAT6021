@@ -1,0 +1,283 @@
+---
+title: "Module 09 Sandbox"
+author: "Diana McSpadden"
+date: "10/24/2020"
+output: html_document
+---
+
+# Module 9: Logistic Regression
+
+in many situations the response variable is binary rather than quantitative
+
+Binary variables lead us to a regression analysis called logistic regression. Logistic regression allows us to predict a binary outcome from one or more predictors.
+
+In the next module, you will learn about the **multinomial logistic regression model**.
+
+This model is used when the response variable is categorical. 
+
+## ESSENTIAL QUESTIONS
+1. How do we interpret the estimated coefficients in a logistic regression model?
+2. How do we decide if certain predictors need to be added to an existing logistic regression model?
+3. How do we assess if our data fits a logistic regression model?
+
+## 9.1: Introduction to the Lesson
+
+For example, you may want to estimate the odds (or probability) of people developing heart disease later in their lives based on characteristics such as blood pressure, cholesterol, and whether the person smokes regularly or not. You may consider using a linear regression model, because the odds of developing heart disease later in life are numerical. However, a linear regression model may end up having estimated odds that are less than 0 (odds are nonnegative by their nature). A logistic regression model is set up to guarantee the estimated odds are never negative.
+
+Typical questions that a logistic regression model can answer include how does smoking increase the odds of developing heart disease? Do characteristics such as weight help us better predict the odds of developing heart disease when we already know the person’s blood pressure and cholesterol? How confident are we of our estimated odds?
+
+## 9.2: Logistic Regression
+Read Section 13.2.1 of your textbook. As you read, take notes on the following.
+
+THis section is about binary models.
+ 
+### In a logistic regression model, what distribution does the response variable follow? 
+
+P(yi == 1) = pi-i
+P(yi == 0) = 1 - pi-i
+
+
+### Write down the logistic regression model, in terms of the expected value of the response, the regression coefficients, and the predictors. 
+
+E(yi) = (1 * (pi-i )) + (0 * (1 - pi-i)) == pi-i
+
+E(yi) = x'i * B == pi-i
+
+### Why do we use the logistic response function instead of a linear response function? 
+
+If we use a linear response function it would be possible to fit a model that would have predictrf values outsid the 0, 1 interval.
+
+### How do we express the odds in terms of π, the probability that the response is 1?
+
+n = ln (pi / 1 - pi), where pi is the probability the response is 1.
+
+the **odds** is the pi / (1 - pi), so the logit transformation is the natural log of the odds.
+
+## 9.3: Estimating the Logistic Regression Coefficients
+Read Section 13.2.2 of your textbook. As you read, take notes on the following.
+
+Estimating the Parameters in a Logistic Regression Model
+ 
+### Write down the expected value and variance for the estimated coefficients in the logistic regression model. 
+
+E(B-hat) = B
+
+Var(B-hat) = (X'VX)^-1
+
+
+### How is maximum likelihood estimation in logistic regression different from least-squares estimation in linear regression? 
+
+
+mimizing square error is the same as maxizing liklihood. The assumptions are the same:
+1) linearity; 2) linear normal residuals; 3) constant variability/homoscedasticity; 4) independence.
+
+## 9.4: Interpreting the Coefficients in a Logistic Regression Model
+Read Section 13.2.3 of your textbook. As you read, take notes on the following.
+ 
+Suppose we have a logistic regression model with just one predictor. 
+
+n-hat for xi = B0-hat + B1-hat(xi) == log odds at point xi
+
+fitted value at xi + 1 = B0-hat + B1-hat(xi + 1) == log odds at point xi + 1
+
+equation 13.12, page 428
+
+**e^B1-hat**
+
+the **odds ratio** can be interpretted as the estimated increase in the probability of success associated with a one uniy change in x.
+ 
+for multiple unit increases: say 5 units, then e^(5 * B1-hat) 
+ 
+### Interpret the estimated coefficient β^1, in terms of the odds ratio and log odds. 
+
+the **odds ratio**, e^B1-hat, can be interpretted as the estimated increase in the probability of success associated with a one uniy change in x.
+ 
+for multiple unit increases: say 5 units, then e^(5 * B1-hat) 
+
+### Interpret the estimated coefficient β^0, in terms of the odds ratio and log odds.
+
+B0 = ln ((P y = 1| x = 0) / P(y = 0 | x = 0))
+
+
+## 9.5: Inference in Logistic Regression
+
+Read Section 13.2.4 of your textbook. As you read, take notes on the following.
+ 
+### What distribution does the test statistic from a likelihood ratio test follow? 
+
+chi-square distribution with df = parameters full - parameters reduced
+
+### What are the three tests for goodness of fit? 
+
+1. **Liklihood ratio Test**: tests full vs reduced. Equation 13.13, p 430
+
+compares twice the ln liklihood for full model to twice ln liklihood of reduced model
+  * chi-square distribution with df = parameters full - parameters reduced
+  * if Liklihood ratio exceeds chi-square critical value then we reject that we can use the reduced model and we need the full model.
+  * large value indicates at least one regressor variable in the model is important because non zero regression coefficient.
+2. Goodness of fit
+  * use Liklihood Test Ratio for saturated model and full model.
+  * calculates deviance
+  * small deviance (or large P value) indicate model provides good fit.
+  * chi-square distribution with n-p df
+  * compare D / (n-p) to unity. if close, then good fit. 
+3. Pearson chi-square goodness of fit
+  * chi-square n - p df
+  * small value (or large P value) indicate model provides good fit.
+  * compare Pearson / (n-p) to unity. If greatly exceeds unity, then fit is questionable.
+4. IF no replicated regressors, then can use **Hosmer-Lemeshow**
+  * observations classified into g groups based on prob of success.
+  * compares observed and expected frequencies of observation success.
+  * chi-square distribution with g - 2 df
+  * large HL values indicate the model is not n adequate fit.
+  * compare HL to g - p , and compare that to unity. If close to unity, good fit.
+
+
+### What is the goodness of fit of the logistic regression model testing? What distribution does the test statistic follow? 
+
+Significance of regression in logistic regression. Can compare significance of full and reduced, including B0 only model.
+
+
+### How do we test hypotheses on a subset of the model parameters? What distribution does the test statistic follow? 
+
+compare deviance of full and reduced moderls: p 433-434
+
+
+### How do we test an individual coefficient? What distribution does the test statistic follow? 
+
+group the model into 
+n = XB1 + XB2 where B2 is the coefficient for the parameter in question and B1 are the other parameters.
+
+chi-squared with r degrees freedom where r are the number of parameters being considered to be removed.
+
+
+ARGH or ...
+
+**Wald inference**: t like statistic p 437
+
+calculates Z0, standard normal distribution.
+
+### How do we construct a confidence interval for a regression coefficient? What is the interpretation of the confidence interval when it does not contain 0? How do we interpret the confidence interval in terms of odds ratio? 
+
+p 437 and 438
+
+actually estimates the median of the sampling distribution of O-hat Regression.
+
+### How do we test if all the coefficients are 0? What distribution does the test statistic follow?
+
+
+# Recap of Module 09
+
+**pi** is prob of succcess
+
+**1 - pi**: is prob of failure
+
+**pi / (1 - pi)**: odds of success. not same as prob unless prob is rare/ really small
+
+**ln(pi / (1 - pi))** log-odds of success
+
+
+
+
+## logistic Regression Equation
+
+ln (pi / (1 - pi)) = Bo + B1x1 + ... + Bkxk
+
+**OR**
+
+pi = (e^(Bo + B1x1 + ... + Bkxk) / 1 + e^(Bo + B1x1 + ... + Bkxk))
+
+
+## Interpreting the Coefs
+
+**B1**:
+1. for a 1 unit increase in predictor the log odds change by B1
+2. For a 1 unit increase in the predictor, the odds are multiplied by a factor of exp(B1)
+3. For a 1 unit increase in the predictor, the odds ratio is exp(B1)
+
+increase in odds is an increase in probability.
+
+## Titanic Example
+
+you survived == 1
+
+you died == 0
+
+coefs: 
+B0: -0.92671
+B1: 0.01613
+
+se(B0): 0.10866
+se(B1): 0.00252
+
+pi == e^(-0.92671 + 0.01613x) / (1 + e^(-0.92671 + 0.01613x))
+
+**logistic regression equation**: log (pi / (1 - pi)) = -0.92671 + 0.01613 * fare
+
+where x == fare paid
+
+Chart shows us that fare is statistically significant.
+
+
+## interpret
+
+B1 tells us the difference in odds for 1 unit change in fare. So,
+
+Three ways of saying this:
+1. The predicted log odds of a passenger surviving increases by 0.01613 for each 1-unit increase in paid fare.
+2. The predicted odds of a passenger surviving is mulyiplied by exp(0.01613) == 1.016261 for a 1 unit increase in paid fare.
+3, The predicted odds ratio of a passenger surviving for a one unit increase in fare is 1.016261.
+
+## if coef is a categorical variable.
+easier interp: example is survival males and females:
+
+1. The difference in log odds of survival between males and females is B1.
+2. The odds of survival for males is exp(B1) times the odds of survival of females.
+3. The odds ratio of survival for males and females is exp(B1)
+
+
+## Hypothesis Tests in Log Regression
+
+1. **Wald Test:** to remove a single predictor. Based on Z distribution. Analogous to t test in MLR
+
+Bj-hat - 0 / se(Bj-hat)
+
+
+2. **Deviance Delta, aka delta G^2 == null deviance - residual deviance**: is the model useful. . Based on chi square p - 1. Analogous to ANOVA F test in MLR.
+
+delta G^2 test stat. of a single model.
+
+null deviance is analogous to SSE of intercept only model.
+
+
+3. **Deviance Delta, aka delta G^2 == residual deviance of reduced - residual deviance  of full**: can we remove a subset of terms? chi square with r (r == number of terms to drop). analogous to partial F test.
+
+## Goodnes of Fits TEsts
+
+Does the equation ln (pi / (1 - pi)) = B0 + B1x1 ... + Bkxk
+
+H0 : equation works
+Ha: ln ... doesnt match model.
+
+you want to fail to reject
+
+These tests require grouped data.
+
+1. Deviance GOF Test
+
+
+2. Pearson GOF Test
+
+
+3. Hosmer-Lemeshow Test
+
+
+
+If you dont have grouped data. Residuals arent useful becausethey are 0 or 1.
+
+
+
+
+
+
+
