@@ -1,0 +1,130 @@
+---
+title: "Module 09 HW"
+author: "Diana McSpadden"
+date: "10/27/2020"
+output: html_document
+---
+
+# Stat 6021: Homework Set 9
+
+## H. Diana McSpadden
+## UID: hdm52
+## Date: 10/30/2020
+
+**Attended group with**: 
+
+
+# Question 1. In an experiment testing the effect of a toxic substance, ...
+1,500 insects were divided at random into six groups of 250 each. 
+
+The insects in each group were exposed to a fixed dose of the toxic substance. A day later, the insects were observed. Death from exposure was recorded as 1, and survival 0. 
+
+The file “insects.txt” contains the data from the experiment. 
+
+* The first column denotes the dose level on a logscale, x; 
+* the 2nd column denotes the sample size for each group, ni
+* ; and the 3rd column denotes the number of insects that died in the group, yi
+
+You will probably want to read the data in and give appropriate names for the columns.
+```{r q1-setup1}
+
+library(dplyr)
+
+insectsData <- read.table("insects.txt", header=FALSE, sep="")
+
+```
+
+
+``` {r q1-setup2}
+
+insectsData <- insectsData %>% rename(logdose = V1, size = V2, died = V3)
+
+#names(insectsData)
+```
+
+```{r q1-setup3}
+
+head(insectsData)
+
+#knowns
+n <- 1500
+groupn <- 250
+groups  <- 6
+
+```
+
+## Q1 (a) Plot the sample log odds against the log dose, x. 
+Does this plot suggest fitting a logistic regression model to be appropriate?
+
+
+
+## Q1 (b) Use R to fit the logistic regression model, and write the estimated logistic regression equation.
+
+
+
+## Q1 (c) Interpret the estimated coefficient βˆ1 in context.
+
+
+## Q1 (d) What are the estimated odds of death at log dose level x = 2?
+
+
+## Q1 (e) Predict the probability of death from exposure at log dose level x = 2.
+
+
+## Q1 (f) Carry out both the Pearson’s χ2 and deviance goodness of fit tests to check the fit ...
+of this logistic regression model. Clearly state the null and alternative hypotheses,
+test statistic, and conclusion.
+
+
+
+
+
+# Question 2. (No R needed) A health clinic sent ...
+fliers to its clients to encourage everyone to get a flu shot. In a follow-up study, 159 elderly clients were randomly selected and asked if
+they received a flu shot. 
+
+A client who received a flu shot was coded y = 1, and a client who did not receive a flu shot was coded y = 0. 
+
+Data were also collected on their age,
+
+* x1, health awareness rating on a 0-100 scale (higher values indicate greater awareness),
+* x2, and gender, 
+* x3, where males were coded x3 = 1 and females were coded x3 = 0. 
+
+A first order logistic regression model was fitted and the output is displayed below. ...
+
+## Q2 (a) Interpret the estimated coecient for x3, gender, in context.
+
+
+## Q2 (b) Conduct the Wald test for B3. ...
+State the null and alternative hypotheses, calculate the test statistic, and make a conclusion in context.
+
+
+## Q2 (c) Calculate a 95% confidence interval for B3, and interpret the interval in context.
+
+
+## Q2 (d) Comment on whether your conclusions from parts 2b and 2c are consistent.
+
+
+## Q2 (e) Suppose you want to drop the coefficients for age and gender, B1 and B3. 
+A logistic regression model for just awareness was fitted, and the output is shown below. ...
+
+
+Carry out the appropriate hypothesis test to see if the coefficients for age and gender can be dropped.
+
+
+
+## Q2 (f) Based on your conclusion in question 2e, what are the estimated odds of a client receiving the ...
+flu shot if the client is 70 years old, has a health awareness rating of 65, and is male? 
+
+What is the estimated probability of this client receiving the flu shot?
+
+
+## Q2 (g) Based on your conclusion in question 2e, ...
+interpret the estimated coefficient for age, in context. 
+
+What does this interpretation tell us about the estimated probability of a client receiving the flu shot if the client is 71 years old, has a health awareness rating of 65, and is male, compared to the estimated probability found for a similar client who is a year younger?
+
+
+
+
