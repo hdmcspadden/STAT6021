@@ -22,7 +22,7 @@ disease, and a `0' indicating the person did not develop coronary heart disease.
 ```{r}
 # load the data
 
-data<-read.csv("wcsg.csv", header=TRUE)
+data<-read.csv("wcgs.csv", header=TRUE)
 attach(data)
 ```
 
@@ -45,5 +45,23 @@ boxplot(dbp~chd69)
 boxplot(ncigs~chd69)
 ```
 From the box plots age and ncigs seem to matter.
+
+## 2. Use R to fit the logistic regression model using all the predictors listed above, and write the estimated logistic regression equation.
+
+```{r q2-1}
+
+result<-glm(chd69 ~ age + ncigs + sbp + dbp, family = "binomial")
+summary(result)
+
+# knowns
+n <- 3154
+p <- 5
+
+```
+
+E(y) = exp(-9.12 + (0.0666 * age) + (0.0242 * ncigs) + (0.019 * sbp) + (0.008 * dbp)) / ( 1 + exp(-9.12 + (0.0666 * age) + (0.0242 * ncigs) + (0.019 * sbp) + (0.008 * dbp)))
+
+
+
 
 
