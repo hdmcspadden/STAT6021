@@ -72,25 +72,64 @@ modelInsects <- glm(prop~logdose, family="binomial", weights=size) # fit model. 
 summary(modelInsects)
 
 ```
+**Answer Q1b**
 
-
+E(y) = exp(-2.64 + (0.67 * logdose)) / ( 1 + exp(-2.64 + (0.67 * logdose)))
 
 
 ## Q1 (c) Interpret the estimated coefficient βˆ1 in context.
+
+```{r q1c-1}
+exp(0.67)
+```
+The predicted odds ratio of an insect dying for a one unit increase in log dose is 1.95.
 
 
 ## Q1 (d) What are the estimated odds of death at log dose level x = 2?
 
 
+```{r q1d-1}
+x_logdose <- 2
+
+propOfDeath <- exp(-2.64 + (0.67 * x_logdose)) / ( 1 + exp(-2.64 + (0.67 * x_logdose)))
+#propOfDeath
+
+oddsOfDeath <- propOfDeath / (1 - propOfDeath)
+print(paste("Odds of Death: ",oddsOfDeath))
+
+```
 ## Q1 (e) Predict the probability of death from exposure at log dose level x = 2.
 
+```{r q1e-1}
+print(paste("Probability of Death: ",propOfDeath))
+
+```
 
 ## Q1 (f) Carry out both the Pearson’s χ2 and deviance goodness of fit tests to check the fit ...
-of this logistic regression model. Clearly state the null and alternative hypotheses,
-test statistic, and conclusion.
+of this logistic regression model. Clearly state the null and alternative hypotheses, test statistic, and conclusion.
 
+H0: The model fits well
+Ha: The model does not fit well
 
+First, Pearson's
+```{r q1f-1}
+#Pearsons
+pearson<-residuals(modelInsects,type="pearson")
+X2<-sum(pearson^2)
+X2 # test statistic is 1.45
+print(paste("Pearson test statistic",X2))
+n= 1500
+p=2
 
+1-pchisq(X2,n-p) # df = n-p, this gives p vcalue
+```
+
+Second, Deviance GOF
+```{r q1f-2}
+1 - pchisq(modelInsects$deviance, n-p) 
+
+```
+**Answer q1f**: We do not reject the null hypothesis, the model is a good fit because p > .05 for both GOF tests. The model fits well which agrees with our analysis of the plot of sample log odds against log dose.
 
 
 # Question 2. (No R needed) A health clinic sent ...
@@ -99,25 +138,78 @@ they received a flu shot.
 
 A client who received a flu shot was coded y = 1, and a client who did not receive a flu shot was coded y = 0. 
 
-Data were also collected on their age,
+Data were also collected on their 
 
-* x1, health awareness rating on a 0-100 scale (higher values indicate greater awareness),
-* x2, and gender, 
-* x3, where males were coded x3 = 1 and females were coded x3 = 0. 
+* age, x1, 
+* health awareness rating on a 0-100 scale (higher values indicate greater awareness), x2, 
+* and gender, x3, where males were coded x3 = 1 and females were coded x3 = 0. 
 
 A first order logistic regression model was fitted and the output is displayed below. ...
 
-## Q2 (a) Interpret the estimated coecient for x3, gender, in context.
+## Q2 (a) Interpret the estimated coefficient for x3, gender, in context.
+
+**Work on q2a**:
+
+B3 = 0.43397.
+
+```{r q2a-1}
+
+exp(0.43397)
+
+```
+
+**Answer q2a**: 
+When age, and awareness rating are held constant, the odds of an elderly male patient receiving the flu shot is exp(0.43397), or 1.543373 times the odds of a an elderly female receiving the flu shot.
 
 
 ## Q2 (b) Conduct the Wald test for B3. ...
 State the null and alternative hypotheses, calculate the test statistic, and make a conclusion in context.
 
+**Work on q2b**
+
+H0: The coef for gender, B3, equals 0
+Ha: The coef for gender, B3, does not equal 0
+
+Wald test statistic: Bj-hat - 0 / se(Bj-hat)
+```{r q2b-1}
+Bjhat <- 0.43397
+seBjhat <- 0.52179
+
+wTestStatistic <- Bjhat / seBjhat
+print(paste("Wald test statistic for B3: ", wTestStatistic))
+
+wPValue <- pnorm(wTestStatistic, 1)
+print(paste("Wald p value for B3: ", wPValue))
+
+```
+**Answer q2b**: We do not reject the null hypothesis, gender is not statistically significant in our model.
+
 
 ## Q2 (c) Calculate a 95% confidence interval for B3, and interpret the interval in context.
 
+**Work on q2c**
+
+```{r q2c-1}
+
+zValue <- 1.96 # for 95% CI
+
+CILow <- Bjhat - (zValue * Bjhat)
+
+CIHigh <- Bjhat + (zValue * Bjhat)
+
+print(paste("The 95% CI for B3 is: ", CILow, " - ", CIHigh))
+
+print(paste("Low odds ratio: ", exp(CILow)))
+
+print(paste("High odds ratio: ", exp(CIHigh)))
+
+```
+When age, and awareness rating are held constant, the odds of an elderly male patient receiving the flu shot is between 0.659 times and 3.61 time the odds of a an elderly female receiving the flu shot. 1 is within the CI, which supports the conclusion that gender is not a significant predictor.
+
 
 ## Q2 (d) Comment on whether your conclusions from parts 2b and 2c are consistent.
+
+**Answer q2d**: 1 is within the CI, which supports the conclusion that gender is not a significant predictor.
 
 
 ## Q2 (e) Suppose you want to drop the coefficients for age and gender, B1 and B3. 
@@ -126,6 +218,25 @@ A logistic regression model for just awareness was fitted, and the output is sho
 
 Carry out the appropriate hypothesis test to see if the coefficients for age and gender can be dropped.
 
+**Work on q2e**
+
+This is analogous to a partial F test in linear regression, but comparing deviance of the partial and full model.
+
+H0: The coefs B1 and B3 are equal to 0.
+Ha: At least one of the coef B1 or B3 is not equal to 0.
+
+```{r q2e}
+partialDeviance <- 113.2
+
+fullDeviance <- 105.09
+
+df <- 2 # considering removing 2 predictors
+
+1-pchisq(partialDeviance - fullDeviance, df)
+
+```
+**Conclusion q2e**:
+We reject the null hypothesis because p-value, 0.017, is < .05. We must use the full model when comparing to the awareness-only model.
 
 
 ## Q2 (f) Based on your conclusion in question 2e, what are the estimated odds of a client receiving the ...
@@ -133,11 +244,50 @@ flu shot if the client is 70 years old, has a health awareness rating of 65, and
 
 What is the estimated probability of this client receiving the flu shot?
 
+**Work on q2f**
+
+Use the reduced model with only B2
+```{r q2f-1}
+
+x_age <- 70
+x_gender <- 1
+x_awareness <- 65
+
+linearPart <- -1.17716 + (0.07279 * x_age) - (0.09899 * x_awareness) + (0.43397 * x_gender)
+
+Ey <- exp(linearPart) / (1 + exp(linearPart))
+Ey
+```
+**Answer q2f**: I estimate an 11% probability this patient received a flu shot.
 
 ## Q2 (g) Based on your conclusion in question 2e, ...
 interpret the estimated coefficient for age, in context. 
 
+```{r q2g-1}
+
+exp(0.07279)
+
+```
+
+**Interpretation of the coefficient for age**: 
+When awareness and gender are held constant, each increase in 1 year of age increases the odds of receiving a flu shot by 7.6%.
+
+
 What does this interpretation tell us about the estimated probability of a client receiving the flu shot if the client is 71 years old, has a health awareness rating of 65, and is male, compared to the estimated probability found for a similar client who is a year younger?
+
+**Answer q2g**: I would expect the odds of the similar patient, except 1 year older than 70 to be 11.08 + (11.08 * .076)% ~= 11.9%
+
+```{r q2g-2}
+x_age <- 71
+x_gender <- 1
+x_awareness <- 65
+
+linearPart <- -1.17716 + (0.07279 * x_age) - (0.09899 * x_awareness) + (0.43397 * x_gender)
+
+Ey <- exp(linearPart) / (1 + exp(linearPart))
+Ey
+
+```
 
 
 

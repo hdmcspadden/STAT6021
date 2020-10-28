@@ -52,7 +52,7 @@ result2<-glm(prop~logdose, family="binomial", weights=size) # fit model. The wei
 summary(result2)
 # summary shows the coefficients are significantly different from 0
 
-# we think because of the plot that the data may noy fit well
+# we think because of the plot that the data may not fit well
 
 # Pearson gives us Goodness of Fit
 pearson<-residuals(result2,type="pearson")
