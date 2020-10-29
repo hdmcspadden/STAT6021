@@ -275,6 +275,41 @@ These tests require grouped data.
 
 If you dont have grouped data. Residuals arent useful becausethey are 0 or 1.
 
+# Live Session Notes
+
+response variable is cateogircal and binary
+
+logistic regression: 
+
+tutorial:
+
+1. must dtermine if grouped or ungrouped data (need weight for grouped in glm)
+2. titanic is ungrouped
+
+
+## Goodness of Fit Tests require grouped  data
+need at least 5 in each outcome and size column
+
+With logistic regression: 
+fewer assumption: response variable binary, independent variables.
+
+# hypothesis Testing Question
+USE qnorm for z test.
+
+Idea of **separation**: 2 predictors and response is binary.
+
+ if there is perfect separation between predictor and response then ask about data, or if sample is actually random.
+
+# Probability and Odds
+
+pi / pi - 1 is odds
+
+equation is log odds
+
+
+
+
+
 
 
 

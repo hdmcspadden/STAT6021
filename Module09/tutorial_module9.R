@@ -4,6 +4,8 @@ data<-read.table("titanic.txt", header=TRUE, sep="")
 attach(data)
 
 result<-glm(Survived ~ Fare, family = "binomial") #generalized linear model, with binomial family, LR = Gaussian family
+#survived is categorical 0/1
+# if factor with 2 classes it is also fine - convert to factor
 
 summary(result) # Z value is the Wald test
 
@@ -42,6 +44,7 @@ data2<-read.table("dose.txt", header=T)
 attach(data2)
 
 prop<-died/size # these are grouped. Size is the group with the particular dose. This is prorprtion died with each dose
+# dose is grouped, more common in designed studies
 
 
 # scatterplot of predictor vs log odds
@@ -64,3 +67,6 @@ X2 # test statistic is 28
 
 
 1 - pchisq(result2$deviance, 7) # GOF deviance, pvalue says usual log regression model does not fit well.
+
+# predict(model, newdata, type = "response") gives you the probability
+

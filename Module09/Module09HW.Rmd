@@ -75,13 +75,20 @@ summary(modelInsects)
 **Answer Q1b**
 
 E(y) = exp(-2.64 + (0.67 * logdose)) / ( 1 + exp(-2.64 + (0.67 * logdose)))
+ 
+or
 
+log pi / (1 - pi) =  -2.64 + (0.67 * logdose)
 
 ## Q1 (c) Interpret the estimated coefficient βˆ1 in context.
 
 ```{r q1c-1}
 exp(0.67)
 ```
+The predicted odds of an insect dying is multiplied by exp(0.67) == 1.95 for a 1 unit increase in log dose.
+
+or
+
 The predicted odds ratio of an insect dying for a one unit increase in log dose is 1.95.
 
 
@@ -91,17 +98,16 @@ The predicted odds ratio of an insect dying for a one unit increase in log dose 
 ```{r q1d-1}
 x_logdose <- 2
 
-propOfDeath <- exp(-2.64 + (0.67 * x_logdose)) / ( 1 + exp(-2.64 + (0.67 * x_logdose)))
-#propOfDeath
-
-oddsOfDeath <- propOfDeath / (1 - propOfDeath)
+oddsOfDeath <- exp(-2.64 + (0.67 * x_logdose))
 print(paste("Odds of Death: ",oddsOfDeath))
-
 ```
 ## Q1 (e) Predict the probability of death from exposure at log dose level x = 2.
 
 ```{r q1e-1}
-print(paste("Probability of Death: ",propOfDeath))
+propOfDeathStart <- exp(-2.64 + (0.67 * x_logdose)) / ( 1 + exp(-2.64 + (0.67 * x_logdose)))
+
+propDeath <- propOfDeathStart / (1 - propOfDeathStart)
+print(paste("Probability of Death: ",propDeath))
 
 ```
 
@@ -178,6 +184,8 @@ seBjhat <- 0.52179
 wTestStatistic <- Bjhat / seBjhat
 print(paste("Wald test statistic for B3: ", wTestStatistic))
 
+#compare to qnorm
+
 wPValue <- pnorm(wTestStatistic, 1)
 print(paste("Wald p value for B3: ", wPValue))
 
@@ -234,6 +242,8 @@ df <- 2 # considering removing 2 predictors
 
 1-pchisq(partialDeviance - fullDeviance, df)
 
+qchisq(.025, df) # critical value
+
 ```
 **Conclusion q2e**:
 We reject the null hypothesis because p-value, 0.017, is < .05. We must use the full model when comparing to the awareness-only model.
@@ -255,10 +265,11 @@ x_awareness <- 65
 
 linearPart <- -1.17716 + (0.07279 * x_age) - (0.09899 * x_awareness) + (0.43397 * x_gender)
 
-Ey <- exp(linearPart) / (1 + exp(linearPart))
-Ey
+Ey1 <- exp(linearPart) / (1 + exp(linearPart))
+Ey2 <- Ey1 / (1-Ey1)
+Ey2
 ```
-**Answer q2f**: I estimate an 11% probability this patient received a flu shot.
+**Answer q2f**: I estimate an 12.5% probability this patient received a flu shot.
 
 ## Q2 (g) Based on your conclusion in question 2e, ...
 interpret the estimated coefficient for age, in context. 
@@ -266,6 +277,8 @@ interpret the estimated coefficient for age, in context.
 ```{r q2g-1}
 
 exp(0.07279)
+
+12.5 + (12.5 * .076)
 
 ```
 
@@ -275,7 +288,7 @@ When awareness and gender are held constant, each increase in 1 year of age incr
 
 What does this interpretation tell us about the estimated probability of a client receiving the flu shot if the client is 71 years old, has a health awareness rating of 65, and is male, compared to the estimated probability found for a similar client who is a year younger?
 
-**Answer q2g**: I would expect the odds of the similar patient, except 1 year older than 70 to be 11.08 + (11.08 * .076)% ~= 11.9%
+**Answer q2g**: I would expect the odds of the similar patient, except 1 year older than 70 to be 12.5 + (12.5 * .076)% ~= 13.4%
 
 ```{r q2g-2}
 x_age <- 71
@@ -284,8 +297,9 @@ x_awareness <- 65
 
 linearPart <- -1.17716 + (0.07279 * x_age) - (0.09899 * x_awareness) + (0.43397 * x_gender)
 
-Ey <- exp(linearPart) / (1 + exp(linearPart))
-Ey
+Ey1 <- exp(linearPart) / (1 + exp(linearPart))
+Ey2 <- Ey1 / (1- Ey1)
+Ey2
 
 ```
 

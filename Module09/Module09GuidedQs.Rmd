@@ -61,11 +61,11 @@ p <- 5
 
 E(y) = exp(-9.12 + (0.0666 * age) + (0.0242 * ncigs) + (0.019 * sbp) + (0.008 * dbp)) / ( 1 + exp(-9.12 + (0.0666 * age) + (0.0242 * ncigs) + (0.019 * sbp) + (0.008 * dbp)))
 
+Try to write in the log pi / (1 - pi) = -9.12 + (0.0666 * age) + (0.0242 * ncigs) + (0.019 * sbp) + (0.008 * dbp)
+
 ```{r q2-2}
 exp(0.0242)
 ```
-
-
 
 ## 3. Interpret the estimated coefficient for ncigs in context.
 
@@ -81,11 +81,19 @@ x_sbp <- 110
 x_dbp <- 70
 
 linearPart <- -9.12 + (0.0666 * x_age) + (0.0242 * x_ncigs) + (0.019 * x_sbp) + (0.008 * x_dbp)
+linearPart # this is log odds
 
 estProb <- exp(linearPart) / ( 1 + exp(linearPart))
-estProb # i think this is probability
+estProb 
 
-estProb / (1 - estProb) # i think this is odds
+estProb / (1 - estProb) # this is probability
+
+# try predict
+newdata<-data.frame(age=45, sbp=110, dbp=70, ncigs=0)
+predict(result, newdata) #is log odds
+
+predict(result, newdata, type="response") # this is probability
+ 
 
 ```
 
@@ -98,9 +106,10 @@ Ha: at least one coef is not equal to 0.
 **Deviance Delta, aka delta G^2 == null deviance - residual deviance**
 
 ```{r q5-1}
-result$null.deviance - result$deviance
+deltaG2 <- result$null.deviance - result$deviance
+deltaG2
 
-1-pchisq(result$null.deviance - result$deviance,4)
+1-pchisq(deltaG2,4)
 ```
 **What is the test statistic? 111.2295????**
 
@@ -122,7 +131,7 @@ dbp          0.007867   0.010057   z =0.782  0.43406
 zscore <- 0.007867  / 0.010057
 zscore
 
-pnorm(zscore,1)
+(1 - pnorm(zscore)) * 2 # gives p value
 ```
 
 ## 7. Suppose a co-worker of yours suggests fitting a logistic regression model without the ...
@@ -136,6 +145,8 @@ Ha: at least one of the sbp or dbp coefs are not 0.
 reduced <- glm(chd69 ~ age + ncigs, family = "binomial")
 
 1-pchisq(reduced$deviance - result$deviance,2)
+
+reduced$deviance - result$deviance
 
 ```
 We reject the null, we need at least one of the bp predictors.
