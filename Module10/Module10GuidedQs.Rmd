@@ -1,0 +1,234 @@
+---
+title: "Module10GuidedQs"
+author: "Diana McSpadden"
+date: "11/3/2020"
+output: html_document
+---
+
+# Stat 6021: Guided Question Set 10
+
+
+## 1. For this question, we will continue using the Western Collaborative Group Study ...
+(WCGS) data set, which is from a study regarding heart disease. 
+
+Data are collected from 3154 middle-aged males in California. Download the file “wcsg.csv” and load it
+into R. In the previous guided question set, we focused on predicting the likelihood of getting a heart attack based on the following predictors
+
+* age. Age in years
+* sbp. Systolic blood pressure in mm Hg
+* dbp. Diastolic blood pressure in mm Hg
+* ncigs. Number of cigarettes smoked per day, on average.
+
+The response variable is chd69, with a ‘1’ indicating the person developed coronary heart disease, and a ‘0’ indicating the person did not develop coronary heart disease.
+
+From the previous guided question set, we went with the model with age, sbp, and ncigs as the predictors, dropping dbp from the model, as it was the only insignificant predictor in the model.
+
+### (a) Validate your logistic regression model using an ROC curve. 
+Randomly split your data set into a testing and training data set, of equal size. 
+For consistency of results among all groups, use set.seed(199). 
+
+What does your ROC curve tell you?
+
+**setup and load** the data
+```{r q1a-1}
+library(ROCR)
+
+data<-read.csv("wcgs.csv", header=TRUE)
+
+#set seed for consistent results
+##set the random number generator so same results can be reproduced
+set.seed(199)
+```
+
+**divide** to training and test
+```{r q1a-2}
+sample<-sample.int(nrow(data), floor(.50*nrow(data)), replace = F)
+train<-data[sample, ]
+test<-data[-sample, ]
+
+```
+
+**create the model** with the **train** data set
+```{r q1a-3}
+result<-glm(chd69 ~ age + sbp + ncigs, family = "binomial", data=train)
+```
+
+get the predictions when using the test data
+```{r q1a-4}
+##predicted survival rate for testing data based on training data
+preds<-predict(result,newdata=test, type="response") # need to use type=response for probabilities.
+
+##produce the numbers associated with classification table
+rates<-prediction(preds, test$chd69) #did it correctly identify CHD diagnosis?
+
+##store the true positive and false postive rates
+roc_result<-performance(rates,measure="tpr", x.measure="fpr")
+```
+
+produce the **ROC curve**
+```{r q1a-5}
+##plot ROC curve and overlay the diagonal line for random guessing
+plot(roc_result, main="ROC Curve for Congestive Heart Disease")
+lines(x = c(0,1), y = c(0,1), col="red")
+lines(x = c(0.27,0.27), y = c(0,1), col="blue")
+lines(x = c(0,1), y = c(0.8,0.8), col="blue")
+```
+**Q1a Answer**
+
+It's possible, with some as yet unknown, threshold to get a true positive rate around 80% with a false positive rate of 27%. I guess that's not bad.
+
+### (b) Find the AUC associated with your ROC curve. What does your AUC tell you?
+
+```{r q2b-1}
+##compute the AUC
+aucvalues <- performance(rates, measure = "auc")
+auc <- aucvalues@y.values[[1]]
+auc
+
+```
+
+**Q1b Answer**
+Our model is better than guessing, and isn't too bad at that.
+
+### (c) Create a confusion matrix using a cutoff of 0.5...
+Create another confusion matrix using a cutoff of 0.1. Are these values surprising? What do you think is going on here?
+
+create **confusion matrix**
+```{r q1c-1}
+table(test$chd69, preds>0.5)
+
+table(test$chd69, preds>0.1)
+```
+Using predicted probability greater than 50% we get **no** predicted TRUEs - so no one is predicted to have congested heart failure. 
+
+Using 10% probability threshold we get some TRUE predictions. This seems bad.
+
+## 2. For this question, we will use a data set containing information regarding housing in ...
+Boston. The data set, Boston, comes from the MASS package in R. 
+
+```{r q2setup}
+library(MASS)
+
+attach(Boston)
+
+head(Boston)
+```
+
+
+We will focus on predicting whether a tract in Boston can be classified as a low-, medium-, or highcrime area, based on two predictors, the weighted distance of the tract from five Boston employment centers, and the student-teacher ratio in the tract.
+
+### (a) The variable crim is the per capita crime rate of the town that the tract is in.
+Create a new variable that categorizes crime in the following manner. Define a tract to have a:
+* low crime rate, if its crime rate is less than the median crime rate for this data set
+* medium crime rate, if its crime rate is between the median and 75th percentile of the crime rate for this data set
+* high crime rate, if its crime rate is higher than the 75th percentile of the crime rate for this data set
+
+determine the IQR's for crim
+```{r q2a-1}
+library(Hmisc)
+library(dplyr)
+attach(Boston)
+library(nnet)
+
+aboutBoston <- summary(Boston$crim)
+aboutBoston
+
+crimMedian <- aboutBoston[[3]] # median crim value
+crim75 <- aboutBoston[[5]] # 75% crim value
+```
+create the new column and values:
+* 0 == low
+* 1 == medium
+* 2 == high
+
+```{r q2a-2}
+
+df <- Boston %>%
+     mutate(crimCat = case_when(crim < crimMedian ~ '0',
+                                  crim <= crim75 ~ '1',
+                                  TRUE ~ '2'))
+
+detach(Boston)
+df
+attach(df)
+```
+
+
+### (b) Fit a multinomial logistic regression model to predict...
+whether a tract is a low-, medium-, or high-crime area using the variables dis and ptratio, the weighted
+distance of the tract from five Boston employment centers and the student-teacher ratio in the tract, respectively.
+
+```{r q2b-1}
+
+is.numeric(crimCat)
+
+is.factor(crimCat)
+
+##tell R to treat this variable as categorical
+crimCat<-factor(crimCat)
+
+is.factor(crimCat)
+```
+```{r q2b-2}
+levels(crimCat)<-c("low","medium","high")
+levels(crimCat)
+```
+
+
+```{r q2b-3}
+
+# crimCat == y
+# dis == x1
+# ptratio == x2
+
+
+
+##fit multinomial logistic regression model
+result<-multinom(crimCat ~ dis + ptratio)
+summary(result)
+
+```
+
+### (c) Compute the Wald statistics and p-values associated with the regression coefficients.
+
+reference class is **low**
+
+```{r}
+##compute test statistics and p-values for each coefficient
+z<-summary(result)$coefficients/summary(result)$standard.errors
+z
+
+p<-(1 - pnorm(abs(z)))*2
+p
+```
+
+### (d) Interpret the results of the Wald statistics associated with the two predictors contextually.
+
+reference class is **low**
+
+2 logits: medium and high
+
+ptratio is not significant when predicting medium crime but is significant when predicting high crime.
+
+dis is significant when predicting both medium and high crime.
+
+all significance is with holding other variable constant, and comparing low crime to the other crime value.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

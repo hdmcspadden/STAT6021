@@ -1,0 +1,320 @@
+---
+title: "Module 10 Sandbox"
+author: "Diana McSpadden"
+date: "11/1/2020"
+output: html_document
+---
+
+# Module 10: Logistic Regression Part Two
+
+In this module, you will learn how to use the Receiver Operating Characteristic (ROC) curve and the Area under the ROC Curve (AUC) to assess how well your logistic regression model performs in classifying outcomes. You will also learn about the multinomial logistic regression model, which is used when the response variable is categorical with more than two outcomes. Finally, you will learn about Generalized Linear Models (GLMs). The linear regression and logistic regression models you have learned so far are specific kinds of GLMs.
+ 
+ESSENTIAL QUESTIONS
+* How do we assess the classifying ability of a logistic regression model?
+* How do we interpret the coefficients of a multinomial logistic regression model?
+* What kind of hypothesis tests can we perform on a Generalized Linear Model?
+
+## 10.1: Introduction to the Lesson
+
+ROC, AUC to assess log regression model
+
+multinomial regression model
+
+In the last part of this module, you will learn about Generalized Linear Models (GLMs). The linear regression and logistic regression models you have learned about are specific types of GLMs. Other types of analysis may necessitate using another model; for example, if the response variable is  discrete with non-negative integers (number of Facebook friends a user has), then a Poisson regression model, another type of GLM, should be used. You will learn about the general framework of a GLM, as well as how inferential procedures are carried out in GLMs.
+
+## 10.2: Logistic Regression Validation
+
+### How do we go about evaluating the predictive ability of a classification model?
+
+uses titanic data set
+
+estimating probability of survival
+
+* split data into training and test
+* split with training
+* use on test data and see how it works
+* use decision rule or threshold: E.g. if estimated prob > .5 then classify as Yes
+* compute true pos, true negs, false pos, false negs
+
+* check performance of true prediction to false
+
+
+### How do we use a confusion matrix to calculate the accuracy, false positive rate, false negative rate, sensitivity, specificity of our model?
+
+**confusion matrix** can be used to summarize the number of true/false positives and T/F negatives.
+
+test$Survived == true survived
+
+the diagonal vs diagonal
+
+```{r}
+# example code
+
+#table(test$survived. preds > 0.5)
+```
+
+
+### How does changing the threshold affect the false positive rate, false negative rate, sensitivity, specificity of our model?
+
+
+Should be based on what type of error you are concerned with.
+
+**Overall Error Rate**: (FP + FN) / n
+
+False Positive: type I error: P(y-hat = 1 / y = 0) == FP / (TN + FP)
+
+False Negative: type II error: P(y-hat = 0 / y-hat = 1) == FN / (FN + TP)
+
+If concerned with false positives: set threshold higher
+
+If concerned with false negatives: set threshold lower
+
+**Sensitivity**: P(y-hat = 1 | y= 1) == 1 - False Neg Rate == TP / (FN + TP)
+
+
+**Specificity**: 1 - False Pos Rate == TN / (TN + FP), also called "true positive rate"
+
+
+Example Table
+
+      FALSE       TRUE
+
+0     201         9
+
+1     98          46
+```{r}
+
+trueNeg <- 201
+falseNeg <- 98
+truePos <- 46
+falsePos <- 9
+
+overallErrorRate <- (falseNeg + falsePos) / (falseNeg + falsePos + trueNeg + truePos)
+overallErrorRate
+
+falsePosRate <- falsePos / (trueNeg + falsePos)
+falsePosRate
+
+falseNegRate <- falseNeg / (falseNeg + truePos)
+falseNegRate
+
+sensitivity <- 1 - falseNegRate
+sensitivity
+
+specifiity <- 1 - falsePosRate
+specifiity
+```
+
+### In a Receiver Operating Characteristic (ROC) curve, what are the values on the vertical and horizontal axes? 
+
+Error Rate == 1 - Accuracy
+
+Two dim plot: 
+* y axis == sensitivity == P(y-hat = 1 | y = 1)
+* x axis == 1 - specificity (aka false positive) == P(y-hat == 1 | y = 0) == FP / (TN + FP)
+
+
+ROC plots for every possible value of decision rule cutoff
+
+
+### What does the ROC curve look like for a model that randomly guesses outcomes? 
+
+lies on the diagonal- pos direction
+
+sen and spec == 1 is a perfect model == (0,1) point == all correct
+
+all incorrect == (1, 0)
+
+### What does the ROC curve for a logistic regression model that classifies outcomes well look like? 
+
+curve above diagonal
+
+### What is the Area Under the ROC Curve (AUC) measuring? What values indicate a model that randomly guesses? What values indicate a model that classifies outcomes well?
+
+auc is for **all possible thresholds**
+
+auc == .5 == random
+
+above .5, .8?????
+
+
+#### unbalanced sample sizes can cause problems.
+
+
+## 10.3: Multinomial Logistic Regression
+Read Section 13.2.7 of your textbook. As you read, take notes on the following.
+ 
+Suppose the response variable is categorical with m + 1 outcomes, where m is at least 2. 
+
+Such a variable follows a multinomial (instead of a Bernoulli) distribution. 
+ 
+### Write down the logistic regression models in this setting with more than two outcomes for the response variable. 
+
+p. 443 
+
+Equations 13.36
+
+
+multinomial logit == pi'i,1,2 = log(pi i,1 / pi i,2) == X'iB1,2
+
+between classes 1 and 2
+
+for each comparison setup a logit
+
+one class is refernence class for logits
+
+only need class# - 1 logits
+
+pi'i,c,m+1 = log(pi i,c / pi i,m+1) == X'iBc,m+1 for c = 1, ..., m
+
+pi i,c / pi i,m+1 is called the **relative risk** of belonging to class c versus belonging to the reference class. Ratio of probabilities.
+
+you can take out the m+1 because it is assumed we are comparing to the refernce class:
+
+pi' i,c = log(pi i,c / pi i,m+1) == X'iBc
+
+### if you compare two non-refernce classes:
+
+say class 4 is reference class, but you want to compare classes 1 and 2:
+
+log(pi i,1 / pi i,2) == log(pi i,1 / pi i,4) - log(pi i,2 / pi i,4) == X'B1 - X'B2
+
+
+
+### Probabilities:
+
+Reference class probability:
+
+1 / (1 + sum each non reference class(exp(X'iBk)))
+
+
+
+### What is the interpretation for the coefficients of a logistic regression model when the response variable is multinomial?
+
+• The (k + 1)th element of βc can be interpreted as the difference in log relative risk
+of belonging to class c versus the reference class with a one-unit increase in the kth
+predictor, given the other predictors are held constant; OR
+
+• The relative risk ratio of belonging to class c versus the reference class with a oneunit increase in the kth predictor, given the other predictors are held constant, is the
+(k + 1)th element of exp(βc); OR
+
+• The relative risk of belonging to class c versus belonging to the reference class is
+multiplied by the (k + 1)th element of exp(βc) with a one-unit increase in the kth
+predictor, given the other predictors are held constant; OR
+
+
+## 10.4: Generalized Linear Models (GLMs)
+Read Sections 13.4 to 13.4.3 of your textbook. As you read, take notes on the following.
+ 
+### For a GLM, the response variable follows a distribution that is a member of what family of distributions? 
+List some of the distributions that belong to this family of distributions. What distribution is used for the linear regression model? How about the logistic regression model?
+
+
+**Exponential Family** of distributions.
+* normal distribution
+* binomial distribution
+* Poisson distribution: where mean and variance are related. both equal mew
+* inverse normal dist
+* exponential dist 
+* gamma dist
+
+
+### What is the basic idea in developing a linear model, in terms of the expected value of the response variable? 
+
+develop an appropriate function of the expected response. 
+
+
+### Describe how you would perform a goodness-of-fit test for a GLM. 
+
+Model deviance would be tested: difference between full and null model, or reduced model. Wald inference on individual parameters, and CIs on coefs to make sure 0 isnt within CI.
+
+
+
+### Describe how you would perform a hypothesis test on a subset of parameters for a GLM. 
+
+Partial F test on deviance compared to chisqu distribution 
+
+### Describe how you would test an individual coefficient for a GLM. 
+
+Wald's test
+
+### Describe how you would test if all coefficients are 0 for a GLM. 
+
+Create 95% CIs or test deviance of full vs null model compared to chisq n-p df.
+
+### To estimate the coefficients for a GLM, what method is used?
+
+maximum liklihoood
+
+# Recap
+
+model diagnostics not as avilable.
+
+GOF dont work for ungrouped data
+
+plotting log odds vs predictor only work in 2D or 3D
+
+residual plots dont work because of discrete outcome
+
+So.... evaluate in terms of predicting outcomes
+
+threshold rule on predictions. E.g 0.5 - on average, this is best.
+
+confusion matrix
+
+ROC
+
+
+## Cautions:
+
+unbalanced sample sizes
+
+ROC: cant tell where on curve your threshold is
+
+
+
+## Multi nomial
+
+important to note reference class
+
+separate equations for each class vs refernce class.
+
+## GLM:
+
+big family of regression models
+
+coef use maximum liklihood
+
+Poisson: used to model count data (non negative counts)
+
+For any GLM:
+* Wald test to drop a single term
+* null and residual deviance to determine if model is useful
+* difference in residual deviances to compare nested models
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

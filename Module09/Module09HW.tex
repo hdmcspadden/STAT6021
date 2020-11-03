@@ -1,0 +1,722 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Module 09 HW},
+  pdfauthor={Diana McSpadden},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+\title{Module 09 HW}
+\author{Diana McSpadden}
+\date{10/27/2020}
+
+\begin{document}
+\maketitle
+
+\hypertarget{stat-6021-homework-set-9}{%
+\section{Stat 6021: Homework Set 9}\label{stat-6021-homework-set-9}}
+
+\hypertarget{h.-diana-mcspadden}{%
+\subsection{H. Diana McSpadden}\label{h.-diana-mcspadden}}
+
+\hypertarget{uid-hdm52}{%
+\subsection{UID: hdm52}\label{uid-hdm52}}
+
+\hypertarget{date-10302020}{%
+\subsection{Date: 10/30/2020}\label{date-10302020}}
+
+\textbf{Attended group with}: Bernhardt, Cheu, Nam, Hiatt, Newman
+
+\hypertarget{question-1.-in-an-experiment-testing-the-effect-of-a-toxic-substance}{%
+\section{Question 1. In an experiment testing the effect of a toxic
+substance,
+\ldots{}}\label{question-1.-in-an-experiment-testing-the-effect-of-a-toxic-substance}}
+
+1,500 insects were divided at random into six groups of 250 each.
+
+The insects in each group were exposed to a fixed dose of the toxic
+substance. A day later, the insects were observed. Death from exposure
+was recorded as 1, and survival 0.
+
+The file ``insects.txt'' contains the data from the experiment.
+
+\begin{itemize}
+\tightlist
+\item
+  The first column denotes the dose level on a logscale, x;
+\item
+  the 2nd column denotes the sample size for each group, ni
+\item
+  ; and the 3rd column denotes the number of insects that died in the
+  group, yi
+\end{itemize}
+
+You will probably want to read the data in and give appropriate names
+for the columns.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(dplyr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'dplyr'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{insectsData <-}\StringTok{ }\KeywordTok{read.table}\NormalTok{(}\StringTok{"insects.txt"}\NormalTok{, }\DataTypeTok{header=}\OtherTok{FALSE}\NormalTok{, }\DataTypeTok{sep=}\StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{insectsData <-}\StringTok{ }\NormalTok{insectsData }\OperatorTok{%>%}\StringTok{ }\KeywordTok{rename}\NormalTok{(}\DataTypeTok{logdose =}\NormalTok{ V1, }\DataTypeTok{size =}\NormalTok{ V2, }\DataTypeTok{died =}\NormalTok{ V3)}
+
+\CommentTok{#names(insectsData)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{head}\NormalTok{(insectsData)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   logdose size died
+## 1       1  250   28
+## 2       2  250   53
+## 3       3  250   93
+## 4       4  250  126
+## 5       5  250  172
+## 6       6  250  197
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{attach}\NormalTok{(insectsData)}
+
+\CommentTok{#knowns}
+\NormalTok{n <-}\StringTok{ }\DecValTok{1500}
+\NormalTok{groupn <-}\StringTok{ }\DecValTok{250}
+\NormalTok{groups  <-}\StringTok{ }\DecValTok{6}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{q1-a-plot-the-sample-log-odds-against-the-log-dose-x.}{%
+\subsection{Q1 (a) Plot the sample log odds against the log dose,
+x.}\label{q1-a-plot-the-sample-log-odds-against-the-log-dose-x.}}
+
+Does this plot suggest fitting a logistic regression model to be
+appropriate?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{prop<-died}\OperatorTok{/}\NormalTok{size}
+
+\KeywordTok{plot}\NormalTok{(logdose, }\KeywordTok{log}\NormalTok{(prop}\OperatorTok{/}\NormalTok{(}\DecValTok{1}\OperatorTok{-}\NormalTok{prop)), }\DataTypeTok{xlab=} \StringTok{"Log Dose"}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"sample log odds"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Module09HW_files/figure-latex/q1a-1-1.pdf}
+
+\textbf{Answer Q1a}: Yes, this plot looks perfect for a logistic
+regression model because the relationship is almost perfectly linear.
+
+\hypertarget{q1-b-use-r-to-fit-the-logistic-regression-model-and-write-the-estimated-logistic-regression-equation.}{%
+\subsection{Q1 (b) Use R to fit the logistic regression model, and write
+the estimated logistic regression
+equation.}\label{q1-b-use-r-to-fit-the-logistic-regression-model-and-write-the-estimated-logistic-regression-equation.}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{modelInsects <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(prop}\OperatorTok{~}\NormalTok{logdose, }\DataTypeTok{family=}\StringTok{"binomial"}\NormalTok{, }\DataTypeTok{weights=}\NormalTok{size) }\CommentTok{# fit model. The weight is the sample/group size}
+\KeywordTok{summary}\NormalTok{(modelInsects)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = prop ~ logdose, family = "binomial", weights = size)
+## 
+## Deviance Residuals: 
+##       1        2        3        4        5        6  
+## -0.5092  -0.1115   0.7461  -0.2869   0.4744  -0.5599  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(>|z|)    
+## (Intercept) -2.64367    0.15610  -16.93   <2e-16 ***
+## logdose      0.67399    0.03911   17.23   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 383.0695  on 5  degrees of freedom
+## Residual deviance:   1.4491  on 4  degrees of freedom
+## AIC: 39.358
+## 
+## Number of Fisher Scoring iterations: 3
+\end{verbatim}
+
+\textbf{Answer Q1b}
+
+E(y) = exp(-2.64 + (0.67 * logdose)) / ( 1 + exp(-2.64 + (0.67 *
+logdose)))
+
+or
+
+log(pi / (1 - pi)) = -2.64 + (0.67 * logdose)
+
+\hypertarget{q1-c-interpret-the-estimated-coefficient-ux3b2ux2c61-in-context.}{%
+\subsection{Q1 (c) Interpret the estimated coefficient βˆ1 in
+context.}\label{q1-c-interpret-the-estimated-coefficient-ux3b2ux2c61-in-context.}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{exp}\NormalTok{(}\FloatTok{0.67}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1.954237
+\end{verbatim}
+
+The predicted odds of an insect dying is multiplied by exp(0.67) == 1.95
+for a 1 unit increase in log dose.
+
+or
+
+The predicted odds ratio of an insect dying for a one unit increase in
+log dose is 1.95.
+
+\hypertarget{q1-d-what-are-the-estimated-odds-of-death-at-log-dose-level-x-2}{%
+\subsection{Q1 (d) What are the estimated odds of death at log dose
+level x =
+2?}\label{q1-d-what-are-the-estimated-odds-of-death-at-log-dose-level-x-2}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{x_logdose <-}\StringTok{ }\DecValTok{2}
+
+\NormalTok{oddsOfDeath <-}\StringTok{ }\KeywordTok{exp}\NormalTok{(}\OperatorTok{-}\FloatTok{2.64} \OperatorTok{+}\StringTok{ }\NormalTok{(}\FloatTok{0.67} \OperatorTok{*}\StringTok{ }\NormalTok{x_logdose))}
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"Odds of Death: "}\NormalTok{,oddsOfDeath))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Odds of Death:  0.272531793034013"
+\end{verbatim}
+
+\hypertarget{q1-e-predict-the-probability-of-death-from-exposure-at-log-dose-level-x-2.}{%
+\subsection{Q1 (e) Predict the probability of death from exposure at log
+dose level x =
+2.}\label{q1-e-predict-the-probability-of-death-from-exposure-at-log-dose-level-x-2.}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#probOfDeathStart <- exp(-2.64 + (0.67 * x_logdose)) / ( 1 + exp(-2.64 + (0.67 * x_logdose)))}
+
+\NormalTok{probDeath <-}\StringTok{ }\NormalTok{oddsOfDeath }\OperatorTok{/}\StringTok{ }\NormalTok{(}\DecValTok{1} \OperatorTok{+}\StringTok{ }\NormalTok{oddsOfDeath)}
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"Probability of Death: "}\NormalTok{,probDeath))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Probability of Death:  0.214165016957441"
+\end{verbatim}
+
+\hypertarget{q1-f-carry-out-both-the-pearsons-ux3c72-and-deviance-goodness-of-fit-tests-to-check-the-fit}{%
+\subsection{Q1 (f) Carry out both the Pearson's χ2 and deviance goodness
+of fit tests to check the fit
+\ldots{}}\label{q1-f-carry-out-both-the-pearsons-ux3c72-and-deviance-goodness-of-fit-tests-to-check-the-fit}}
+
+of this logistic regression model. Clearly state the null and
+alternative hypotheses, test statistic, and conclusion.
+
+H0: The model fits well Ha: The model does not fit well
+
+First, Pearson's
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Pearsons}
+\NormalTok{pearson<-}\KeywordTok{residuals}\NormalTok{(modelInsects,}\DataTypeTok{type=}\StringTok{"pearson"}\NormalTok{)}
+\NormalTok{X2<-}\KeywordTok{sum}\NormalTok{(pearson}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+\NormalTok{X2 }\CommentTok{# test statistic is 1.45}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1.451786
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"Pearson test statistic"}\NormalTok{,X2))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Pearson test statistic 1.4517864549869"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{n=}\StringTok{ }\DecValTok{6}
+\NormalTok{p=}\DecValTok{2}
+
+\NormalTok{pValue <-}\StringTok{ }\DecValTok{1}\OperatorTok{-}\KeywordTok{pchisq}\NormalTok{(X2,n}\OperatorTok{-}\NormalTok{p) }\CommentTok{# df = n-p, this gives p value}
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"pvalue: "}\NormalTok{,pValue))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "pvalue:  0.835146184673398"
+\end{verbatim}
+
+Second, Deviance GOF
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DecValTok{1} \OperatorTok{-}\StringTok{ }\KeywordTok{pchisq}\NormalTok{(modelInsects}\OperatorTok{$}\NormalTok{deviance, n}\OperatorTok{-}\NormalTok{p) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.8356191
+\end{verbatim}
+
+\textbf{Answer q1f}: We fail reject the null hypothesis, the model is a
+good fit because p value \textgreater{} .05 for both GOF tests. The
+model fits well which agrees with our analysis of the plot of sample log
+odds against log dose.
+
+\hypertarget{question-2.-no-r-needed-a-health-clinic-sent}{%
+\section{Question 2. (No R needed) A health clinic sent
+\ldots{}}\label{question-2.-no-r-needed-a-health-clinic-sent}}
+
+fliers to its clients to encourage everyone to get a flu shot. In a
+follow-up study, 159 elderly clients were randomly selected and asked if
+they received a flu shot.
+
+A client who received a flu shot was coded y = 1, and a client who did
+not receive a flu shot was coded y = 0.
+
+Data were also collected on their
+
+\begin{itemize}
+\tightlist
+\item
+  age, x1,
+\item
+  health awareness rating on a 0-100 scale (higher values indicate
+  greater awareness), x2,
+\item
+  and gender, x3, where males were coded x3 = 1 and females were coded
+  x3 = 0.
+\end{itemize}
+
+A first order logistic regression model was fitted and the output is
+displayed below. \ldots{}
+
+\hypertarget{q2-a-interpret-the-estimated-coefficient-for-x3-gender-in-context.}{%
+\subsection{Q2 (a) Interpret the estimated coefficient for x3, gender,
+in
+context.}\label{q2-a-interpret-the-estimated-coefficient-for-x3-gender-in-context.}}
+
+\textbf{Work on q2a}:
+
+B3 = 0.43397.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{exp}\NormalTok{(}\FloatTok{0.43397}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1.543373
+\end{verbatim}
+
+\textbf{Answer q2a}: When age, and awareness rating are held constant,
+the odds of an elderly male patient receiving the flu shot is
+exp(0.43397), or 1.543373 times the odds of a an elderly female patient
+receiving the flu shot.
+
+\hypertarget{q2-b-conduct-the-wald-test-for-b3.}{%
+\subsection{Q2 (b) Conduct the Wald test for B3.
+\ldots{}}\label{q2-b-conduct-the-wald-test-for-b3.}}
+
+State the null and alternative hypotheses, calculate the test statistic,
+and make a conclusion in context.
+
+\textbf{Work on q2b}
+
+H0: The coef for gender, B3, equals 0 Ha: The coef for gender, B3, does
+not equal 0
+
+Wald test statistic: Bj-hat - 0 / se(Bj-hat)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Bjhat <-}\StringTok{ }\FloatTok{0.43397}
+\NormalTok{seBjhat <-}\StringTok{ }\FloatTok{0.52179}
+
+\NormalTok{wTestStatistic <-}\StringTok{ }\NormalTok{Bjhat }\OperatorTok{/}\StringTok{ }\NormalTok{seBjhat}
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"Wald test statistic for B3: "}\NormalTok{, wTestStatistic))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Wald test statistic for B3:  0.831694743095882"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#compare to pnorm}
+\NormalTok{wPValue <-}\StringTok{ }\NormalTok{(}\DecValTok{1}\OperatorTok{-}\KeywordTok{pnorm}\NormalTok{(wTestStatistic))}\OperatorTok{*}\DecValTok{2}
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"Wald p value for B3: "}\NormalTok{, wPValue))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Wald p value for B3:  0.405581268667017"
+\end{verbatim}
+
+\textbf{Answer q2b}: We do not reject the null hypothesis, gender is not
+statistically significant in our model.
+
+\hypertarget{q2-c-calculate-a-95-confidence-interval-for-b3-and-interpret-the-interval-in-context.}{%
+\subsection{Q2 (c) Calculate a 95\% confidence interval for B3, and
+interpret the interval in
+context.}\label{q2-c-calculate-a-95-confidence-interval-for-b3-and-interpret-the-interval-in-context.}}
+
+\textbf{Work on q2c}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{zValue <-}\StringTok{ }\FloatTok{1.96} \CommentTok{# for 95% CI}
+
+\NormalTok{CILow <-}\StringTok{ }\NormalTok{Bjhat }\OperatorTok{-}\StringTok{ }\NormalTok{(zValue }\OperatorTok{*}\StringTok{ }\NormalTok{seBjhat)}
+
+\NormalTok{CIHigh <-}\StringTok{ }\NormalTok{Bjhat }\OperatorTok{+}\StringTok{ }\NormalTok{(zValue }\OperatorTok{*}\StringTok{ }\NormalTok{seBjhat)}
+
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"The 95% CI for B3 is: "}\NormalTok{, CILow, }\StringTok{" - "}\NormalTok{, CIHigh))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "The 95% CI for B3 is:  -0.5887384  -  1.4566784"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"Low odds ratio: "}\NormalTok{, }\KeywordTok{exp}\NormalTok{(CILow)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Low odds ratio:  0.555027065365734"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"High odds ratio: "}\NormalTok{, }\KeywordTok{exp}\NormalTok{(CIHigh)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "High odds ratio:  4.2916805807803"
+\end{verbatim}
+
+When age, and awareness rating are held constant, the odds of an elderly
+male patient receiving the flu shot is between -0.589 times and 1.46
+time the odds of a an elderly female receiving the flu shot. 0 is within
+the CI, which supports the conclusion that gender is not a significant
+predictor.
+
+\hypertarget{q2-d-comment-on-whether-your-conclusions-from-parts-2b-and-2c-are-consistent.}{%
+\subsection{Q2 (d) Comment on whether your conclusions from parts 2b and
+2c are
+consistent.}\label{q2-d-comment-on-whether-your-conclusions-from-parts-2b-and-2c-are-consistent.}}
+
+\textbf{Answer q2d}: 0 is within the CI, which supports the conclusion
+that gender is not a significant predictor.
+
+\hypertarget{q2-e-suppose-you-want-to-drop-the-coefficients-for-age-and-gender-b1-and-b3.}{%
+\subsection{Q2 (e) Suppose you want to drop the coefficients for age and
+gender, B1 and
+B3.}\label{q2-e-suppose-you-want-to-drop-the-coefficients-for-age-and-gender-b1-and-b3.}}
+
+A logistic regression model for just awareness was fitted, and the
+output is shown below. \ldots{}
+
+Carry out the appropriate hypothesis test to see if the coefficients for
+age and gender can be dropped.
+
+\textbf{Work on q2e}
+
+This is analogous to a partial F test in linear regression, but
+comparing deviance of the partial and full model.
+
+H0: The coefs B1 and B3 are equal to 0. Ha: At least one of the coef B1
+or B3 is not equal to 0.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{partialDeviance <-}\StringTok{ }\FloatTok{113.2}
+
+\NormalTok{fullDeviance <-}\StringTok{ }\FloatTok{105.09}
+
+\NormalTok{df <-}\StringTok{ }\DecValTok{2} \CommentTok{# considering removing 2 predictors}
+
+\NormalTok{deltaG2 <-}\StringTok{ }\NormalTok{partialDeviance }\OperatorTok{-}\StringTok{ }\NormalTok{fullDeviance}
+
+\DecValTok{1}\OperatorTok{-}\KeywordTok{pchisq}\NormalTok{(deltaG2, df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.01733548
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{qchisq}\NormalTok{(.}\DecValTok{025}\NormalTok{, df) }\CommentTok{# critical value}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.05063562
+\end{verbatim}
+
+\textbf{Conclusion q2e}: We reject the null hypothesis because p-value,
+0.017, is \textless{} .05. We must use the full model when comparing to
+the awareness-only model.
+
+\hypertarget{q2-f-based-on-your-conclusion-in-question-2e-what-are-the-estimated-odds-of-a-client-receiving-the}{%
+\subsection{Q2 (f) Based on your conclusion in question 2e, what are the
+estimated odds of a client receiving the
+\ldots{}}\label{q2-f-based-on-your-conclusion-in-question-2e-what-are-the-estimated-odds-of-a-client-receiving-the}}
+
+flu shot if the client is 70 years old, has a health awareness rating of
+65, and is male?
+
+What is the estimated probability of this client receiving the flu shot?
+
+\textbf{Work on q2f}
+
+Use the reduced model with only B2
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{x_age <-}\StringTok{ }\DecValTok{70}
+\NormalTok{x_gender <-}\StringTok{ }\DecValTok{1}
+\NormalTok{x_awareness <-}\StringTok{ }\DecValTok{65}
+
+\NormalTok{linearPart <-}\StringTok{ }\FloatTok{-1.17716} \OperatorTok{+}\StringTok{ }\NormalTok{(}\FloatTok{0.07279} \OperatorTok{*}\StringTok{ }\NormalTok{x_age) }\OperatorTok{-}\StringTok{ }\NormalTok{(}\FloatTok{0.09899} \OperatorTok{*}\StringTok{ }\NormalTok{x_awareness) }\OperatorTok{+}\StringTok{ }\NormalTok{(}\FloatTok{0.43397} \OperatorTok{*}\StringTok{ }\NormalTok{x_gender)}
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"log odds: "}\NormalTok{, linearPart))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "log odds:  -2.08224"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"odds: "}\NormalTok{, }\KeywordTok{exp}\NormalTok{(linearPart)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "odds:  0.124650681714281"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Ey1 <-}\StringTok{ }\KeywordTok{exp}\NormalTok{(linearPart) }\OperatorTok{/}\StringTok{ }\NormalTok{(}\DecValTok{1} \OperatorTok{+}\StringTok{ }\KeywordTok{exp}\NormalTok{(linearPart))}
+\NormalTok{Ey1 }\CommentTok{#prob}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.110835
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"prob: "}\NormalTok{, Ey1))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "prob:  0.110835020812221"
+\end{verbatim}
+
+\textbf{Answer q2f}: I estimate the odds as .125 that this patient
+received a flu shot.
+
+\hypertarget{q2-g-based-on-your-conclusion-in-question-2e}{%
+\subsection{Q2 (g) Based on your conclusion in question 2e,
+\ldots{}}\label{q2-g-based-on-your-conclusion-in-question-2e}}
+
+interpret the estimated coefficient for age, in context.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{exp}\NormalTok{(}\FloatTok{0.07279}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1.075505
+\end{verbatim}
+
+\textbf{Interpretation of the coefficient for age}: When awareness and
+gender are held constant, each increase in 1 year of age multiplies the
+predicted odds of receiving a flu shot by 1.076
+
+What does this interpretation tell us about the estimated probability of
+a client receiving the flu shot if the client is 71 years old, has a
+health awareness rating of 65, and is male, compared to the estimated
+probability found for a similar client who is a year younger?
+
+\textbf{Answer q2g}:
+
+I would expect the odds of the similar patient, except 1 year older than
+70 to be 12.5 + (12.5 * .076)\% \textasciitilde= 13.4\%
+
+And to compare probabilities we exam the odds ratio == exp(B-hat) ==
+1.075505 and is the increase in probability of flu shot, when gender and
+awareness are constant, of a 1 year increase in age.
+
+\textbf{And to confirm}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{x_age <-}\StringTok{ }\DecValTok{71}
+\NormalTok{x_gender <-}\StringTok{ }\DecValTok{1}
+\NormalTok{x_awareness <-}\StringTok{ }\DecValTok{65}
+
+\NormalTok{linearPart71 <-}\StringTok{ }\FloatTok{-1.17716} \OperatorTok{+}\StringTok{ }\NormalTok{(}\FloatTok{0.07279} \OperatorTok{*}\StringTok{ }\NormalTok{x_age) }\OperatorTok{-}\StringTok{ }\NormalTok{(}\FloatTok{0.09899} \OperatorTok{*}\StringTok{ }\NormalTok{x_awareness) }\OperatorTok{+}\StringTok{ }\NormalTok{(}\FloatTok{0.43397} \OperatorTok{*}\StringTok{ }\NormalTok{x_gender)}
+\KeywordTok{exp}\NormalTok{(linearPart71)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.1340624
+\end{verbatim}
+
+\end{document}

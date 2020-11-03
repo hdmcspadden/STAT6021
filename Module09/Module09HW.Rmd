@@ -2,7 +2,10 @@
 title: "Module 09 HW"
 author: "Diana McSpadden"
 date: "10/27/2020"
-output: html_document
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
 ---
 
 # Stat 6021: Homework Set 9
@@ -11,7 +14,7 @@ output: html_document
 ## UID: hdm52
 ## Date: 10/30/2020
 
-**Attended group with**: 
+**Attended group with**: Bernhardt, Cheu, Nam, Hiatt, Newman 
 
 
 # Question 1. In an experiment testing the effect of a toxic substance, ...
@@ -63,7 +66,7 @@ plot(logdose, log(prop/(1-prop)), xlab= "Log Dose", ylab="sample log odds")
 
 ```
 
-**Answer Q1a**: Yes, this plot looks perfet for a logistic regression model because the relationship is almost perfectly linear.
+**Answer Q1a**: Yes, this plot looks perfect for a logistic regression model because the relationship is almost perfectly linear.
 
 ## Q1 (b) Use R to fit the logistic regression model, and write the estimated logistic regression equation.
 
@@ -78,7 +81,7 @@ E(y) = exp(-2.64 + (0.67 * logdose)) / ( 1 + exp(-2.64 + (0.67 * logdose)))
  
 or
 
-log pi / (1 - pi) =  -2.64 + (0.67 * logdose)
+log(pi / (1 - pi)) =  -2.64 + (0.67 * logdose)
 
 ## Q1 (c) Interpret the estimated coefficient βˆ1 in context.
 
@@ -104,10 +107,10 @@ print(paste("Odds of Death: ",oddsOfDeath))
 ## Q1 (e) Predict the probability of death from exposure at log dose level x = 2.
 
 ```{r q1e-1}
-propOfDeathStart <- exp(-2.64 + (0.67 * x_logdose)) / ( 1 + exp(-2.64 + (0.67 * x_logdose)))
+#probOfDeathStart <- exp(-2.64 + (0.67 * x_logdose)) / ( 1 + exp(-2.64 + (0.67 * x_logdose)))
 
-propDeath <- propOfDeathStart / (1 - propOfDeathStart)
-print(paste("Probability of Death: ",propDeath))
+probDeath <- oddsOfDeath / (1 + oddsOfDeath)
+print(paste("Probability of Death: ",probDeath))
 
 ```
 
@@ -124,23 +127,26 @@ pearson<-residuals(modelInsects,type="pearson")
 X2<-sum(pearson^2)
 X2 # test statistic is 1.45
 print(paste("Pearson test statistic",X2))
-n= 1500
+
+n= 6
 p=2
 
-1-pchisq(X2,n-p) # df = n-p, this gives p vcalue
+pValue <- 1-pchisq(X2,n-p) # df = n-p, this gives p value
+print(paste("pvalue: ",pValue))
+
 ```
+
 
 Second, Deviance GOF
 ```{r q1f-2}
 1 - pchisq(modelInsects$deviance, n-p) 
 
 ```
-**Answer q1f**: We do not reject the null hypothesis, the model is a good fit because p > .05 for both GOF tests. The model fits well which agrees with our analysis of the plot of sample log odds against log dose.
+**Answer q1f**: We fail reject the null hypothesis, the model is a good fit because p value > .05 for both GOF tests. The model fits well which agrees with our analysis of the plot of sample log odds against log dose.
 
 
 # Question 2. (No R needed) A health clinic sent ...
-fliers to its clients to encourage everyone to get a flu shot. In a follow-up study, 159 elderly clients were randomly selected and asked if
-they received a flu shot. 
+fliers to its clients to encourage everyone to get a flu shot. In a follow-up study, 159 elderly clients were randomly selected and asked if they received a flu shot. 
 
 A client who received a flu shot was coded y = 1, and a client who did not receive a flu shot was coded y = 0. 
 
@@ -165,7 +171,7 @@ exp(0.43397)
 ```
 
 **Answer q2a**: 
-When age, and awareness rating are held constant, the odds of an elderly male patient receiving the flu shot is exp(0.43397), or 1.543373 times the odds of a an elderly female receiving the flu shot.
+When age, and awareness rating are held constant, the odds of an elderly male patient receiving the flu shot is exp(0.43397), or 1.543373 times the odds of a an elderly female patient receiving the flu shot.
 
 
 ## Q2 (b) Conduct the Wald test for B3. ...
@@ -184,9 +190,8 @@ seBjhat <- 0.52179
 wTestStatistic <- Bjhat / seBjhat
 print(paste("Wald test statistic for B3: ", wTestStatistic))
 
-#compare to qnorm
-
-wPValue <- pnorm(wTestStatistic, 1)
+#compare to pnorm
+wPValue <- (1-pnorm(wTestStatistic))*2
 print(paste("Wald p value for B3: ", wPValue))
 
 ```
@@ -201,9 +206,9 @@ print(paste("Wald p value for B3: ", wPValue))
 
 zValue <- 1.96 # for 95% CI
 
-CILow <- Bjhat - (zValue * Bjhat)
+CILow <- Bjhat - (zValue * seBjhat)
 
-CIHigh <- Bjhat + (zValue * Bjhat)
+CIHigh <- Bjhat + (zValue * seBjhat)
 
 print(paste("The 95% CI for B3 is: ", CILow, " - ", CIHigh))
 
@@ -212,12 +217,12 @@ print(paste("Low odds ratio: ", exp(CILow)))
 print(paste("High odds ratio: ", exp(CIHigh)))
 
 ```
-When age, and awareness rating are held constant, the odds of an elderly male patient receiving the flu shot is between 0.659 times and 3.61 time the odds of a an elderly female receiving the flu shot. 1 is within the CI, which supports the conclusion that gender is not a significant predictor.
+When age, and awareness rating are held constant, the odds of an elderly male patient receiving the flu shot is between -0.589 times and 1.46 time the odds of a an elderly female receiving the flu shot. 0 is within the CI, which supports the conclusion that gender is not a significant predictor.
 
 
 ## Q2 (d) Comment on whether your conclusions from parts 2b and 2c are consistent.
 
-**Answer q2d**: 1 is within the CI, which supports the conclusion that gender is not a significant predictor.
+**Answer q2d**: 0 is within the CI, which supports the conclusion that gender is not a significant predictor.
 
 
 ## Q2 (e) Suppose you want to drop the coefficients for age and gender, B1 and B3. 
@@ -240,7 +245,9 @@ fullDeviance <- 105.09
 
 df <- 2 # considering removing 2 predictors
 
-1-pchisq(partialDeviance - fullDeviance, df)
+deltaG2 <- partialDeviance - fullDeviance
+
+1-pchisq(deltaG2, df)
 
 qchisq(.025, df) # critical value
 
@@ -264,12 +271,16 @@ x_gender <- 1
 x_awareness <- 65
 
 linearPart <- -1.17716 + (0.07279 * x_age) - (0.09899 * x_awareness) + (0.43397 * x_gender)
+print(paste("log odds: ", linearPart))
+
+print(paste("odds: ", exp(linearPart)))
 
 Ey1 <- exp(linearPart) / (1 + exp(linearPart))
-Ey2 <- Ey1 / (1-Ey1)
-Ey2
+Ey1 #prob
+
+print(paste("prob: ", Ey1))
 ```
-**Answer q2f**: I estimate an 12.5% probability this patient received a flu shot.
+**Answer q2f**: I estimate the odds as .125 that this patient received a flu shot.
 
 ## Q2 (g) Based on your conclusion in question 2e, ...
 interpret the estimated coefficient for age, in context. 
@@ -278,30 +289,32 @@ interpret the estimated coefficient for age, in context.
 
 exp(0.07279)
 
-12.5 + (12.5 * .076)
-
 ```
 
 **Interpretation of the coefficient for age**: 
-When awareness and gender are held constant, each increase in 1 year of age increases the odds of receiving a flu shot by 7.6%.
-
+When awareness and gender are held constant, each increase in 1 year of age multiplies the predicted odds of receiving a flu shot by 1.076
 
 What does this interpretation tell us about the estimated probability of a client receiving the flu shot if the client is 71 years old, has a health awareness rating of 65, and is male, compared to the estimated probability found for a similar client who is a year younger?
 
-**Answer q2g**: I would expect the odds of the similar patient, except 1 year older than 70 to be 12.5 + (12.5 * .076)% ~= 13.4%
+
+**Answer q2g**: 
+
+I would expect the odds of the similar patient, except 1 year older than 70 to be 12.5 + (12.5 * .076)% ~= 13.4%
+
+And to compare probabilities we exam the odds ratio == exp(B-hat) == 1.075505 and is the increase in probability of flu shot, when gender and awareness are constant, of a 1 year increase in age.
+
+**And to confirm**
 
 ```{r q2g-2}
 x_age <- 71
 x_gender <- 1
 x_awareness <- 65
 
-linearPart <- -1.17716 + (0.07279 * x_age) - (0.09899 * x_awareness) + (0.43397 * x_gender)
-
-Ey1 <- exp(linearPart) / (1 + exp(linearPart))
-Ey2 <- Ey1 / (1- Ey1)
-Ey2
+linearPart71 <- -1.17716 + (0.07279 * x_age) - (0.09899 * x_awareness) + (0.43397 * x_gender)
+exp(linearPart71)
 
 ```
+
 
 
 
