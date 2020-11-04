@@ -135,44 +135,193 @@ This ROC curve shows there is some unknown threshold that predicts with a true p
 ### Question 1(c) Find the AUC associated with your ROC curve. 
 What does your AUC tell you?
 
+**Work on Q1c**
+
+Calculate the AUC...
+```{r q1c-1}
+##compute the AUC
+aucvalues <- performance(rates, measure = "auc")
+auc <- aucvalues@y.values[[1]]
+auc
+```
+**Answer Q1c**:
+The AUC = 0.978 means our model can perform with that accuracy when making a classification.
+
+### Quest 1(d) Create a confusion matrix using a cutoff of 0.5. 
+What is the false positive rate?
+
+What is the false negative rate? 
+
+Note: Be very careful with the coding associated with your response variable. 
+
+You may want to use the levels() function to check how R was coding your response variable.
+
+**Work on Q1d**
+
+Create the confusion matrix:
+```{r q1d-1}
+table(test$crimHigh, preds>0.5)
+```
+0 == low crime
+
+1 == high crime
+
+```{r q1d-1}
+
+trueNeg <- 164
+falseNeg <- 11
+truePos <- 75
+falsePos <- 3
+
+# here are all my calculations
+overallErrorRate <- (falseNeg + falsePos) / (falseNeg + falsePos + trueNeg + truePos)
+print(paste("Overall Error Rate: ",overallErrorRate))
+
+falsePosRate <- falsePos / (trueNeg + falsePos)
+print(paste("False Positive Rate: ",falsePosRate))
 
 
+falseNegRate <- falseNeg / (falseNeg + truePos)
+print(paste("False Negative Rate: ",falseNegRate))
 
-(d) Create a confusion matrix using a cutoff of 0.5. What is the false positive rate?
-What is the false negative rate? Note: Be very careful with the coding associated
-with your response variable. You may want to use the levels() function to check
-how R was coding your response variable.
-(e) Bearing in mind the governor is most interested in identifying towns with high
-crime rates, how would you adjust the cutoff value from 0.5? Briefly explain why.
-1
-2. (No R required) A study was undertaken to determine the association between several
-predictors and the duration of pregnancies. The response variable, pregnancy duration,
-was recorded as a three-class variable: pre-term for pregnancies lasting less than 36
-weeks, intermediate term for pregnancies lasting between 36 and 37 weeks, and full
-term for pregnancies lasting more than 37 weeks. The predictors are:
-• nutrition: index of nutritional status, higher scores denote better nutritional status
-• less20 : 1 =less than 20 years old, 0 otherwise
-• greater30 : 1 =greater than 30 years old, 0 otherwise
-• alcohol: 1 =drank alcohol during pregnancy, 0 otherwise
-• smoking: 1 =smoked during pregnancy, 0 otherwise
-A first-order multinomial logistic regression is carried out for this study, and the R
-output is shown below.
+#sensitivity <- 1 - falseNegRate
+#sensitivity
+
+#specifiity <- 1 - falsePosRate
+#specifiity
+
+```
+
+**Answer Q1d**
+
+False Positive Rate:  0.018
+
+False Negative Rate:  0.128
+
+### Question 1(e) Bearing in mind ...
+the governor is most interested in identifying towns with high crime rates, how would you adjust the cutoff value from 0.5? Briefly explain why.
+
+**Answer Q1e**
+
+We could set the threshold lower than 0.5 to identify more high crime towns, i.e. fewer false negatives. We would however also be increasing the false positive rate.
+
+## 2. (No R required) ...
+A study was undertaken to determine the association between several predictors and the duration of pregnancies. 
+The response variable, pregnancy duration, was recorded as a three-class variable: 
+* pre-term for pregnancies lasting less than 36 weeks, 
+* intermediate term for pregnancies lasting between 36 and 37 weeks, 
+* and full term for pregnancies lasting more than 37 weeks. 
+
+The predictors are:
+* nutrition: index of nutritional status, higher scores denote better nutritional status
+* less20 : 1 =less than 20 years old, 0 otherwise
+* greater30 : 1 =greater than 30 years old, 0 otherwise
+* alcohol: 1 =drank alcohol during pregnancy, 0 otherwise
+* smoking: 1 =smoked during pregnancy, 0 otherwise
+
+
+A first-order multinomial logistic regression is carried out for this study, and the R output is shown below.
+
 Call:
-multinom(formula = preg ~ nutrition + less20 + greater30 + alcohol +
-smoking)
-Coefficients:
-(Intercept) nutrition less20 greater30 alcohol smoking
-preterm 5.475147 -0.06541919 2.957028 2.059662 2.042900 2.452362
-intermediate 3.958370 -0.04644903 2.913475 1.887550 1.067001 2.230492
-Std. Errors:
-(Intercept) nutrition less20 greater30 alcohol smoking
-preterm 2.271677 0.01823916 0.9644921 0.8947727 0.7097461 0.7315106
-intermediate 1.941063 0.01488581 0.8575544 0.8088255 0.6495262 0.6681955
-(a) Write down the estimated multinomial logistic regression models associated with
-this analysis.
-(b) Calculate the Wald test statistics associated with the predictor alcohol, and find
-the corresponding p-value. What are the conclusions in context at significance
-level α = 0.05? You do not need to apply the Bonferroni method here.
-(c) Calculate the 95% confidence intervals associated with the predictor alcohol, and
-interpret these intervals in context, in terms of relative risk of having a pregnancy that is pre-term, intermediate, or full term. You do not need to apply the
-Bonferroni method here.
+
+multinom(formula = preg ~ nutrition + less20 + greater30 + alcohol + smoking)
+
+...
+
+### Quest 2(a) Write down the estimated multinomial logistic regression models associated with this analysis.
+
+**Answer Q2a**
+
+Refernce class is **full term pregnancies**. There are 2 logits that are each compared against probability of full term pregnancy.
+
+odds preterm vs full term = exp(5.48 - (0.65 * nutrition) + (2.96 * less20) + (2.06 * greater30) + (2.04 * alcohol) +(2.45 * smoking))
+
+odds intermediate vs full term = exp(3.96 - (0.46 * nutrition) + (2.91 * less20) + (1.89 * greater30) + (1.07 * alcohol) +(2.23 * smoking))
+
+
+### Question 2 (b) Calculate the Wald test statistics associated with the predictor alcohol, ...
+and find the corresponding p-value. 
+
+What are the conclusions in context at significance level α = 0.05? 
+You do not need to apply the Bonferroni method here.
+
+**Work on Q2b**
+
+Calculate z and p values for the coefficients:
+```{r q2c-1}
+
+#preTermNutritionZ <- -0.065 / 0.018
+#preTermNutritionP <- (1 - pnorm(abs(preTermNutritionZ)))*2
+#print(paste("Preterm Nutrition Z Score: ", preTermNutritionZ))
+#print(paste("Preterm Nutrition P Value: ", preTermNutritionP))
+
+#preTermLess20Z <- 2.96 / .096
+#preTermLess20P <- (1 - pnorm(abs(preTermLess20Z)))*2
+#print(paste("Preterm Less 20 Z Score: ", preTermLess20Z))
+#print(paste("Preterm Less 20 P Value: ", preTermLess20P))
+
+#preTermGreater30Z <- 2.06 / 0.89
+#preTermGreater30P <- (1 - pnorm(abs(preTermGreater30Z)))*2
+#print(paste("Preterm Greater 30 Z Score: ", preTermGreater30Z))
+#print(paste("Preterm Greater 30 P Value: ", preTermGreater30P))
+
+preTermAlcoholZ <- 2.04 / 0.71
+preTermAlcoholP <- (1 - pnorm(abs(preTermAlcoholZ)))*2
+print(paste("Preterm Alcohol Z Score: ", preTermAlcoholZ))
+print(paste("Preterm Alcohol P Value: ", preTermAlcoholP))
+
+#preTermSmokingZ <- 2.45 / 0.73
+#preTermSmokingP <- (1 - pnorm(abs(preTermSmokingZ)))*2
+#print(paste("Preterm Smoking Z Score: ", preTermSmokingZ))
+#print(paste("Preterm Smoking P Value: ", preTermSmokingP))
+
+#intNutritionZ <- -0.46 / 0.015
+#intNutritionP <- (1 - pnorm(abs(intNutritionZ)))*2
+#print(paste("Intermediate Nutrition Z Score: ", intNutritionZ))
+#print(paste("Intermediate Nutrition P Value: ", intNutritionP))
+
+#intLess20Z <- 2.91 / 0.86
+#intLess20P <- (1 - pnorm(abs(intLess20Z)))*2
+#print(paste("Intermediate Less 20 Z Score: ", intLess20Z))
+#print(paste("Intermediate Less 20 P Value: ", intLess20P))
+
+#intGreater30Z <- 1.89 / 0.81
+#intGreater30P <- (1 - pnorm(abs(intGreater30Z)))*2
+#print(paste("Intermediate Greater 30 Z Score: ", intGreater30Z))
+#print(paste("Intermediate Greater 30 P Value: ", intGreater30P))
+
+intAlcoholZ <- 1.07 / 0.65
+intAlcoholP <- (1 - pnorm(abs(intAlcoholZ)))*2
+print(paste("Intermediate Alcohol Z Score: ", intAlcoholZ))
+print(paste("Intermediate Alcohol P Value: ", intAlcoholP))
+
+#intSmokingZ <- 2.23 / 0.67
+#intSmokingP <- (1 - pnorm(abs(intSmokingZ)))*2
+#print(paste("Intermediate Smoking Z Score: ", intSmokingZ))
+#print(paste("Intermediate Smoking P Value: ", intSmokingP))
+```
+
+**Answer Q2b**:
+Alcohol is significant when predicting preterm vs full term, but not when predicting intermediate term vs full term in this model.
+
+
+### Question 2(c) Calculate the 95% confidence intervals associated with the predictor alcohol, ...
+and interpret these intervals in context, in terms of relative risk of having a pregnancy that is pre-term, intermediate, or full term. You do not need to apply the Bonferroni method here.
+
+**Work on 2c**
+
+**Answer 2C**
+
+```{r q2c-1}
+
+```
+
+
+
+
+
+
+
+
+
+
