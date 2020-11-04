@@ -1,0 +1,178 @@
+---
+title: "Module10HW"
+author: "Diana McSpadden"
+date: "11/4/2020"
+output: html_document
+---
+
+# Stat 6021: Homework Set 9
+
+## H. Diana McSpadden
+## UID: hdm52
+## Date: 11/06/2020
+
+**Attended group with**: 
+
+
+## Question 1. 
+For this question, you will use a data set Boston, which comes from the MASS package in R. This is the same data set that you saw in the live session. The purpose of this question is to classify a town as being a high- or low-crime town based on some predictors. The governor of Massachusetts is most interested in identifying towns that have a high crime rate.
+
+
+### Question 1 (a) Before fitting your logistic regression model ...
+you will need to create a new variable. The variable crim is the per capita crime rate of the town. Create a new variable that classifies crim in the following manner: 
+
+Define a town to have a:
+* low crime rate, if its crime rate is less than 1 per capita.
+* high crime rate, otherwise
+
+Using the ifelse() function will be very helpful for this.
+
+I highly recommend to add this newly created variable to the existing data frame.
+
+Also, use the contrasts() function to see which class is the reference class for this newly created variable. What is the reference class?
+
+**Work on Q1a**
+
+```{r q1-setup1}
+library(MASS)
+library(Hmisc)
+library(dplyr)
+library(nnet)
+library(ROCR)
+```
+
+``` {r q1a-1}
+
+#?Boston
+
+
+# even though we dont need it, here is the summary
+aboutBoston <- summary(Boston$crim)
+aboutBoston
+
+Boston <- Boston %>%
+     mutate(crimHigh = (crim >= 1.0) * 1)
+```
+
+```{r q1a-2}
+
+Boston
+
+attach(Boston)
+
+```
+```{r q1a-3}
+is.factor(crimHigh)
+
+##tell R to treat this variable as categorical
+crimHigh<-factor(crimHigh)
+
+is.factor(crimHigh)
+
+levels(crimHigh)<-c("low","high")
+levels(crimHigh)
+
+contrasts(crimHigh)
+
+```
+**Answer Q1a**:
+
+The reference class is low == 0
+
+### Question 1 (b) Randomly split the data into a testing and training set of equal sizes. 
+For consistency of results among all groups, use set.seed(199). Next, using the training set, fit a logistic regression model, with your newly created variable as the binary response variable, and with the following predictors: indus, nox, rad, tax, lstat, and medv. Then validate your model on the test data by creating an ROC curve.
+
+
+What does your ROC curve tell you?
+
+**Work on Q1b**
+
+First, split the dataset into training and test:
+```{r q1b-1}
+detach(Boston) #detach Boston so variable names aren't a mess
+
+set.seed(199) #set seed
+
+sample<-sample.int(nrow(Boston), floor(.50*nrow(Boston)), replace = F) # get random sample to rows
+train<-Boston[sample, ]
+test<-Boston[-sample, ]
+```
+
+Second, fit the model on training data with specified predictors:
+
+```{r q1b-2}
+result<-glm(crimHigh ~ indus + nox + rad + tax + lstat + medv, family = "binomial", data=train)
+```
+
+Third, create ROC curve using validation, i.e. test, data.
+```{r q1b-3}
+##predicted prob of high crime vs. low crime rate for testing data based on training data
+preds<-predict(result,newdata=test, type="response") # need to use type=response for probabilities.
+
+##produce the numbers associated with classification table
+rates<-prediction(preds, test$crimHigh) #did it correctly identify CHD diagnosis?
+
+##store the true positive and false postive rates
+roc_result<-performance(rates,measure="tpr", x.measure="fpr")
+```
+
+
+Now, plot the resulting ROC:
+``` {r q1b-4}
+##plot ROC curve and overlay the diagonal line for random guessing
+plot(roc_result, main="ROC Curve for High Crime")
+lines(x = c(0,1), y = c(0,1), col="red")
+lines(x = c(0.08,0.08), y = c(0,1), col="blue")
+lines(x = c(0,1), y = c(0.93,0.93), col="blue")
+
+```
+**Answer Q1b**:
+
+I really am impressed with the predictive power of the model to predict high crime based on indus, nox, rad, tax, lstat, and medv.
+
+This ROC curve shows there is some unknown threshold that predicts with a true positive rate around 93% with a corresponding false positive rate of only ~8%.
+
+### Question 1(c) Find the AUC associated with your ROC curve. 
+What does your AUC tell you?
+
+
+
+
+(d) Create a confusion matrix using a cutoff of 0.5. What is the false positive rate?
+What is the false negative rate? Note: Be very careful with the coding associated
+with your response variable. You may want to use the levels() function to check
+how R was coding your response variable.
+(e) Bearing in mind the governor is most interested in identifying towns with high
+crime rates, how would you adjust the cutoff value from 0.5? Briefly explain why.
+1
+2. (No R required) A study was undertaken to determine the association between several
+predictors and the duration of pregnancies. The response variable, pregnancy duration,
+was recorded as a three-class variable: pre-term for pregnancies lasting less than 36
+weeks, intermediate term for pregnancies lasting between 36 and 37 weeks, and full
+term for pregnancies lasting more than 37 weeks. The predictors are:
+• nutrition: index of nutritional status, higher scores denote better nutritional status
+• less20 : 1 =less than 20 years old, 0 otherwise
+• greater30 : 1 =greater than 30 years old, 0 otherwise
+• alcohol: 1 =drank alcohol during pregnancy, 0 otherwise
+• smoking: 1 =smoked during pregnancy, 0 otherwise
+A first-order multinomial logistic regression is carried out for this study, and the R
+output is shown below.
+Call:
+multinom(formula = preg ~ nutrition + less20 + greater30 + alcohol +
+smoking)
+Coefficients:
+(Intercept) nutrition less20 greater30 alcohol smoking
+preterm 5.475147 -0.06541919 2.957028 2.059662 2.042900 2.452362
+intermediate 3.958370 -0.04644903 2.913475 1.887550 1.067001 2.230492
+Std. Errors:
+(Intercept) nutrition less20 greater30 alcohol smoking
+preterm 2.271677 0.01823916 0.9644921 0.8947727 0.7097461 0.7315106
+intermediate 1.941063 0.01488581 0.8575544 0.8088255 0.6495262 0.6681955
+(a) Write down the estimated multinomial logistic regression models associated with
+this analysis.
+(b) Calculate the Wald test statistics associated with the predictor alcohol, and find
+the corresponding p-value. What are the conclusions in context at significance
+level α = 0.05? You do not need to apply the Bonferroni method here.
+(c) Calculate the 95% confidence intervals associated with the predictor alcohol, and
+interpret these intervals in context, in terms of relative risk of having a pregnancy that is pre-term, intermediate, or full term. You do not need to apply the
+Bonferroni method here.
