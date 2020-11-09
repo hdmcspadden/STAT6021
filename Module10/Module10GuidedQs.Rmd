@@ -70,8 +70,8 @@ produce the **ROC curve**
 ##plot ROC curve and overlay the diagonal line for random guessing
 plot(roc_result, main="ROC Curve for Congestive Heart Disease")
 lines(x = c(0,1), y = c(0,1), col="red")
-lines(x = c(0.27,0.27), y = c(0,1), col="blue")
-lines(x = c(0,1), y = c(0.8,0.8), col="blue")
+#lines(x = c(0.27,0.27), y = c(0,1), col="blue")
+#lines(x = c(0,1), y = c(0.8,0.8), col="blue")
 ```
 **Q1a Answer**
 
@@ -134,7 +134,9 @@ aboutBoston <- summary(Boston$crim)
 aboutBoston
 
 crimMedian <- aboutBoston[[3]] # median crim value
+crimMedian
 crim75 <- aboutBoston[[5]] # 75% crim value
+crim75
 ```
 create the new column and values:
 * 0 == low
@@ -143,14 +145,11 @@ create the new column and values:
 
 ```{r q2a-2}
 
-df <- Boston %>%
+Boston <- Boston %>%
      mutate(crimCat = case_when(crim < crimMedian ~ '0',
                                   crim <= crim75 ~ '1',
                                   TRUE ~ '2'))
-
-detach(Boston)
-df
-attach(df)
+attach(Boston)
 ```
 
 
@@ -160,18 +159,18 @@ distance of the tract from five Boston employment centers and the student-teache
 
 ```{r q2b-1}
 
-is.numeric(crimCat)
+is.numeric(Boston$crimCat)
 
-is.factor(crimCat)
+is.factor(Boston$crimCat)
 
 ##tell R to treat this variable as categorical
-crimCat<-factor(crimCat)
+crimCat<-factor(Boston$crimCat)
 
 is.factor(crimCat)
 ```
 ```{r q2b-2}
-levels(crimCat)<-c("low","medium","high")
-levels(crimCat)
+levels(Boston$crimCat)<-c("low","medium","high")
+levels(Boston$crimCat)
 ```
 
 
@@ -184,7 +183,7 @@ levels(crimCat)
 
 
 ##fit multinomial logistic regression model
-result<-multinom(crimCat ~ dis + ptratio)
+result<-multinom(crimCat ~ dis + ptratio, data = Boston)
 summary(result)
 
 ```

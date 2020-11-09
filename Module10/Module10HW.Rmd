@@ -2,7 +2,9 @@
 title: "Module10HW"
 author: "Diana McSpadden"
 date: "11/4/2020"
-output: html_document
+output:
+  word_document: default
+  html_document: default
 ---
 
 # Stat 6021: Homework Set 9
@@ -11,7 +13,7 @@ output: html_document
 ## UID: hdm52
 ## Date: 11/06/2020
 
-**Attended group with**: 
+**Attended group with**: Wright, Nam, Barbre
 
 
 ## Question 1. 
@@ -166,7 +168,7 @@ table(test$crimHigh, preds>0.5)
 
 1 == high crime
 
-```{r q1d-1}
+```{r q1d-2}
 
 trueNeg <- 164
 falseNeg <- 11
@@ -203,10 +205,13 @@ the governor is most interested in identifying towns with high crime rates, how 
 
 **Answer Q1e**
 
+I am interpreting "most interested" as wanting to make sure as many high crime areas are identified as feasible with the model.
+
 We could set the threshold lower than 0.5 to identify more high crime towns, i.e. fewer false negatives. We would however also be increasing the false positive rate.
 
 ## 2. (No R required) ...
 A study was undertaken to determine the association between several predictors and the duration of pregnancies. 
+
 The response variable, pregnancy duration, was recorded as a three-class variable: 
 * pre-term for pregnancies lasting less than 36 weeks, 
 * intermediate term for pregnancies lasting between 36 and 37 weeks, 
@@ -232,11 +237,11 @@ multinom(formula = preg ~ nutrition + less20 + greater30 + alcohol + smoking)
 
 **Answer Q2a**
 
-Refernce class is **full term pregnancies**. There are 2 logits that are each compared against probability of full term pregnancy.
+Reference class is **full term pregnancies**. There are 2 logits that are each compared against probability of full term pregnancy.
 
-odds preterm vs full term = exp(5.48 - (0.65 * nutrition) + (2.96 * less20) + (2.06 * greater30) + (2.04 * alcohol) +(2.45 * smoking))
+probability of preterm vs full term = exp(5.48 - (0.065 * nutrition) + (2.96 * less20) + (2.06 * greater30) + (2.04 * alcohol) + (2.45 * smoking))
 
-odds intermediate vs full term = exp(3.96 - (0.46 * nutrition) + (2.91 * less20) + (1.89 * greater30) + (1.07 * alcohol) +(2.23 * smoking))
+probability of intermediate vs full term = exp(3.96 - (0.046 * nutrition) + (2.91 * less20) + (1.89 * greater30) + (1.07 * alcohol) +(2.23 * smoking))
 
 
 ### Question 2 (b) Calculate the Wald test statistics associated with the predictor alcohol, ...
@@ -275,7 +280,7 @@ print(paste("Preterm Alcohol P Value: ", preTermAlcoholP))
 #print(paste("Preterm Smoking Z Score: ", preTermSmokingZ))
 #print(paste("Preterm Smoking P Value: ", preTermSmokingP))
 
-#intNutritionZ <- -0.46 / 0.015
+#intNutritionZ <- -0.046 / 0.015
 #intNutritionP <- (1 - pnorm(abs(intNutritionZ)))*2
 #print(paste("Intermediate Nutrition Z Score: ", intNutritionZ))
 #print(paste("Intermediate Nutrition P Value: ", intNutritionP))
@@ -304,6 +309,10 @@ print(paste("Intermediate Alcohol P Value: ", intAlcoholP))
 **Answer Q2b**:
 Alcohol is significant when predicting preterm vs full term, but not when predicting intermediate term vs full term in this model.
 
+For preterm vs fullterm, because the p-value is < 0.05, we reject H0, and say alcohol is significant in this model.
+
+For intermediate vs. fullterm, because the p-value is < 0.05, we fail to reject H0, and say alcohol is not significant in this model.
+
 
 ### Question 2(c) Calculate the 95% confidence intervals associated with the predictor alcohol, ...
 and interpret these intervals in context, in terms of relative risk of having a pregnancy that is pre-term, intermediate, or full term. You do not need to apply the Bonferroni method here.
@@ -312,12 +321,32 @@ and interpret these intervals in context, in terms of relative risk of having a 
 
 **Answer 2C**
 
-```{r q2c-1}
+```{r q2c-2}
 
+preBhat <- 2.0429
+preBse <- 0.7097461
+
+preciLow <- preBhat - (1.96 * preBse)
+preciHigh <- preBhat + (1.96 * preBse)
+
+print(paste("preterm vs full term alcohol CI: ",preciLow, " - ",preciHigh))
+print(paste("EXP preterm vs full term alcohol CI: ",exp(preciLow), " - ",exp(preciHigh)))
+
+
+intBhat <- 1.067001
+intBse <- 0.6495262
+  
+intciLow <- intBhat - (1.96 * intBse)
+intciHigh <- intBhat + (1.96 * intBse)
+
+print(paste("intermediate vs full term alcohol CI: ",intciLow, " - ",intciHigh))
+print(paste("EXP intermediate vs full term alcohol CI: ",exp(intciLow), " - ",exp(intciHigh)))
 ```
 
+**Answer Q2c**
+95% CI for preterm vs full term coefficient within our model is: preterm 0.652 - 3.43. We are 95% confident the relative risk of preterm vs full term pregnancies when alcohol is consumed, and all other variables are held constant ,is between 1.92 and 31.
 
-
+The 95% CI for the alcohol coefficient is between -0.21 and 2.34; since 0 is within the 95% CI, this CI agrees with our Wald's test that when predicting intermediate pregnancy length vs full length pregnancies alcohol is not a significant predictor within our model.
 
 
 

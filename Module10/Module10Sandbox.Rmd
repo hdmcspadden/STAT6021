@@ -292,6 +292,19 @@ For any GLM:
 * null and residual deviance to determine if model is useful
 * difference in residual deviances to compare nested models
 
+```{r}
+set.seed(1)
+sample.int(100,5)
+
+```
+
+## Lecture
+
+Rare Events: if you have really good predictors it can still work with unbalanced data. look at mod 9 and mod 10.
+
+consider the data set: e.g. look at data. with chd the same is skewed to young men which makes it even rarer. may only be appropriate for older men.
+
+also try to think if you can subset your dataset. must mention in conclusion.
 
 
 

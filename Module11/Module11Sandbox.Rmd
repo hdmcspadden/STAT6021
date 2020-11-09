@@ -1,0 +1,105 @@
+---
+title: "Module11Sandbox"
+author: "Diana McSpadden"
+date: "11/8/2020"
+output: html_document
+---
+
+
+# Module 11: Regression for Time Series Data and Resampling Methods
+
+## ESSENTIAL QUESTIONS
+1. What are the consequences of using linear regression when the observations are not independent?
+2. How do we transform the variables to account for the correlation between observations?
+3. What are the various methods of cross-validation and what are their pros and cons?
+
+## LEARNING OBJECTIVES
+1. Detect the presence of autocorrelation in error terms.
+2. Explain how the presence of autocorrelation in error terms affects the least-squares regression model.
+3. Describe the setup of an autoregressive (AR) error model, and use the model to answer questions of interest.
+4. Explain the pros and cons of the various methods of cross-validation.
+5. Use cross-validation to decide which regression model to use in a data analysis.
+
+## Introduction
+
+To account for the correlation between data and error terms, we will use an autoregressive (AR) model for the error terms. After finding the appropriate AR model for the error terms, we can apply a simple transformation to our data, and then fit a linear regression model after the transformation.
+
+In the last part of this lesson, we will compare a few different ways of splitting the data into these two parts, and you will learn about the pros and cons of these different ways to validate models.
+
+## 11.2: Autocorrelation in Errors
+
+Read Sections 14.1 and 14.2 of your textbook. As you read, take notes on the following.
+ 
+### Describe, in your own words, when observations and errors may not be independent in data.
+ 
+* when an important predictor is not included that accounts for changes over time
+
+* 
+
+
+### What are the consequences in ordinary least squares regression when the errors are autocorrelated? 
+
+1. coefficients are not minimum varianceeimates.
+2. when errors are + autocorrelated the MSE seriously underestimate the error variance, sigma^2.
+    - standard errors of coeffs may be too small
+    - CIs will be too small
+3. CIs, PIs, hypothesis tests on t or F values are no longer exact.
+
+
+### How are residual plots used to detect autocorrelation in the errors? 
+
+1. plot residuals vs time. If positive correlation then residuals of equal sign occur in clusters.If negative correlation, changes in sign occur too rapidly.
+
+
+### Consider the simple linear regression model with first-order autoregressive errors. 
+
+#### (a) Write down the model. 
+
+yt = B0 + B1x1 + Et where Et = (phi * E(t-1)) + at where at is NID(0, sigma^2a)
+
+#### (b) What are the expected value, the variance, and the covariance of the error terms? 
+
+expected value, i.e. mean, of E is E(e) = 0
+
+variance = sigma^2 = sigma^2a  * (1/ (1 - phi^2))
+
+covariance = Equation 14.3 , page 476
+
+#### (c) What is the autocorrelation between two error terms that are k periods apart? 
+
+== phi (Equation 14.3, p 476)
+
+
+### How is a partial autocorrelation function (PACF) plot used to detect autocorrelation in the errors?
+
+epsilons are a AR(p) structure.
+
+
+E(t) is a linear combination of past errors and a N(0,sigma^2a) term == a(t)
+
+assess how many past terms to use, i.e. what is "p" in the linearized form of E(t)?
+
+Watson-Durbin assumes it is only 1 (just the last error term == E(t-1)
+
+
+#### PACF plot of residuals to assess order of AR structure of our errors.
+
+lag h measures correlation of any two points h lags apart after **removing the connections with all the points between x(t) and x(t + h)**
+
+## 11.3: Estimating the Regression Model with Autocorrelated Errors and Using it to Make Predictions
+
+Read Section 14.3 of your textbook. As you read, take notes on the following.
+ 
+Note: There is a mistake in last line of equation (14.7) in textbook. εt should be at.
+ 
+### Using your own words, describe the steps you would take to fit a simple linear regression model ...
+with first-order autocorrelated errors using the Cochrane-Orcutt method. 
+
+
+
+### What is the forecast at time period T+1 based on the end of the current time period T? 
+
+
+
+### What is the one-step ahead forecast error? 
+
