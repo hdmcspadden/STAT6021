@@ -1,0 +1,139 @@
+---
+title: "Module11GuidedQs"
+author: "Diana McSpadden"
+date: "11/10/2020"
+output: html_document
+---
+
+# Stat 6021: Guided Question Set 11
+
+For this guided question set, we will use the nfl.txt data set that we used in module 7.
+As a reminder, the data are on NFL team performance from the 1976 season. 
+
+The variables are:
+* y: Games won (14-game season)
+* x1: Rushing yards (season)
+* x2: Passing yards (season)
+* x3: Punting average (yards/punt)
+* x4: Field goal percentage (FGs made/FGs attempted)
+* x5: Turnover dierential (turnovers acquired - turnovers lost)
+* x6: Penalty yards (season)
+* x7: Percent rushing (rushing plays/total plays)
+* x8: Opponents' rushing yards (season)
+* x9: Opponents' passing yards (season)
+
+We will use the predictors x2; x7; and x8, which we found to have the lowest BIC from module 7. For this guided question set, your group is to write your own code to carry out Leave-One-Out Cross-Validation and to provide an estimate for the test MSE for this model.
+
+Be sure to submit your R script containing the code (comments should be added in the code when appropriate), as well as the estimated test MSE for this model for HW 11.
+
+While there exist functions to carry out LOOCV, you are tasked to write your own code for this activity. Writing your code is a good way to test if you really understand all the steps in the process involved with a statistical method or algorithm. You can then compare your code with existing functions to verify if you wrote your code correctly.
+
+The cv.glm() function from the boot library can carry out cross-validation. 
+
+For example: 
+
+glm.fit<-glm(y~x2+x7+x8, data=data)
+
+cv.err<-cv.glm(data, glm.fit)
+
+cv.err$delta[1] ## the output for the LOOCV should match your own
+
+cv.glm(data,glm.fit, K=10)$delta[1] ##k fold CV with k=10
+
+```{r gq11-setup}
+# include libraries
+library(boot)
+
+
+# get the data
+data<-read.table("nfl.txt", header=TRUE, sep="")
+attach(data)
+data
+
+```
+
+28 observations.
+
+## Provided Cross Validation For Comparison
+
+```{r gq-cv}
+
+glm.fit<-glm(y~x2+x7+x8, data=data)
+
+cv.err<-cv.glm(data, glm.fit)
+
+cv.err$delta[1] ##the output for the LOOCV should match your own
+
+cv.glm(data, glm.fit, K=10)$delta[1] ##k fold CV with k=10
+
+```
+LOOCV Steps:
+1. split into two parts, but only single observation is used for validation.
+2. n of these training vs. 1 models are done so you have MSE1 ... MSEn and find mean of MSE's
+```{r gq-LOOCV}
+
+myLOOCVLoop <- function(theData, leaveOutIndex) {
+
+  # leave out the i-th value for testing
+  test <- theData[leaveOutIndex, ]
+  # keep rest of data for training
+  train <- theData[-leaveOutIndex, ]
+  
+  # fit to training data
+  glm.fit<-glm(y~x2+x7+x8, data=train)
+
+  ## get predicted value from test data
+  preds<-predict(glm.fit,newdata=test)
+  
+  #print(paste("Prediction: ", preds))
+  #print(paste("Actual: ", test[1]))
+  
+  # calculate square of difference between predicted and actual
+  difsquared = (preds - test[1])^2
+  
+  # return dif squared
+  return(difsquared)
+}
+
+# I want to calculate: #mean((data$actual - data$pred)^2)
+# create an accumulator variable
+difSquaredAccummulator <- 0
+
+# loop through all rows in data set
+for (i in 1:nrow(data)) 
+{ 
+  # add to accumulator the dif Squared
+  difSquaredAccummulator <- difSquaredAccummulator + myLOOCVLoop(data,i)
+}
+
+# get average of dif squared == MSE for LOOCV
+mseLOOCV <- difSquaredAccummulator / nrow(data)
+
+print(paste("My LOOCV: ", mseLOOCV))
+
+```
+
+Dr. Woo's gicen code for comparison:
+```{r}
+glm.fit<-glm(y~x2+x7+x8, data=data)
+
+cv.err<-cv.glm(data, glm.fit)
+
+cv.err$delta[1] ##the output for the LOOCV should match your own
+
+cv.glm(data, glm.fit, K=10)$delta[1] ##k fold CV with k=28
+cv.glm(data, glm.fit, K=28)$delta[1] ##k fold CV with k=28
+```
+
+
+
+And, I was interested in the MSE when all data was used
+``` {r gq11-alldataMSE}
+# And this is MSE using all available data
+
+glm.fit <- lm(y~x2+x7+x8, data=data)
+summary <- summary(glm.fit)
+summary
+print(paste("MSE of model: ",mean(summary$residuals^2)))
+
+```

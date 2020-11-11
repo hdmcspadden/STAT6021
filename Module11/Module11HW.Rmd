@@ -1,0 +1,232 @@
+---
+title: "Module11HW"
+author: "Diana McSpadden"
+date: "11/11/2020"
+output: html_document
+---
+# Stat 6021: Homework Set 11
+
+## H Diana McSpadden (hdm5s)
+
+## 1. The data set "mcgill.txt" contains the seasonally adjusted quarterly sales for the McGill Company (response variable, first column, in million dollars) and for the entire industry (predictor, second column, in million dollars).
+
+## (a) Explain why fitting a simple linear regression model with autocorrelated errors is a better choice than a simple linear regression model with i.i.d. errors for this data set.
+
+**Answer Q1a**:
+
+Due to the residuals not meeting the SLR assumption of lack of correlation, if we fit without taking account of these correlated errors :
+1. coefficients will not be minimum variance estimates.
+2. when errors are positively autocorrelated the MSE seriously underestimates the error variance: sigma^2 resulting in:
+    * standard errors of coefficients may be too small, and CIs will be too small
+3. and CIs, PIs, hypothesis tests on t or F values are no longer exact.
+
+If we fix the issue of autocorrelation of errors (and the other assumptions are met) we will not have the issues above.
+
+
+## (b) Use the Cochrane-Orcutt method to fit a simple linear regression model with AR(1) errors.
+
+```{r q1b-1}
+#setup
+library(dplyr)
+
+# get the data
+mcData<-read.table("mcgill.txt", header=FALSE, sep="")
+
+colnames(mcData)<-c("company","industry")
+mcData
+attach(mcData)
+```
+```{r q1b-2}
+mcResult<-lm(company~industry)
+summary(mcResult)
+
+mcRes<-mcResult$residuals
+
+##PACF plot of residuals
+pacf(mcRes, main="PACF of Residuals")
+# significant at lag 1
+
+
+##fit an AR(1) model for residuals
+# order = c(1,0,0) indicates the p value == 1
+ar.1<-arima(mcRes, order = c(1,0,0), include.mean = FALSE)
+ar.1
+
+ar.1$coef
+```
+This looks significant at lag 1 **and** 4.
+
+### i. Report the estimated autocorrelation at lag 1 for the errors.
+I believe this is asking for phi.
+
+**Answer Q1bi**: 0.6442
+
+
+### ii. Write out the model with the estimated values of the coefficients.
+
+y' = (-1.43)(1 - 0.6442) + (0.176)(x(t) - (0.6442)x(t-1)) + E(t) - 0.6442E(t-1)
+
+**Answer Q1bii**:
+
+y' = (0.509) + 0.176(x') + a(t)
+
+### iii. Assess if the regression model assumptions are met.
+
+First, transform company and industry.
+
+```{r q1b-3}
+##transform response and predictor
+shift<-ar.1$coef
+
+#?lag
+
+#create new column bind, shifts company variable by 1
+y<-cbind(as.ts(company),lag(company,1))
+yprime<-y[,2] - shift*y[,1]
+#y
+#yprime
+
+x<-cbind(as.ts(industry),lag(industry))
+xprime<-x[,2] - shift*x[,1]
+#x
+#xprime
+
+##perform regression on transformed variables
+result.prime<-lm(yprime~xprime)
+summary(result.prime)
+  
+
+```
+
+Second, now test the SLR assumptions:
+```{r q1b-4}
+##residual plot
+plot(result.prime$fitted.values,result.prime$residuals, main="Plot of Residuals against Fitted Values")
+abline(h=0,col="red")
+
+##acf plot of residuals
+acf(result.prime$residuals)
+
+##qq plot of residuals
+qqnorm(result.prime$residuals)
+qqline(result.prime$residuals, col="red")
+```
+**Answer Q1biii**:
+
+Yes, based on the residual plot, ACF plot, and QQ plot, the linear regression assumptions are met.
+
+### iv. Are the seasonally adjusted quarterly sales for the McGill Company significantly linearly related to the seasonally adjusted quarterly sales for the entireindustry? 
+Be sure to state the hypothesis statements, test statistic, and p-value, as well as an appropriate conclusion in context.
+
+
+## 2. Show how to apply the Cochrane-Orcutt method to a multiple linear regression model ...
+with AR(1) errors, i.e. what kind of transformations to the variables need to be made. Show how you derived your answer.
+
+**Answer Q2**:
+
+Each variable: response and predictor needs to be corrected by (phi * (variable at the correct lag)). So for each observation, i:
+
+y(i)' = y(i) - (phi * y(i-lag))
+
+and each regressor x(j):
+
+x(j,i)' = x(j,i) - (phi * x(j,i-lag))
+
+## 3. Consider a applying the Cochrane Orcutt method, but now ...
+to a simple linear regression with AR(2) errors, where Et = phi1(t-1) + phi2(t-2) + at.
+
+### (a) Show how the Cochrane-Orcutt method should be applied, ...
+i.e. what kind of transformations to the variables need to be made. Show how you derived your answer.
+
+**Answer Q3a**:
+
+The response and predictor needs to be corrected by (phi(j) * (variable at the j lag)) for j = 1 to p. So, for lag == 2, for each observation, i:
+
+The response variable:
+
+y(i)' = y(i) - (phi1 * y(i-1)) - (phi2 * y(i-2))
+
+and the regressor:
+
+x(i)' = x(i) - (phi1 * x(i-1)) - (phi2 * x(i-2))
+
+
+### (b) What do you think are the transformations to the variables for a simple linear regression model with AR(p) errors, ...
+where p is a positive integer. You do not have to show how you arrived at your answer.
+
+**Answer Q3b**:
+
+The response and predictor needs to be corrected by (phi(j) * (variable at the j lag)) for j = 1 to p. So, for each observation, i:
+
+The response variable:
+
+y(i)' = y(i) - (phi1 * y(i-1)) - ... - (phip * y(i-p))
+
+and the regressor:
+
+x(i)' = x(i) - (phi1 * x(i-1)) - ... -  (phip * x(i-p))
+
+
+Hint: For questions 2 and 3, the derivation from the textbook page 482, equation (14.7) will be helpful. Please note the typo in the last line of (14.7), Et should be at.
+
+## 4. Submit your group's code and estimated test MSE from guided question set 11.
+
+```{r q4-1}
+
+# setup
+library(boot)
+
+# get the data & attach
+data<-read.table("nfl.txt", header=TRUE, sep="")
+attach(data)
+
+
+# myLOOCVLoop function
+# inpuut: the dataset: dataframe, leaveOutIndex: the index to use as the test value
+# output: the MSE for the requested loop of LOOCV 
+myLOOCVLoop <- function(theData, leaveOutIndex) {
+
+  # leave out the i-th value for testing
+  test <- theData[leaveOutIndex, ]
+  # keep rest of data for training
+  train <- theData[-leaveOutIndex, ]
+  
+  # fit to training data
+  glm.fit<-glm(y~x2+x7+x8, data=train)
+
+  ## get predicted value from test data
+  preds<-predict(glm.fit,newdata=test)
+  
+  #print(paste("Prediction: ", preds))
+  #print(paste("Actual: ", test[1]))
+  
+  # calculate square of difference between predicted and actual
+  difsquared = (preds - test[1])^2
+  
+  # return dif squared
+  return(difsquared)
+}
+
+# I want to calculate: #mean((data$actual - data$pred)^2)
+# create an accumulator variable
+difSquaredAccummulator <- 0
+
+# loop through all rows in data set
+for (i in 1:nrow(data)) 
+{ 
+  # add to accumulator the dif Squared
+  difSquaredAccummulator <- difSquaredAccummulator + myLOOCVLoop(data,i)
+}
+
+# get average of dif squared == MSE for LOOCV
+mseLOOCV <- difSquaredAccummulator / nrow(data)
+
+print(paste("My LOOCV: ", mseLOOCV))
+
+```
+**My test MSE**: 3.123615380779
+
+
+## 5. Please remember to complete the Module 11 Guided Question Set Participation Self-and Peer-Evaluation Questions via Test & Quizzes on Collab.
+
+**Will do**

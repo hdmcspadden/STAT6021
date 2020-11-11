@@ -34,7 +34,7 @@ Read Sections 14.1 and 14.2 of your textbook. As you read, take notes on the fol
  
 * when an important predictor is not included that accounts for changes over time
 
-* 
+* actual time dependance
 
 
 ### What are the consequences in ordinary least squares regression when the errors are autocorrelated? 
@@ -95,11 +95,89 @@ Note: There is a mistake in last line of equation (14.7) in textbook. εt should
 ### Using your own words, describe the steps you would take to fit a simple linear regression model ...
 with first-order autocorrelated errors using the Cochrane-Orcutt method. 
 
+1. get an estimate of phi, using equation 14.8
+2. use the phi estimate to transform x' and y' (top of page 483)
+3. then use ordinary least squares regression to get B0-hat and B1-hat and new set of residuals.
+4. do durbin-watson again to see if d value is good/bad and repeat process if needed with new residuals.
+
+from slides ...
+
+1. Use OLS to get initial coef estimates
+2. Examine the AR structure of the sample residuals from step 1 using a PACF plot
+3. estimate the coefs phi-1 ... phi-p using ARIMA estimation
+4. use estimated phi-1...phi-p to transform y' and x'
+5. use OLS to estimate yi and xi
+6. If everything works, the residuals at the end of step 5 should be uncorrelated and mean=0 and constant variance.
 
 
 ### What is the forecast at time period T+1 based on the end of the current time period T? 
 
-
+Eq. 14.15 on page 491
 
 ### What is the one-step ahead forecast error? 
+
+a(T + 1)
+
+## 11.4: Cross-Validation
+Read from the beginning of Section 5 up to Section 5.1.4 of An Introduction to Statistical Learning, with Applications in R (scroll down to the bottom to find the link to the book). As you read, take notes on the following.
+ 
+### Using your own words, describe the steps taken in the validation set approach. 
+
+1. randomly divide available set into training and test.
+2. Fit on Training
+2. Predict values in test
+5. Determine predict error rate .. MSE for quant responses.
+
+
+### Using your own words, describe the steps taken in Leave-One-Out Cross-Validation (LOOCV). 
+
+1. split into two parts, but only single observation is used for validation.
+2. n of these training vs. 1 models are done so you have MSE1 ... MSEn and find mean of MSE's
+
+
+### What are the advantages of LOOCV over the validation set approach? 
+1. far less bias, tends not to overestimate test error rate
+2. no randomness of results. same mean MSE each time with data set.
+3. can use equation 5.2: https://faculty.marshall.usc.edu/gareth-james/ISL/ISLR%20Seventh%20Printing.pdf
+and only run once.
+
+
+### Using your own words, describe the steps taken in k-Fold Cross-Validation. 
+1. randomly divide into k groups, or folds of approximately equal size
+2. 1st fold == validation
+3. fit the model with the remaining folds.
+4. compute MSE of the validation fold
+5. repeat the procedure k times, each time with a different group as the validation fold.
+6. calculate the mean.
+
+### How is LOOCV a special case of k-Fold Cross-Validation?
+
+
+LOOCV is a special case where the validation group size is 1, or k==n.
+
+### Comment on the bias-variance tradeoff between LOOCV and k-Fold Cross-Validation.
+
+k-fold can give more accurate estimates of the test error rate than LOOCV because of bias-variance trade-off.
+
+LOOCV has lower bias because n-1 observations used to fit, BUT k-fold has lower variance in estimates because there is less correlation because the overlaps between training data are smaller.
+
+k==5, or k==10 are preferred.
+
+## 11.5 RECAP
+
+lag regression: regress response on lagged version of predictors.
+
+**cross correlation functions**
+
+ARMA errors: include another q terms in AR error equation with a correction, theta.
+
+bias: whether long run average is == truth - over time it is true
+
+variance: whether "distance" of estimate from truth on average - each value may be far
+
+
+
+
+
+
 
