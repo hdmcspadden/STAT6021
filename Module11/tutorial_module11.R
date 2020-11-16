@@ -22,7 +22,7 @@ shift<-ar.1$coef
 ?lag
 
 #create new column bind, shifts company variable by 1
-y<-cbind(as.ts(company),lag(company,1))
+y<-cbind(as.ts(company),lag(company))
 yprime<-y[,2] - shift*y[,1]
 y
 yprime

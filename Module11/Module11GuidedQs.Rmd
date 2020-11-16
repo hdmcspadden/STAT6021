@@ -16,7 +16,7 @@ The variables are:
 * x2: Passing yards (season)
 * x3: Punting average (yards/punt)
 * x4: Field goal percentage (FGs made/FGs attempted)
-* x5: Turnover dierential (turnovers acquired - turnovers lost)
+* x5: Turnover differential (turnovers acquired - turnovers lost)
 * x6: Penalty yards (season)
 * x7: Percent rushing (rushing plays/total plays)
 * x8: Opponents' rushing yards (season)
@@ -99,6 +99,7 @@ myLOOCVLoop <- function(theData, leaveOutIndex) {
 # create an accumulator variable
 difSquaredAccummulator <- 0
 
+# TODO: map or apply, try to stop writing loops
 # loop through all rows in data set
 for (i in 1:nrow(data)) 
 { 

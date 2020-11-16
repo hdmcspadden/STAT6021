@@ -1,0 +1,171 @@
+---
+title: "Module12Sandbox"
+author: "Diana McSpadden"
+date: "11/14/2020"
+output: html_document
+---
+
+# Module 12: Shrinkage Methods
+
+In module 12, you will learn about two shrinkage methods: ridge regression and lasso. Shrinkage methods help us deal with the issue of stability in estimating the regression model. Shrinkage methods typically introduce a little bit of bias into our estimates while at the same time diminishing the variance of the estimates, sometimes by a lot, which leads to estimates that are much more stable.
+ 
+Principal Component Analysis (PCA) is a method for dimension reduction when we have many predictors. PCA seeks to find a set of linearly uncorrelated variables that accounts for as much variability in the data as possible. The number of linearly uncorrelate variables is typically a lot smaller than the number of predictors.
+
+
+## ESSENTIAL QUESTIONS
+1. What are the consequences of multicollinearity?
+2. How do we use the bias-variance trade-off in ridge regression and lasso?
+3. What are the pros and cons associated with principal component analysis (PCA)?
+
+## LEARNING OBJECTIVES
+1. Describe the setup of ridge regression, lasso, and principal component regression.
+2. Describe the bias-variance trade-off in model estimation.
+
+## 12.1: Introduction to the Lesson
+
+**Bias refers to how correct (or incorrect) the model is. A very simple model that makes a lot of mistakes is said to have high bias. A very complicated model that does well on its training data is said to have low bias. Negatively correlated with bias is the variance of a model, which describes how much a prediction could potentially vary if one of the predictors changes slightly. **
+
+## 12.2: Ridge Regression
+Read Section 6.2.1 of An Introduction to Statistical Learning, with Applications in R (scroll down to the bottom to find the link to the book). As you read, take notes on the following.
+ 
+### In your own words, describe what happens to least-squares regression when the predictors exhibit multicollinearity. 
+
+* a single observation can have undue influence on the model. This can result in coefficients having large changes if a single observation is removed == high variance.
+
+
+### How is the mean-squared error (MSE) of an estimator related to its bias and variance? 
+
+MSE is a measure of both variance and bias. E(MSE) = $$\sigma^2$$
+
+E(Y2) = MSE = E[(θo –θ)2] → MSE = V(θo) + [E(θo) – θ]2 = variance of estimator + (bias)2
+
+
+$$MSE(\hat{\beta}) = bias(\hat{\beta})^2 + var(\hat{\beta})$$
+In OLS  the bias == 0, but the variance can be quite large.
+
+
+### What quantity are we minimizing in ridge regression? 
+
+it "shrinks" the estimated association of each variable to the predicted value.
+
+increase bias, but may shrink variance to reduce the test MSE.
+
+### Write out the ridge estimator, β^R, in terms of the vector of responses, the design matrix, and the tuning parameter. 
+
+$$\beta^R = \sum{(Y - \beta X)^2} + \lambda \sum{\beta^2}$$
+Seconmd term is small when coefficients are close to 0.
+
+
+### How do we choose the tuning parameter, λ, in terms of the bias-variance trade-off? 
+
+place where both bias and variance are minimized.
+
+variance + bias is minimized
+
+### Under what circumstance is the ridge estimator equal to the least-squares estimator?
+
+$$ when:  \lambda = 0$$
+
+###How does the estimated test MSE vary as λ increases from 0?
+
+Decrease, then increase.
+
+
+### R Func does standardization but default: glmnet()
+
+## 12.3: The Lasso
+Read Section 6.2.2 of An Introduction to Statistical Learning, with Applications in R (scroll down to the bottom to find the link to the book). As you read, take notes on the following.
+ 
+### What quantity are we minimizing in the Lasso? 
+
+$$\beta^R = \sum{(Y - \beta X)^2} + \lambda \sum{\mid{\beta}\mid}$$
+
+### Compare and contrast ridge regression and the Lasso.
+
+lasso can exclude predictors.
+
+lasso also shrinks coefficients
+
+can force some coeffs to == 0. == exclude the parameter. == variable selection
+
+the both create decrease then increase in MSE.
+
+### QUESTION: hypothesis testing and CIs no longer apply, but can one still examine relationship of coefficients, or is the model now limited to being utilized for prediction?
+
+
+## 12.4: Principal Component Analysis
+Read Section 10.2 of An Introduction to Statistical Learning, with Applications in R (scroll down to the bottom to find the link to the book). As you read, take notes on the following.
+ 
+### Describe how the principal components (PCs) are found in principal component analysis (PCA). 
+
+The first principal component of a set of features X1,X2, . . . , Xp is the normalized linear combination of the features:
+
+Z1 = φ11X1 + φ21X2 + . . . + φp1Xp
+
+
+that have the largest variance.
+
+By normalized, we mean that
+
+$$\sum(\phi^2) == 1, \  for\ j = 1\ to\ p$$
+
+The first principle component maximizes variance while keeping sum square of loading vector == 1
+
+Second principle component has next maximum variance that is also uncorrelated with Z1 matrix. == phi1 vector is orthogonal to phi1 vector.
+
+
+### Video: Thinkimg only as a dimension reduction measure.
+
+* each dimension is a linear combination of the k variables.
+
+
+### Question: when do we stop? when there is are no non-orthogonal vectors remaining? 
+
+
+### Explain why we typically center the variables in PCA. 
+
+We cant talk about nearest in Euclidean space if the center isn't a fixed location, ie 0, for all variables.
+
+### Explain why we typically standardize the variables in PCA. 
+
+z score each variable.
+
+xi' = (xi - x-bari) / sd(xi)
+
+Consequently, if we perform PCA on the unscaled variables, then
+the first principal component loading vector will have a very large loading
+for Assault, since that variable has by far the highest variance.
+
+**If variance isnt standard we cant correctly maximize the variance.**
+
+If units aren't same then you also cannot compare Euclidean distances.
+
+
+### Explain how we choose the number of PCs in PCA. 
+
+* This is done by eyeballing the scree plot, and
+looking for a point at which the proportion of variance explained by each
+subsequent principal component drops off. This is often referred to as an
+elbow in the scree plot
+
+* In fact, the question of how many principal components
+are enough is inherently ill-defined, and will depend on the specific
+area of application and the specific data set.
+
+On the other hand, if we compute principal components for use in a
+supervised analysis, such as the principal components regression presented
+in Section 6.3.1, then there is a simple and objective way to determine how
+many principal components to use: we can treat the number of principal
+component score vectors to be used in the regression as a tuning parameter
+to be selected via cross-validation or a related approach.
+
+
+
+Proportion of Variance Explained
+
+
+Variance explained by mth principal component:
+$$Var(Z\scriptstyle m \textstyle) \  =  1/n  \ * \ \sum{z^2 \scriptstyle im}$$
+
+
+

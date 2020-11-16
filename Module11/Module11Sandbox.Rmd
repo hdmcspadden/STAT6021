@@ -176,7 +176,20 @@ bias: whether long run average is == truth - over time it is true
 variance: whether "distance" of estimate from truth on average - each value may be far
 
 
+## Lecture
 
+**Why we transform both variables in time series?**: 
+
+**Time Series REgression**:
+
+still is y = intercept + slopex1 + Ei
+
+but error are autocorrelated ...
+
+
+it could  ga back several lags.
+
+prewhitening == transform both variables to make one of them white noise.
 
 
 
