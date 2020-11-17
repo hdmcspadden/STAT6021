@@ -92,6 +92,8 @@ the both create decrease then increase in MSE.
 
 ### QUESTION: hypothesis testing and CIs no longer apply, but can one still examine relationship of coefficients, or is the model now limited to being utilized for prediction?
 
+### QUESTION: Bias? Should I think about this as decreasing the F statistic?
+
 
 ## 12.4: Principal Component Analysis
 Read Section 10.2 of An Introduction to Statistical Learning, with Applications in R (scroll down to the bottom to find the link to the book). As you read, take notes on the following.

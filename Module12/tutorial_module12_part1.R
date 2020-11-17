@@ -1,11 +1,17 @@
-##Ridge
+##Ridge Shrinkage Method
 
 ##install.packages("glmnet")
 
 library(glmnet)
 
-##model.matrix automatically transform categorical variables into dummy codes, which is needed as the glmnet function cannot handle categorical variables
+##model.matrix automatically transform categorical variables into dummy codes, which is needed as the glmnet function cannot handle categorical
+# variables
+
+# x variable need to be assigned this way - needs a matrix with categorical does as dummy codes which model.matrix does, 
+# -1 gets rid of first column, that is the column  of 1's in the design matrix
 x<-model.matrix(mpg~.,mtcars)[,-1]
+
+# y variable is as usual
 y<-mtcars$mpg
 
 ##Note some predictors are highly correlated with each other. 
@@ -13,7 +19,8 @@ pairs(x, lower.panel=NULL, main="Scatterplots of Predictors")
 
 ##alpha=0 for ridge, alpha=1 for LASSO
 ##threshold value should be very small if multicollinearity is present. see what happens if thresh was set to a larger value
-##we know theoretically the coeffs should be the same as lm when lambda is 0
+##  used to find the estimatede coefs
+##we know theoretically the coeffs should be the same as lm when lambda is 0, lambda == 0 == OLS regression
 ridge.r<-glmnet(x,y,alpha=0, lambda=0, thresh = 1e-14)
 coefficients(ridge.r)
 
@@ -21,13 +28,25 @@ coefficients(ridge.r)
 result<-lm(mpg~.,mtcars)
 summary(result)
 
+
+# play with thres notice not the same as LR
+ridge.r<-glmnet(x,y,alpha=0, lambda=0, thresh = 1e-04)
+coefficients(ridge.r)
+
+# back to smaller threshol
+ridge.r<-glmnet(x,y,alpha=0, lambda=0, thresh = 1e-14)
+coefficients(ridge.r)
+
+
+### here is where we are trying to determine the tuning parameter $$\lambda$$
+  
 ##split data
 set.seed(12)
 train<-sample(1:nrow(x), nrow(x)/2)
 test<-(-train)
 y.test<-y[test]
 
-##use CV to find optimal lambda based on training set
+##use CV (cross validation) to find optimal lambda based on training set
 set.seed(12)
 cv.out<-cv.glmnet(x[train,],y[train],alpha=0)
 bestlam<-cv.out$lambda.min
