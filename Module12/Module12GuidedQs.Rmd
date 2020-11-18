@@ -1,0 +1,125 @@
+---
+title: "Module12GuidedQs"
+author: "Diana McSpadden"
+date: "11/18/2020"
+output: html_document
+---
+
+# Stat 6021: Guided Question Set 12
+
+For this question, we will use the same mtcars data set that you saw in the tutorial. You will now use lasso to fit a model, with fuel efficiency as the response variable.
+
+```{r setup}
+knitr::opts_chunk$set(warning = TRUE, message = TRUE)
+library(glmnet)
+attach(mtcars)
+
+head(mtcars)
+
+```
+
+
+
+## 1. Before comparing the results between ridge and lasso regression, which of these methods do you think will lead to a more accurate model? Briefly explain.
+
+I think ridge, because adding additional variables reduces SSE, but I think the difference will be small.
+
+```{r setup2}
+# x variable need to be assigned this way - needs a matrix with categorical does as dummy codes which model.matrix does, 
+# -1 gets rid of first column, that is the column  of 1's in the design matrix
+x<-model.matrix(mpg~.,mtcars)[,-1]
+
+# y variable is as usual
+y<-mtcars$mpg
+```
+
+
+## 2. Using set.seed(12), what is the optimal value of $$\lambda$$ for lasso?
+
+```{r q2-1}
+set.seed(12)
+train <- sample(1:nrow(x), nrow(x)/2)
+test <- (-train)
+y.test <- y[test]
+
+cv.out<-cv.glmnet(x[train,],y[train],alpha=1)
+bestlamlasso<-cv.out$lambda.min
+bestlamlasso
+plot(cv.out)
+```
+**Best lambda is: 0.7021885**
+
+compare to best lambda of 2.643695 in ridge regression.
+
+## 3. Compare and contrast the test MSE of: 
+* OLS regression,
+* ridge regression using its optimal lambda, and
+* lasso using its optimal lambda.
+
+MSE of OLS: **13.8246**
+
+MSE of Ridge Regression: **7.39826**
+
+
+Get the MSE to bestlambda with lasso:
+```{r q3-1}
+##fit ridge regression using training data
+ridge.mod<-glmnet(x[train,],y[train],alpha=1,lambda=bestlamlasso, thresh = 1e-14)
+
+##Test MSE with best lambda
+ridge.pred<-predict(ridge.mod,s=bestlamlasso,newx=x[test,])
+mean((ridge.pred-y.test)^2)
+```
+
+MSE of LASSO: **8.083576**
+
+### What do these comparisons inform you about the relationship between the response variable and the predictors (and also among the predictors)?
+
+MSE is slightly more with LASSO but the model will have fewer predictor variables (simpler). All the variables do help account for variance, but the added variables don't account for much of the additional variance.
+
+With an increase in bias we get a real improvement on variance (compare to OLS)
+
+## 4. Which predictors remained in the lasso model, when using the optimal lambda?
+```{r q4-1}
+#get bastlam for ridge
+cv.out.ridge<-cv.glmnet(x[train,],y[train],alpha=0)
+bestlamridge<-cv.out.ridge$lambda.min
+
+
+##Compare lasso, ridge, and OLS using best lambda and all observations
+out.lasso<-glmnet(x,y,alpha=1,lambda=bestlamlasso,thresh = 1e-14)
+out.ridge<-glmnet(x,y,alpha=0,lambda=bestlamridge,thresh = 1e-14)
+out.ols<-glmnet(x,y,alpha=0, lambda=0, thresh = 1e-14)
+cbind(coefficients(out.lasso),coefficients(out.ridge), coefficients(out.ols))
+```
+**Kept Variable in LASSO**:
+* cyl
+* hp
+* wt
+
+
+## 5. Produce the "ridge plot" for your lasso. 
+This is the plot of MSE against the estimated coefficients. How is this plot different than the one from ridge regression?
+
+### LASSO
+```{r q5-1}
+##Create plot of ridge coeff against lambda
+grid<-10^seq(10,-2,length=100)
+out.all<-glmnet(x,y,alpha=1,lambda=grid,thresh = 1e-14)
+#plot(out.all, xvar = "lambda")
+plot(out.all, xvar = "lambda", ylim=c(-1,1))
+abline(v=log(bestlamlasso), lty=2)
+legend("bottomright", lwd = 1, col = 1:6, legend = colnames(x), cex = .7)
+```
+
+### Ridge
+
+```{r q5-2}
+##Create plot of ridge coeff against lambda
+grid<-10^seq(10,-2,length=100)
+out.all<-glmnet(x,y,alpha=0,lambda=grid,thresh = 1e-14)
+plot(out.all, xvar = "lambda")
+abline(v=log(bestlamridge), lty=2)
+legend("bottomright", lwd = 1, col = 1:6, legend = colnames(x), cex = .7)
+```
+**All the variables are still included, ie coeff is non zero, in the ridge at the best ridge log lambda, but two are noticeably visible, and cyl must also be non zero at best lasso log lambda
