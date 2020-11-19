@@ -121,9 +121,6 @@ Second principle component has next maximum variance that is also uncorrelated w
 * each dimension is a linear combination of the k variables.
 
 
-### Question: when do we stop? when there is are no non-orthogonal vectors remaining? 
-
-
 ### Explain why we typically center the variables in PCA. 
 
 We cant talk about nearest in Euclidean space if the center isn't a fixed location, ie 0, for all variables.
@@ -161,13 +158,33 @@ many principal components to use: we can treat the number of principal
 component score vectors to be used in the regression as a tuning parameter
 to be selected via cross-validation or a related approach.
 
-
-
 Proportion of Variance Explained
-
 
 Variance explained by mth principal component:
 $$Var(Z\scriptstyle m \textstyle) \  =  1/n  \ * \ \sum{z^2 \scriptstyle im}$$
+
+## Lecture:
+
+see collab for new zoom hours.
+
+key project dates: dec 10, 11
+
+### Shrinkage: Ridge, Lasso - 
+Bias: unbiased == average of B1-hat == B1. Saying that other samples will create an average at the E(B1). Bathroom scale averages real weight.
+
+Variance: measures how much these B-hats vary from sample to sample. bathroom scale can have huge variances from the actual value.
+
+OLS == unbiased. BUT we are not guaranteed 0 variance.
+
+Ridge and LASSO, consider small bias, but reduce variance. Really only want to work on prediction because comparing coefs is no longer possible due to intro of bias.
+
+
+### PCA:
+
+because variance is affected by n-p (lower p == lower variance)
+
+there is not a response variable involved.
+
 
 
 

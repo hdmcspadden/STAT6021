@@ -42,12 +42,13 @@ train <- sample(1:nrow(x), nrow(x)/2)
 test <- (-train)
 y.test <- y[test]
 
-cv.out<-cv.glmnet(x[train,],y[train],alpha=1)
-bestlamlasso<-cv.out$lambda.min
+set.seed(12)
+cv.out.lasso<-cv.glmnet(x[train,],y[train],alpha=1)
+bestlamlasso<-cv.out.lasso$lambda.min
 bestlamlasso
-plot(cv.out)
+plot(cv.out.lasso)
 ```
-**Best lambda is: 0.7021885**
+**Best lambda is: 0.639**
 
 compare to best lambda of 2.643695 in ridge regression.
 
@@ -61,17 +62,17 @@ MSE of OLS: **13.8246**
 MSE of Ridge Regression: **7.39826**
 
 
-Get the MSE to bestlambda with lasso:
+Get the MSE to best lambda with lasso:
 ```{r q3-1}
-##fit ridge regression using training data
-ridge.mod<-glmnet(x[train,],y[train],alpha=1,lambda=bestlamlasso, thresh = 1e-14)
+##fit LASSO regression using training data
+lasso.mod<-glmnet(x[train,],y[train],alpha=1,lambda=bestlamlasso, thresh = 1e-14)
 
 ##Test MSE with best lambda
-ridge.pred<-predict(ridge.mod,s=bestlamlasso,newx=x[test,])
+lasso.pred<-predict(lasso.mod,s=bestlamlasso,newx=x[test,])
 mean((ridge.pred-y.test)^2)
 ```
 
-MSE of LASSO: **8.083576**
+MSE of LASSO: **7.998604**
 
 ### What do these comparisons inform you about the relationship between the response variable and the predictors (and also among the predictors)?
 
@@ -96,18 +97,19 @@ cbind(coefficients(out.lasso),coefficients(out.ridge), coefficients(out.ols))
 * cyl
 * hp
 * wt
+* am
 
 
 ## 5. Produce the "ridge plot" for your lasso. 
-This is the plot of MSE against the estimated coefficients. How is this plot different than the one from ridge regression?
+This is the plot of estimated coefficients vs log lambda. How is this plot different than the one from ridge regression?
 
 ### LASSO
 ```{r q5-1}
-##Create plot of ridge coeff against lambda
+##Create plot of lasso coeff against lambda
 grid<-10^seq(10,-2,length=100)
 out.all<-glmnet(x,y,alpha=1,lambda=grid,thresh = 1e-14)
 #plot(out.all, xvar = "lambda")
-plot(out.all, xvar = "lambda", ylim=c(-1,1))
+plot(out.all, xvar = "lambda", ylim=c(-0.5,0.5))
 abline(v=log(bestlamlasso), lty=2)
 legend("bottomright", lwd = 1, col = 1:6, legend = colnames(x), cex = .7)
 ```
@@ -122,4 +124,5 @@ plot(out.all, xvar = "lambda")
 abline(v=log(bestlamridge), lty=2)
 legend("bottomright", lwd = 1, col = 1:6, legend = colnames(x), cex = .7)
 ```
-**All the variables are still included, ie coeff is non zero, in the ridge at the best ridge log lambda, but two are noticeably visible, and cyl must also be non zero at best lasso log lambda
+**All the variables are still included, ie coeff is non zero, in the ridge at the best ridge log lambda, but two are noticeably visible, and cyl must also be non zero at best lasso log lambda.
+

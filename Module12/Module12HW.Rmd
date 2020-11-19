@@ -1,0 +1,293 @@
+---
+title: "Module12HW"
+author: "Diana McSpadden"
+date: "11/18/2020"
+output: html_document
+---
+# Stat 6021: Homework Set 12
+
+## H Diana McSpadden (hdm5s)
+
+**Attended Study Group With**: ...
+
+## 1. You will use the College data set from the ISLR package for this question. 
+
+The data set comes from the 1995 issue of the US News and World Report, and contains information on 777 US Colleges on a number of variables. Please use the documentation in R to read the description of the variables. 
+
+
+```{r setup}
+library(glmnet)
+library(ISLR)
+
+head(College)
+
+?College
+```
+
+#### Format:
+
+* Private: A factor with levels No and Yes indicating private or public university
+* Apps: Number of applications received
+* Accept: Number of applications accepted
+* Enroll: Number of new students enrolled
+* Top10perc: Pct. new students from top 10% of H.S. class
+* Top25perc: Pct. new students from top 25% of H.S. class
+* F.Undergrad: Number of fulltime undergraduates
+* P.Undergrad: Number of parttime undergraduates
+* Outstate: Out-of-state tuition
+* Room.Board: Room and board costs
+* Books: Estimated book costs
+* Personal: Estimated personal spending
+* PhD: Pct. of faculty with Ph.D.'s
+* Terminal: Pct. of faculty with terminal degree
+* S.F.Ratio: Student/faculty ratio
+* perc.alumni: Pct. alumni who donate
+* Expend: Instructional expenditure per student
+* Grad.Rate: Graduation rate
+
+
+You will use ridge regression and lasso regression to improve upon a model that is predicting the number of applications a college receives,
+using the other 17 variables in this data set.
+
+
+### (a) Before fitting any model(s), ...
+explain the circumstances that result in ridge regression and lasso regression to improve the accuracy of the model (compared to ordinary least squares, OLS).
+
+**Answer Q1a**
+
+When we are interested inusing a model for prediction, and there is significant multicollinearity between variables and we want to decrease their variance. Lasso can also be used when we expect multicollinearity and we want to decrease the number of predictors.
+
+
+### (b) Before fitting any model(s), ...
+discuss whether you think ridge regression or lasso regression will perform better in predicting the number of applications a college receives (in terms of model accuracy). Briefly explain.
+
+**Answer Q1b**
+
+I believe lasso will perform slightly better due not believing all the predictors explain application counts.
+
+
+### (c) Split your data into a training set and a test set with (roughly) equal numbers...
+Use set.seed(2019).
+
+```{r q1c-1}
+
+# x variable need to be assigned this way - needs a matrix with categorical does as dummy codes which model.matrix does, 
+# -1 gets rid of first column, that is the column  of 1's in the design matrix
+x<-model.matrix(Apps~.,College)[,-1]
+
+# y variable is as usual
+y<-College$Apps
+
+set.seed(2019)
+train <- sample(1:nrow(x), nrow(x)/2)
+test <- (-train)
+y.test <- y[test]
+
+```
+
+
+### (d) Fit a ridge regression model on the training set, with lambda chosen by cross-validation
+using the cv.glmnet() function. Before using this function, use set.seed(4630).
+Report the test MSE based on this value of lambda.
+
+```{r q1d-1}
+# ridge is alpha=0
+set.seed(4630)
+cv.ridge.out<-cv.glmnet(x[train,],y[train],alpha=0)
+bestlamridge<-cv.ridge.out$lambda.min
+print(paste("The best Ridge Lambda: ",bestlamridge))
+
+#plot the lambda selection
+plot(cv.ridge.out)
+
+
+##fit ridge regression using training data
+ridge.mod<-glmnet(x[train,],y[train],alpha=0,lambda=bestlamridge, thresh = 1e-14)
+
+##Test MSE with best lambda
+ridge.pred<-predict(ridge.mod,s=bestlamridge,newx=x[test,])
+print(paste("MSE Ridge: ",mean((ridge.pred-y.test)^2)))
+```
+**Answer Q1d**
+
+"MSE Ridge:  977113.167196157"
+
+
+### (e) Fit a lasso model on the training set, with lamba chosen...
+by cross-validation using the cv.glmnet() function. Before using this function, use set.seed(4630). Report
+the test MSE based on this value of lambda.
+
+```{r q1e-1}
+
+# lasso is alpha=1
+set.seed(4630)
+cv.lasso.out<-cv.glmnet(x[train,],y[train],alpha=1)
+bestlamlasso<-cv.lasso.out$lambda.min
+print(paste("The best LASSO Lambda: ",bestlamlasso))
+
+#plot the lambda selection
+plot(cv.lasso.out)
+
+
+##fit lasso regression using training data
+lasso.mod<-glmnet(x[train,],y[train],alpha=1,lambda=bestlamlasso, thresh = 1e-14)
+
+##Test LASSO MSE with best lambda
+lasso.pred<-predict(lasso.mod,s=bestlamlasso,newx=x[test,])
+print(paste("MSE LASSO: ",mean((lasso.pred-y.test)^2)))
+
+```
+
+**Answer Q1e:**
+
+"MSE LASSO:  1116834.58136861"
+
+
+### (f) Find the test MSE with OLS.
+
+```{r q1f-1}
+
+##fit ols regression using training data, lambda = 0 for OLS
+ols.mod<-glmnet(x[train,],y[train],alpha=0,lambda=0, thresh = 1e-14)
+
+##Test MSE with best lambda
+ols.pred<-predict(ols.mod,s=0,newx=x[test,])
+print(paste("MSE OLS: ",mean((ols.pred-y.test)^2)))
+
+
+```
+
+### (g) Comment on the test MSE with ridge regression, the lasso regression, and OLS.
+Which model has the best accuracy? Is this result surprising?
+
+* OLS MSE: 1,125,281
+* LASSO MSE: 1,116,834
+* Ridge MSE: 977,113
+
+Ridge has the best accuracy. I am surprised because I did not expect the following predictor to be useful in predicting application counts:
+* perc.alumni: Pct. alumni who donate
+* Books: Estimated book costs 
+* Expend: Instructional expenditure per student
+
+### (h) Create ridge plots to see how the values of the estimated coefficients vary with ...
+lambda, for both ridge and lasso regression. Comment on how these plots explain why
+these methods are called "shrinkage methods".
+
+```{r q1h-1}
+
+##Compare lasso, ridge, and OLS using best lambda and all observations
+out.lasso<-glmnet(x,y,alpha=1,lambda=bestlamlasso,thresh = 1e-14)
+out.ridge<-glmnet(x,y,alpha=0,lambda=bestlamridge,thresh = 1e-14)
+out.ols<-glmnet(x,y,alpha=0, lambda=0, thresh = 1e-14)
+cbind(coefficients(out.lasso),coefficients(out.ridge), coefficients(out.ols))
+
+##Create plot of lasso coeff against lambda
+grid<-10^seq(10,-2,length=100)
+out.all<-glmnet(x,y,alpha=1,lambda=grid,thresh = 1e-14)
+#plot(out.all, xvar = "lambda")
+plot(out.all, xvar = "lambda", ylim=c(-0.2,0.2))
+abline(v=log(bestlamlasso), lty=2)
+legend("bottomright", lwd = 1, col = 1:6, legend = colnames(x), cex = .7)
+
+##Create plot of ridge coeff against lambda
+grid<-10^seq(10,-2,length=100)
+out.all<-glmnet(x,y,alpha=0,lambda=grid,thresh = 1e-14)
+plot(out.all, xvar = "lambda")
+abline(v=log(bestlamridge), lty=2)
+legend("bottomright", lwd = 1, col = 1:6, legend = colnames(x), cex = .7)
+
+```
+**Answer Q1h**
+
+From the ridge plots it is clear that the coefficient values trend towards zero, thus "shrinking" in absolute value. 
+
+
+##2. For this second question, ...
+we will use the swiss data set that you have worked on before. You will perform principal component analysis (PCA) on the quantitative variables for this data set and answer the following questions:
+
+```{r q2setup}
+#detach(College)
+
+attach(swiss)
+?swiss
+```
+
+A data frame with 47 observations on 6 variables, each of which is in percent, i.e., in [0, 100].
+
+* [,1]	Fertility	Ig, ‘common standardized fertility measure’
+* [,2]	Agriculture	% of males involved in agriculture as occupation
+* [,3]	Examination	% draftees receiving highest mark on army examination
+* [,4]	Education	% education beyond primary school for draftees.
+* [,5]	Catholic	% ‘catholic’ (as opposed to ‘protestant’).
+* [,6]	Infant.Mortality	live births who live less than 1 year.
+
+
+All variables but ‘Fertility’ give proportions of the population.
+
+
+### (a) What are the loading vectors for the principal components (PCs)?
+
+```{r q2a-1}
+##perform PCA, with scaling.
+# scaling makes the units the same. Do every time
+pr.out<-prcomp(swiss, scale=TRUE)
+
+##extract the mean and SD of each variable
+#pr.out$center
+#pr.out$scale
+
+##same result if you calculated their means and SDs on your own - checking pr function
+#apply(swiss, 2, mean)
+#apply(swiss, 2, sd)
+
+##obtain the loading vector for the PCs
+# Look at first two and see how we could interpret first two PC's
+pr.out$rotation
+```
+
+### (b) How would you interpret the first and second PCs contextually?
+
+If we are examining relationship to fertility, then I would exclude Fertility from PC1 even though its absolute value is "large". I would put **Examination, Fertility, and Education** in PC1 which suggests these variables vary together. Fertility goes down as Education and army exam scores increase. I interpret this as showing that training and education of the population decrease fertility.
+
+For PC2 I would include **Agriculture and Infant.Mortality**, which I interpret that as fewer males are involved in agriculture as an occupation, infant mortality increases. Why would that be? Possibly because fewer families have farms as an income source, and in Switzerland in 1888 this transitional time resulted in many families not having resources. So this is a measure of increased infant mortality as a measure of lack of agricultural opportunities.
+
+Refernce: https://www.eda.admin.ch/aboutswitzerland/en/home/geschichte/epochen/der-bundesstaat-im-19--jahrhundert.html
+
+
+### (c) Use the biplot() function to create a plot of the first two PCs. 
+Locate the province of La Vallee. How would you characterize this province, based on this plot?
+
+```{r q2c-1, , fig.width=8, fig.height=6}
+##plot of first two PCs
+biplot(pr.out, scale=0)
+```
+**Answer Q2c**
+
+La Vallee: has an above average rate of education/training for army draftees/members.
+
+LaVallee: has a below average rate of families suffering ill effects of agricultural transition.
+
+
+### (d) Produce a scree plot. How many PCs would you consider using?
+Briefly explain.
+
+```{r q2d-1}
+##variance of each PC
+pr.var<-pr.out$sdev^2
+pr.var
+
+##proportion of variance in data explained by each PC
+# first and second account for 85% variance
+pve<-pr.var/sum(pr.var)
+pve
+
+
+##Scree plot
+# plots proportion of variance each component accounts for
+plot(pve, ylim=c(0,1))
+plot(pve, xlab="Principal Component", ylab="Proportion of Variance Explained", main="Scree Plot", ylim=c(0,1),type='b')
+
+```
+**Answer Q2d**
+
+I would use three for better performance of the model; the first three account for ~87% of the variance in the model. Without the third PC only 73% of the model variance is accounted for. I could even interpret the third PC the includes Catholic and Education as a measure of catholic high school education (if such a thing existed in Switzerland in 1888). I did find evidence for this interpretation here " To replace the suppressed Jesuit colleges, new schools were started by Benedictines, Capuchins, Augustinian Canons and secular priests. The most important educational accomplishment was the foundation of the Catholic University of Fribourg by Georges Python in 1889." - https://www.encyclopedia.com/religion/encyclopedias-almanacs-transcripts-and-maps/switzerland-catholic-church
